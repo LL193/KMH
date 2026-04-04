@@ -483,8 +483,147 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   .prox-cat-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ── PROGRESS RING ── */
-.progress-ring { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); }
+/* ── MENTOR PANEL ── */
+.mentor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+.mentor-chat-wrap { display: flex; flex-direction: column; gap: 0; }
+
+.mentor-header-card {
+  background: linear-gradient(135deg, #1a1410 0%, #2C2C2C 60%, #3D3028 100%);
+  border-radius: 16px 16px 0 0;
+  padding: 24px 28px 20px;
+  color: white;
+  border: 1px solid rgba(201,169,110,0.2);
+  border-bottom: none;
+}
+.mentor-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(201,169,110,0.15);
+  border: 1px solid rgba(201,169,110,0.3);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold-light); margin-bottom: 12px;
+}
+.mentor-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; margin-bottom: 6px;
+}
+.mentor-subtitle { font-size: .78rem; opacity: .6; line-height: 1.5; }
+.mentor-modes {
+  display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+}
+.mentor-mode-btn {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid rgba(201,169,110,0.3);
+  background: transparent; color: var(--gold-light);
+  font-family: 'Jost', sans-serif; font-size: .7rem; font-weight: 600;
+  cursor: pointer; transition: all .2s; letter-spacing: .05em;
+}
+.mentor-mode-btn:hover { background: rgba(201,169,110,0.15); border-color: var(--gold); }
+.mentor-mode-btn.active { background: var(--gold); border-color: var(--gold); color: white; }
+
+.mentor-chat-body {
+  background: white; border: 1px solid var(--border);
+  border-top: none; border-bottom: none;
+  padding: 20px 24px;
+  max-height: 380px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px;
+  scrollbar-width: thin; scrollbar-color: var(--gold-light) var(--cream);
+}
+.mentor-chat-body::-webkit-scrollbar { width: 4px; }
+.mentor-chat-body::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 2px; }
+
+.mentor-msg {
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.mentor-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; color: white; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(201,169,110,0.35);
+  margin-top: 2px;
+}
+.mentor-bubble {
+  background: linear-gradient(135deg, #FDFAF6, white);
+  border: 1px solid var(--gold-light);
+  border-radius: 4px 16px 16px 16px;
+  padding: 12px 16px; font-size: .84rem;
+  line-height: 1.65; color: var(--charcoal); flex: 1;
+}
+.mentor-bubble strong { color: var(--gold-dark); }
+.mentor-bubble .mentor-tag {
+  display: inline-block; padding: 1px 7px; border-radius: 8px;
+  font-size: .62rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; margin-right: 4px; margin-bottom: 2px;
+}
+.mentor-tag.sensory   { background: #FDF3E3; color: var(--gold-dark); }
+.mentor-tag.stress    { background: #FDDDE6; color: #C0607A; }
+.mentor-tag.contract  { background: #EDE7F6; color: #673AB7; }
+.mentor-tag.budget    { background: #D4EDD9; color: #3D7A4A; }
+.mentor-tag.reality   { background: #E8F4FD; color: #2E6DA4; }
+
+.mentor-msg-user { flex-direction: row-reverse; }
+.mentor-msg-user .mentor-bubble {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border-color: var(--gold-dark); color: white;
+  border-radius: 16px 4px 16px 16px;
+}
+.mentor-msg-user .mentor-bubble strong { color: var(--gold-light); }
+
+.mentor-input-bar {
+  background: var(--cream); border: 1px solid var(--border);
+  border-top: none; border-radius: 0 0 16px 16px;
+  padding: 14px 16px; display: flex; gap: 10px; align-items: center;
+}
+.mentor-input {
+  flex: 1; padding: 10px 16px;
+  border: 1.5px solid rgba(201,169,110,0.2);
+  border-radius: 10px; font-family: 'Jost', sans-serif;
+  font-size: .84rem; color: var(--charcoal);
+  background: white; outline: none; transition: all .2s;
+}
+.mentor-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,0.1); }
+
+/* Mentor Sidebar */
+.mentor-analysis-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px; margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.mentor-insight {
+  padding: 12px 14px; border-radius: 10px; margin-bottom: 10px;
+  border-left: 3px solid; cursor: pointer; transition: all .2s;
+}
+.mentor-insight:hover { transform: translateX(3px); }
+.mentor-insight:last-child { margin-bottom: 0; }
+.mentor-insight.sensory   { background: #FDF9F0; border-color: var(--gold); }
+.mentor-insight.stress    { background: #FFF5F7; border-color: var(--rose); }
+.mentor-insight.contract  { background: #F5F0FF; border-color: #9B72CF; }
+.mentor-insight.budget    { background: #F0FBF4; border-color: var(--sage); }
+.mentor-insight.reality   { background: #EFF6FF; border-color: #60A5FA; }
+.insight-label {
+  font-size: .6rem; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.insight-text { font-size: .78rem; line-height: 1.5; color: var(--charcoal); }
+.insight-action {
+  font-size: .68rem; font-weight: 600; margin-top: 6px;
+  cursor: pointer; text-decoration: underline; opacity: .7;
+}
+
+.mentor-quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mentor-quick-btn {
+  padding: 10px 12px; border: 1.5px solid var(--border);
+  border-radius: 10px; background: var(--ivory);
+  font-family: 'Jost', sans-serif; font-size: .72rem; font-weight: 500;
+  cursor: pointer; color: var(--charcoal); transition: all .2s;
+  text-align: left; line-height: 1.4;
+}
+.mentor-quick-btn:hover { background: var(--gold); color: white; border-color: var(--gold); }
+.mentor-quick-btn .mq-icon { font-size: 1rem; display: block; margin-bottom: 4px; }
+
+@media (max-width: 900px) { .mentor-grid { grid-template-columns: 1fr; } }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
@@ -562,7 +701,8 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   <div class="ntab" onclick="showPanel('seating',this)">🪑 Sitzplan</div>
   <div class="ntab" onclick="showPanel('vendors',this)">🤝 Dienstleister</div>
   <div class="ntab" onclick="showPanel('inspiration',this)">✨ Inspiration</div>
-  <div class="ntab" onclick="showPanel('assistant',this)">🤖 KI-Assistent</div>
+  <div class="ntab" onclick="showPanel('mentor',this)">🧠 Mentor</div>
+  <div class="ntab" onclick="showPanel('assistant',this)">🤖 KI-Chat</div>
 </div>
 
 <main>
@@ -718,29 +858,115 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 
 <!-- ══ GÄSTE ══ -->
 <div class="panel" id="panel-guests">
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
-    <div class="stat-card rose"><div class="stat-label">Gesamt eingeladen</div><div class="stat-value">110</div></div>
-    <div class="stat-card sage"><div class="stat-label">Zugesagt</div><div class="stat-value">84</div></div>
-    <div class="stat-card charcoal"><div class="stat-label">Ausstehend</div><div class="stat-value">18</div></div>
-    <div class="stat-card gold"><div class="stat-label">Abgesagt</div><div class="stat-value">8</div></div>
+
+  <!-- Stats (dynamisch) -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;" id="guestStats">
+    <div class="stat-card rose"><div class="stat-label">Gesamt eingeladen</div><div class="stat-value" id="statTotal">–</div></div>
+    <div class="stat-card sage"><div class="stat-label">Zugesagt</div><div class="stat-value" id="statYes">–</div></div>
+    <div class="stat-card charcoal"><div class="stat-label">Ausstehend</div><div class="stat-value" id="statPending">–</div></div>
+    <div class="stat-card gold"><div class="stat-label">Abgesagt</div><div class="stat-value" id="statNo">–</div></div>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="icon">👥</span> Gästeliste
-      <button class="btn btn-primary" style="margin-left:auto;padding:7px 16px;font-size:.75rem;" onclick="showToast('➕ Gast-Formular kommt in v3!')">+ Gast hinzufügen</button>
+
+  <!-- RSVP-Link Banner -->
+  <div style="background:linear-gradient(135deg,#2C2C2C,#3D3530);border-radius:14px;padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <span style="font-size:1.4rem;">💌</span>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:white;margin-bottom:3px;">RSVP-Seite für Gäste</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.55);">Öffnet im gleichen Browser → Daten werden automatisch synchronisiert</div>
     </div>
-    <table class="guest-table">
-      <thead><tr><th>Name</th><th>Kategorie</th><th>RSVP</th><th>Menü</th><th>Tisch</th><th>Plus One</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Elisabeth Müller</strong></td><td><span class="tag gold-tag">Familie</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Fleisch</td><td>Tisch 1</td><td>–</td></tr>
-        <tr><td><strong>Thomas & Sandra Weber</strong></td><td><span class="tag gold-tag">Familie</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Fleisch / Vegi</td><td>Tisch 1</td><td>2 Kinder</td></tr>
-        <tr><td><strong>Laura Schneider</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Vegetarisch</td><td>Tisch 3</td><td>Florian K.</td></tr>
-        <tr><td><strong>Markus Hoffmann</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge pending">Ausstehend</span></td><td>–</td><td>–</td><td>–</td></tr>
-        <tr><td><strong>Dr. Anna Fischer</strong></td><td><span class="tag" style="background:#EDE7F6;color:#673AB7">Kollegen</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Vegan</td><td>Tisch 6</td><td>–</td></tr>
-        <tr><td><strong>Peter & Monika Bauer</strong></td><td><span class="tag gold-tag">Familie</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Fleisch / Fleisch</td><td>Tisch 2</td><td>–</td></tr>
-        <tr><td><strong>Sophie Braun</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge no">Abgesagt</span></td><td>–</td><td>–</td><td>–</td></tr>
-        <tr><td><strong>Jonas & Lena Klein</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge pending">Ausstehend</span></td><td>–</td><td>–</td><td>–</td></tr>
-      </tbody>
-    </table>
+    <button class="btn" onclick="openRSVP()" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;white-space:nowrap;flex-shrink:0;">
+      💌 RSVP-Seite öffnen
+    </button>
+    <button class="btn btn-outline" onclick="refreshGuests()" style="white-space:nowrap;flex-shrink:0;border-color:rgba(201,169,110,.4);color:var(--gold-light);">
+      🔄 Aktualisieren
+    </button>
+  </div>
+
+  <!-- Neue Anmeldungen Badge -->
+  <div id="newRsvpBanner" style="display:none;background:linear-gradient(135deg,#D4EDD9,#E8F5E9);border:1px solid var(--sage);border-radius:10px;padding:12px 18px;margin-bottom:16px;display:none;align-items:center;gap:10px;">
+    <span style="font-size:1.2rem;">🆕</span>
+    <span id="newRsvpText" style="font-size:.84rem;font-weight:500;color:#2D6A3F;flex:1;"></span>
+    <button onclick="clearNewBadge()" style="background:none;border:none;cursor:pointer;color:var(--sage);font-size:1rem;">✕</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">👥</span> Gästeliste
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input type="search" id="guestSearch" placeholder="🔍 Suchen …"
+          style="padding:6px 12px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.78rem;outline:none;width:160px;"
+          oninput="renderGuestTable()" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream)'">
+        <select id="guestRsvpFilter" onchange="renderGuestTable()"
+          style="padding:6px 10px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.78rem;outline:none;background:white;color:var(--charcoal);">
+          <option value="all">Alle</option>
+          <option value="yes">✓ Zugesagt</option>
+          <option value="pending">⏳ Ausstehend</option>
+          <option value="no">✕ Abgesagt</option>
+        </select>
+        <button class="btn btn-primary" onclick="showAddGuestModal()" style="padding:7px 14px;font-size:.75rem;">+ Hinzufügen</button>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="guest-table" id="guestTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Gruppe</th>
+            <th>RSVP</th>
+            <th>Menü</th>
+            <th>Begleitung</th>
+            <th>Tisch</th>
+            <th>Quelle</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="guestTbody">
+          <tr><td colspan="8" style="text-align:center;padding:30px;color:var(--warm-gray);">Lade Gäste …</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Gast hinzufügen Modal ── -->
+<div class="modal-backdrop" id="addGuestModal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeAddGuestModal()">✕</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:4px;">Gast hinzufügen</div>
+    <div style="font-size:.75rem;color:var(--warm-gray);margin-bottom:20px;">Manuell eintragen</div>
+    <div style="display:grid;gap:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="field"><label>Vorname *</label><input type="text" id="agFirst" placeholder="Julia"></div>
+        <div class="field"><label>Nachname *</label><input type="text" id="agLast" placeholder="Müller"></div>
+      </div>
+      <div class="field">
+        <label>Gruppe</label>
+        <select id="agCategory" style="padding:10px 14px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.84rem;background:var(--ivory);outline:none;">
+          <option>Familie</option><option>Freunde</option><option>Kollegen</option><option>Sonstige</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>RSVP-Status</label>
+        <select id="agRsvp" style="padding:10px 14px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.84rem;background:var(--ivory);outline:none;">
+          <option value="pending">⏳ Ausstehend</option>
+          <option value="yes">✓ Zugesagt</option>
+          <option value="no">✕ Abgesagt</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Menü</label>
+        <select id="agMenu" style="padding:10px 14px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.84rem;background:var(--ivory);outline:none;">
+          <option value="">–</option>
+          <option>Fleisch</option><option>Vegetarisch</option><option>Vegan</option>
+        </select>
+      </div>
+      <div class="field"><label>Begleitung (Name)</label><input type="text" id="agPlusOne" placeholder="Optional"></div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveNewGuest()">✓ Speichern</button>
+        <button class="btn btn-outline" onclick="closeAddGuestModal()">Abbrechen</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -915,7 +1141,119 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   </div>
 </div>
 
-<!-- ══ KI-ASSISTENT (jetzt funktionsfähig via Anthropic API) ══ -->
+<!-- ══ MENTOR ══ -->
+<div class="panel" id="panel-mentor">
+  <div class="mentor-grid">
+
+    <!-- Chat-Bereich -->
+    <div class="mentor-chat-wrap">
+      <div class="mentor-header-card">
+        <div class="mentor-badge">✦ KI-Mentor · Hochzeits-Consultant</div>
+        <div class="mentor-title">Dein Hochzeits-Mentor</div>
+        <div class="mentor-subtitle">Ich denke zwischen den Zeilen. Budget, Stress, Verträge, Sinneserlebnisse — was andere Planer übersehen, finde ich.</div>
+        <div class="mentor-modes">
+          <button class="mentor-mode-btn active" onclick="setMentorMode('full',this)">🧠 Vollanalyse</button>
+          <button class="mentor-mode-btn" onclick="setMentorMode('sensory',this)">👃 Sensorik-Check</button>
+          <button class="mentor-mode-btn" onclick="setMentorMode('stress',this)">💆 Stress-Radar</button>
+          <button class="mentor-mode-btn" onclick="setMentorMode('contract',this)">📋 Vertrags-Check</button>
+          <button class="mentor-mode-btn" onclick="setMentorMode('budget',this)">💰 Budget-Strategie</button>
+          <button class="mentor-mode-btn" onclick="setMentorMode('reality',this)">👁️ Reality-Check</button>
+        </div>
+      </div>
+
+      <div class="mentor-chat-body" id="mentorChatLog">
+        <!-- Initiale Mentor-Nachricht -->
+        <div class="mentor-msg">
+          <div class="mentor-avatar">✦</div>
+          <div class="mentor-bubble">
+            Hallo Julia & Maximilian. Ich habe eure Planungsdaten analysiert — und ein paar Dinge fallen mir auf, die ihr vielleicht noch nicht auf dem Schirm habt.<br><br>
+            <strong>Drei Themen, die wir angehen sollten:</strong><br><br>
+            <span class="mentor-tag sensory">Sensorik</span> Ihr habt das Catering gebucht, aber: Habt ihr die Akustik im Schloss Nymphenburg bei Vollbelegung getestet? Hohe Decken + 110 Gäste = Lärmpegel, der Gespräche unmöglich macht.<br><br>
+            <span class="mentor-tag contract">Vertrag</span> Der Limousinen-Service hat keine Website und kein Angebot im System. Klassisches Risiko ohne schriftliche Stornobedingungen.<br><br>
+            <span class="mentor-tag stress">Stress</span> Ihr habt 3 offene Hochprioritäts-Aufgaben gleichzeitig. Das ist kein Zeitdruck-Problem — das ist ein Entscheidungs-Müdigkeits-Problem. Lass uns das sortieren.
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick-Action Chips -->
+      <div style="background:white;border:1px solid var(--border);border-top:none;padding:12px 16px;">
+        <div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:8px;">Schnell-Analyse</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <div class="ai-chip" onclick="sendMentorQuick('Analysiere unsere Stornobedingungen bei allen gebuchten Dienstleistern und nenne konkrete Risiken.')">📋 Vertrags-Risiken</div>
+          <div class="ai-chip" onclick="sendMentorQuick('Führe einen vollständigen Sensorik-Check durch: Was müssen wir bei Location, Catering und Musik noch persönlich testen?')">👃 Sensorik-Check</div>
+          <div class="ai-chip" onclick="sendMentorQuick('Wo können wir im Budget sparen, ohne dass es emotional wehtut? Nenne 3 konkrete Streichposten.')">✂️ Budget-Schnitt</div>
+          <div class="ai-chip" onclick="sendMentorQuick('Ich fühle mich überfordert. Priorisiere alle offenen Aufgaben und gib mir einen klaren 3-Punkte-Plan für diese Woche.')">💆 Ruhepuls</div>
+          <div class="ai-chip" onclick="sendMentorQuick('Reality-Check: Welche Hochzeits-Erwartungen aus Instagram und Pinterest sind unrealistisch für unser Budget und unsere Location?')">👁️ Reality-Check</div>
+          <div class="ai-chip" onclick="sendMentorQuick('Analysiere den Konflikt an Tisch 6 und schlage 3 alternative Sitzplan-Strategien vor, die Harmonie herstellen.')">🪑 Tisch-6-Konflikt</div>
+        </div>
+      </div>
+
+      <div class="mentor-input-bar">
+        <input type="text" class="mentor-input" id="mentorInput"
+          placeholder="Frag den Mentor — er denkt zwischen den Zeilen …"
+          onkeypress="if(event.key==='Enter')sendMentor()">
+        <button class="btn btn-primary" onclick="sendMentor()" id="mentorSendBtn" style="white-space:nowrap;">✦ Fragen</button>
+      </div>
+    </div>
+
+    <!-- Sidebar: Live-Insights -->
+    <div>
+      <div class="mentor-analysis-card">
+        <div class="card-title" style="font-size:1rem;margin-bottom:16px;"><span class="icon">🔍</span> Live-Insights</div>
+
+        <div class="mentor-insight sensory" onclick="sendMentorQuick('Erkläre mir genau, was ich bei der Probe des Catering Weißbauer testen soll — alle Sinne.')">
+          <div class="insight-label" style="color:var(--gold-dark);">👃 Sensorik</div>
+          <div class="insight-text">Catering gebucht, aber Tastprobe dokumentiert? Servietten-Qualität, Besteckgewicht und Tellertemperatur wurden noch nie erwähnt.</div>
+          <div class="insight-action" style="color:var(--gold-dark);">→ Checkliste erstellen lassen</div>
+        </div>
+
+        <div class="mentor-insight contract" onclick="sendMentorQuick('Was muss ich bei Limousinen-Service München im Vertrag unbedingt prüfen? Nenne spezifische Klauseln.')">
+          <div class="insight-label" style="color:#673AB7;">📋 Vertrag</div>
+          <div class="insight-text">Limousinen-Service: Kein schriftlicher Vertrag sichtbar. Was passiert, wenn das Fahrzeug am Tag ausfällt?</div>
+          <div class="insight-action" style="color:#673AB7;">→ Vertragsklauseln prüfen</div>
+        </div>
+
+        <div class="mentor-insight stress" onclick="sendMentorQuick('Ich habe das Gefühl wir machen zu viele Änderungen. Gib mir einen Ruhe-Impuls und priorisiere die 3 wichtigsten Aufgaben neu.')">
+          <div class="insight-label" style="color:#C0607A;">💆 Stress-Signal</div>
+          <div class="insight-text">3 Hochprio-Aufgaben gleichzeitig + 18 ausstehende RSVPs = klassische Entscheidungs-Müdigkeit. Fokus fehlt.</div>
+          <div class="insight-action" style="color:#C0607A;">→ Neu priorisieren</div>
+        </div>
+
+        <div class="mentor-insight budget" onclick="sendMentorQuick('Schlage konkret vor, was wir bei Gastgeschenken, Transport oder Dekoration einsparen können — ohne emotionalen Verlust.')">
+          <div class="insight-label" style="color:#3D7A4A;">💰 Budget-Hebel</div>
+          <div class="insight-text">Transport überbudgetiert (900 € von 800 €). Gastgeschenke vs. Open Bar — klassische emotionale Fehlgewichtung.</div>
+          <div class="insight-action" style="color:#3D7A4A;">→ Einsparpotenzial zeigen</div>
+        </div>
+
+        <div class="mentor-insight reality" onclick="sendMentorQuick('Welche Erwartungen an Blumenzauber oder die Papeterie sind durch Instagram unrealistisch? Was soll ich konkret nachfragen?')">
+          <div class="insight-label" style="color:#2E6DA4;">👁️ Reality-Check</div>
+          <div class="insight-text">Blumenzauber und Papeterie: Habt ihr nach unbearbeiteten Referenzfotos gefragt? Instagram-Filter verschönern die Realität erheblich.</div>
+          <div class="insight-action" style="color:#2E6DA4;">→ Fragen-Template anzeigen</div>
+        </div>
+      </div>
+
+      <div class="mentor-analysis-card">
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:12px;">Tiefenanalyse starten</div>
+        <div class="mentor-quick-grid">
+          <button class="mentor-quick-btn" onclick="sendMentorQuick('Erstelle eine vollständige emotionale Risikoanalyse unserer Hochzeitsplanung.')">
+            <span class="mq-icon">🧠</span>Vollanalyse
+          </button>
+          <button class="mentor-quick-btn" onclick="sendMentorQuick('Was sind die 3 besten Vibe-Matches für unsere noch offenen Dienstleister Fotografie und Musik basierend auf unserem Romantic Garden Stil?')">
+            <span class="mq-icon">✨</span>Vibe-Matches
+          </button>
+          <button class="mentor-quick-btn" onclick="sendMentorQuick('Erstelle eine Akustik- und Sensorik-Checkliste für den nächsten Besuch im Schloss Nymphenburg.')">
+            <span class="mq-icon">🏛️</span>Location-Check
+          </button>
+          <button class="mentor-quick-btn" onclick="sendMentorQuick('Analysiere alle unsere Verträge auf versteckte Kosten, Stornobedingungen und Fallstricke.')">
+            <span class="mq-icon">📋</span>Vertrags-Scan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KI-CHAT (leichtgewichtiger Schnell-Assistent) ══ -->
 <div class="panel" id="panel-assistant">
   <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
     <div class="card">
@@ -1281,10 +1619,192 @@ function showAddVendorHint() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  KI-ASSISTENT – Anthropic API
+//  KI-SYSTEME – Zwei Modi: Mentor + Chat-Assistent
 // ═══════════════════════════════════════════════════════
-const AI_SYSTEM = `Du bist FOREVER, ein eleganter KI-Hochzeitsassistent für das Brautpaar Julia & Maximilian. Ihre Hochzeit ist am 05.12.2026 im Schloss Nymphenburg, München. 
-Fakten: 84 von 110 Gästen bestätigt, Budget 18.000€ (12.450€ verplant), Stil: Romantic Garden, noch keine Fotografin und kein DJ gebucht.
+
+// ── Basis-Planungskontext (für beide Systeme) ───────────
+function getPlanningContext() {
+  const guests = getGuests();
+  const yes = guests.filter(g => g.rsvp === 'yes').length;
+  const pending = guests.filter(g => g.rsvp === 'pending').length;
+  return `
+PLANUNGSDATEN (Stand heute):
+- Hochzeit: Julia & Maximilian, 05.12.2026, Schloss Nymphenburg München
+- Budget: 18.000€ gesamt, 12.450€ verplant, 5.550€ verfügbar
+- Gäste: ${guests.length} eingeladen, ${yes} zugesagt, ${pending} ausstehend
+- Stil: Romantic Garden (Pfingstrosen, Gold, Sage, Elfenbein)
+- Dienstleister gebucht: Location (4.800€), Catering (4.000€), Ringe (1.800€), Limousine (450€), Papeterie (320€)
+- Dienstleister offen: Fotografin (Budget 2.200€, DRINGEND), DJ/Band (Budget 1.200€)
+- Dienstleister in Verhandlung: Floristik (1.050€ Angebot), Konditorei (Budget 600€)
+- Offene Aufgaben: Fotografin bestätigen (3 Tage!), Menü an Catering (7 Tage), Sitzplan (Tisch 6 Konflikt)
+- Sitzplan: 6 Tische, 43/60 Plätze belegt, Konflikt Tisch 6 (Markus H. + Anna F.)
+  `.trim();
+}
+
+// ── MENTOR System-Prompt ────────────────────────────────
+const MENTOR_MODES = {
+  full: `Du bist der "Hochzeits-Mentor" – eine hochintelligente, empathische und strategische KI für Hochzeitsplanung. Du analysierst was ZWISCHEN DEN ZEILEN steht.
+
+DEINE 5 KERNAUFGABEN:
+1. SENSORIK-CHECK: Frage nach Akustik bei Vollbelegung, Besteckqualität, Gerüchen, Texturen. Was hat das Paar noch nicht physisch erlebt?
+2. STRESS-RADAR: Erkenne Entscheidungs-Müdigkeit. Bei vielen gleichzeitigen Aufgaben: Ruhepuls geben, auf 3 Punkte reduzieren.
+3. VERTRAGS-RISIKEN: Weise auf Stornobedingungen, versteckte Kosten, fehlende schriftliche Abmachungen hin. Konkret und spezifisch.
+4. BUDGET-STRATEGIE: Nicht warnen – HANDELN. Schlage vor, was emotionalen Kern NICHT beeinträchtigt (z.B. Gastgeschenke vs. Open Bar).
+5. REALITY-CHECK: Instagram-Filter, ungeschönte Referenzbilder, realistische Erwartungen setzen.
+
+TON: Wie ein erfahrener Freund der 100 Hochzeiten begleitet hat. Authentisch, klar, manchmal humorvoll. KEINE Roboter-Listen. Kurze, prägnante Sätze. Sprich direkt zum Paar.
+
+Kennzeichne deine Erkenntnisse mit Tags: [SENSORIK], [VERTRAG], [STRESS], [BUDGET], [REALITY]`,
+
+  sensory: `Du bist der Sensorik-Spezialist des Hochzeits-Mentor-Teams. Deine Mission: Alles was das Paar noch NICHT mit allen Sinnen erlebt hat.
+
+Frage konkret nach: Akustik (Nachhall bei 110 Gästen?), Temperatur (Dezember in einem Schloss!), Gerüche (Blumen + Essen + Parfüm?), Textur (Besteck, Tischdecke, Stuhlkissen), Licht (Dezember = wenig Tageslicht, Kerzen?), Geschmack (Tastprobe wirklich gemacht?).
+
+TON: Sinnlich, konkret, überraschend. Lass das Paar merken was sie noch nicht bedacht haben.`,
+
+  stress: `Du bist der psychologische Support des Hochzeits-Mentor-Teams. Deine Mission: Stress-Signale erkennen und Entscheidungs-Müdigkeit auflösen.
+
+Wenn du Stress-Signale siehst: Gib einen "Ruhe-Impuls". Reduziere auf 3 Prioritäten. Erkläre warum alles gleichzeitig zu wollen sabotiert. Sei wie ein ruhiger, erfahrener Coach.
+
+TON: Warm, beruhigend, klar. Keine Panik-Energie zurückgeben.`,
+
+  contract: `Du bist der Vertrags-Experte des Hochzeits-Mentor-Teams. Deine Mission: Rechtliche und vertragliche Risiken identifizieren.
+
+Prüfe: Stornobedingungen (was passiert 30/60/90 Tage vorher?), fehlende schriftliche Bestätigungen, versteckte Kosten (Service-Pauschalen, Auf-/Abbaukosten, Überstunden), Zahlungsbedingungen, Force-Majeure-Klauseln.
+
+TON: Sachlich aber nicht trocken. Mach das Risiko greifbar ohne Angst zu machen.`,
+
+  budget: `Du bist der Budget-Stratege des Hochzeits-Mentor-Teams. Deine Mission: Einsparpotenziale finden die emotional nicht schmerzen.
+
+Analysiere: Emotionaler Kern (was wirklich wichtig ist) vs. "nice to have". Klassische Fehler: Gastgeschenke (Gäste vergessen sie meist), zu teurer Transport, überteuerte Dekoration für Orte die eh schön sind. Zeige konkrete Alternativen.
+
+TON: Direkt, pragmatisch, lösungsorientiert.`,
+
+  reality: `Du bist der Reality-Check-Experte des Hochzeits-Mentor-Teams. Deine Mission: Unrealistische Erwartungen sanft korrigieren.
+
+Prüfe: Instagram-Filter vs. echte Fotos, "Traumhochzeit"-Erwartungen vs. Budget, typische Enttäuschungen (Wetter, Zeitplan, Emotionen am Tag selbst). Gib konkrete Fragen die das Paar bei Dienstleistern stellen soll.
+
+TON: Ehrlich aber liebevoll. Nicht desillusionieren, sondern vorbereiten.`
+};
+
+let activeMentorMode = 'full';
+let mentorHistory = [];
+let isMentorTyping = false;
+
+function setMentorMode(mode, btn) {
+  activeMentorMode = mode;
+  document.querySelectorAll('.mentor-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('✦ Modus: ' + btn.textContent.trim());
+}
+
+async function callMentor(userMsg) {
+  const systemPrompt = MENTOR_MODES[activeMentorMode] + '\n\n' + getPlanningContext();
+  const history = mentorHistory.map(m => ({ role: m.role, content: m.content }));
+  history.push({ role: 'user', content: userMsg });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: history
+      })
+    });
+    const data = await res.json();
+    return data.content?.[0]?.text ?? 'Der Mentor ist kurz nicht erreichbar.';
+  } catch {
+    return 'Verbindungsfehler. Bitte versuche es erneut.';
+  }
+}
+
+function appendMentorMsg(text, role) {
+  const log = document.getElementById('mentorChatLog');
+  const wrap = document.createElement('div');
+  wrap.className = 'mentor-msg' + (role === 'user' ? ' mentor-msg-user' : '');
+
+  // Tags wie [SENSORIK] in farbige Badges umwandeln
+  const tagMap = {
+    '[SENSORIK]':  ['sensory',  '👃 Sensorik'],
+    '[VERTRAG]':   ['contract', '📋 Vertrag'],
+    '[STRESS]':    ['stress',   '💆 Stress'],
+    '[BUDGET]':    ['budget',   '💰 Budget'],
+    '[REALITY]':   ['reality',  '👁️ Reality'],
+  };
+  let formatted = text
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  Object.entries(tagMap).forEach(([tag, [cls, label]]) => {
+    formatted = formatted.replace(
+      new RegExp(tag.replace(/[\[\]]/g, '\\$&'), 'g'),
+      `<span class="mentor-tag ${cls}">${label}</span>`
+    );
+  });
+
+  if (role !== 'user') {
+    wrap.innerHTML = `
+      <div class="mentor-avatar">✦</div>
+      <div class="mentor-bubble">${formatted}</div>`;
+  } else {
+    wrap.innerHTML = `
+      <div class="mentor-bubble">${formatted}</div>
+      <div class="mentor-avatar" style="background:var(--charcoal);">👤</div>`;
+  }
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+}
+
+function showMentorTyping() {
+  const log = document.getElementById('mentorChatLog');
+  const div = document.createElement('div');
+  div.className = 'mentor-msg';
+  div.id = 'mentorTyping';
+  div.innerHTML = `<div class="mentor-avatar">✦</div><div class="chat-typing"><span></span><span></span><span></span></div>`;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function sendMentor() {
+  const input = document.getElementById('mentorInput');
+  const msg = input.value.trim();
+  if (!msg || isMentorTyping) return;
+  input.value = '';
+  isMentorTyping = true;
+  document.getElementById('mentorSendBtn').disabled = true;
+
+  appendMentorMsg(msg, 'user');
+  mentorHistory.push({ role: 'user', content: msg });
+  showMentorTyping();
+
+  const reply = await callMentor(msg);
+  document.getElementById('mentorTyping')?.remove();
+  appendMentorMsg(reply, 'ai');
+  mentorHistory.push({ role: 'assistant', content: reply });
+
+  isMentorTyping = false;
+  document.getElementById('mentorSendBtn').disabled = false;
+}
+
+function sendMentorQuick(msg) {
+  document.getElementById('mentorInput').value = msg;
+  // Zum Mentor-Tab wechseln falls nicht aktiv
+  const mentorPanel = document.getElementById('panel-mentor');
+  if (!mentorPanel.classList.contains('active')) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+    mentorPanel.classList.add('active');
+    document.querySelectorAll('.ntab')[7]?.classList.add('active');
+  }
+  sendMentor();
+}
+
+// ── KI-CHAT Assistent (einfacher, schneller) ────────────
+const AI_SYSTEM = `Du bist FOREVER, ein eleganter KI-Hochzeitsassistent für das Brautpaar Julia & Maximilian.
+${getPlanningContext()}
 Antworte auf Deutsch, freundlich, professionell, präzise. Maximal 4 Sätze. Verwende gelegentlich passende Emojis.`;
 
 async function callClaude(userMsg) {
@@ -1424,6 +1944,202 @@ const days = Math.max(0, Math.ceil((weddingDate - today) / (1000 * 60 * 60 * 24)
 });
 
 // ─── Animate Bars ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  GÄSTE – localStorage System
+//  Gleicher Key wie rsvp.html → automatische Synchronisation
+// ═══════════════════════════════════════════════════════
+const LS_KEY = 'forever_guests_v1';
+
+// Seed-Daten (werden nur beim ersten Start geschrieben, nie überschrieben)
+const SEED_GUESTS = [
+  { id:'g001', name:'Elisabeth Müller',      firstName:'Elisabeth', lastName:'Müller',      category:'Familie',  rsvp:'yes',     menu:'Fleisch',      dietary:null,  plusOne:null,         table:'Tisch 1', source:'manual' },
+  { id:'g002', name:'Thomas & Sandra Weber', firstName:'Thomas',    lastName:'Weber',        category:'Familie',  rsvp:'yes',     menu:'Fleisch/Vegi', dietary:null,  plusOne:'Sandra W.',  table:'Tisch 1', source:'manual' },
+  { id:'g003', name:'Laura Schneider',       firstName:'Laura',     lastName:'Schneider',    category:'Freunde',  rsvp:'yes',     menu:'Vegetarisch',  dietary:null,  plusOne:'Florian K.', table:'Tisch 3', source:'manual' },
+  { id:'g004', name:'Markus Hoffmann',       firstName:'Markus',    lastName:'Hoffmann',     category:'Freunde',  rsvp:'pending', menu:null,           dietary:null,  plusOne:null,         table:null,      source:'manual' },
+  { id:'g005', name:'Dr. Anna Fischer',      firstName:'Anna',      lastName:'Fischer',      category:'Kollegen', rsvp:'yes',     menu:'Vegan',        dietary:null,  plusOne:null,         table:'Tisch 6', source:'manual' },
+  { id:'g006', name:'Peter & Monika Bauer',  firstName:'Peter',     lastName:'Bauer',        category:'Familie',  rsvp:'yes',     menu:'Fleisch',      dietary:null,  plusOne:'Monika B.',  table:'Tisch 2', source:'manual' },
+  { id:'g007', name:'Sophie Braun',          firstName:'Sophie',    lastName:'Braun',        category:'Freunde',  rsvp:'no',      menu:null,           dietary:null,  plusOne:null,         table:null,      source:'manual' },
+  { id:'g008', name:'Jonas Klein',           firstName:'Jonas',     lastName:'Klein',        category:'Freunde',  rsvp:'pending', menu:null,           dietary:null,  plusOne:'Lena K.',    table:null,      source:'manual' },
+];
+
+// ── Daten lesen/schreiben ───────────────────────────────
+function getGuests() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveGuests(list) {
+  localStorage.setItem(LS_KEY, JSON.stringify(list));
+}
+function initGuests() {
+  if (!localStorage.getItem(LS_KEY)) {
+    saveGuests(SEED_GUESTS);
+  }
+}
+
+// ── Statistiken ─────────────────────────────────────────
+function updateGuestStats() {
+  const guests = getGuests();
+  const yes     = guests.filter(g => g.rsvp === 'yes').length;
+  const no      = guests.filter(g => g.rsvp === 'no').length;
+  const pending = guests.filter(g => g.rsvp === 'pending').length;
+  document.getElementById('statTotal').textContent   = guests.length;
+  document.getElementById('statYes').textContent     = yes;
+  document.getElementById('statNo').textContent      = no;
+  document.getElementById('statPending').textContent = pending;
+  // Dashboard-Header auch updaten
+  const heroEl = document.querySelector('.hero-stats');
+  if (heroEl) {
+    const vals = heroEl.querySelectorAll('.hero-stat-val');
+    if (vals[2]) vals[2].textContent = yes;
+  }
+}
+
+// ── Kategorie-Tag ────────────────────────────────────────
+function catTag(cat) {
+  const map = {
+    'Familie':  ['#FDF3E3','#9E7C45'],
+    'Freunde':  ['#E8F4FD','#2E6DA4'],
+    'Kollegen': ['#EDE7F6','#673AB7'],
+    'Sonstige': ['#F5EFE6','#8A8078'],
+  };
+  const [bg, fg] = map[cat] ?? map['Sonstige'];
+  return `<span class="tag" style="background:${bg};color:${fg}">${cat}</span>`;
+}
+
+// ── Tabelle rendern ──────────────────────────────────────
+function renderGuestTable() {
+  const q      = (document.getElementById('guestSearch')?.value || '').toLowerCase();
+  const filter = document.getElementById('guestRsvpFilter')?.value || 'all';
+  const guests = getGuests().filter(g => {
+    const matchRsvp = filter === 'all' || g.rsvp === filter;
+    const matchQ    = !q || g.name.toLowerCase().includes(q) ||
+                      (g.category||'').toLowerCase().includes(q) ||
+                      (g.menu||'').toLowerCase().includes(q);
+    return matchRsvp && matchQ;
+  });
+
+  const tbody = document.getElementById('guestTbody');
+  if (!tbody) return;
+
+  if (!guests.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--warm-gray);">Keine Gäste gefunden.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = guests.map(g => {
+    const rsvpBadge =
+      g.rsvp === 'yes'     ? `<span class="rsvp-badge yes">✓ Zugesagt</span>` :
+      g.rsvp === 'no'      ? `<span class="rsvp-badge no">✕ Abgesagt</span>` :
+                             `<span class="rsvp-badge pending">⏳ Ausstehend</span>`;
+    const sourceBadge = g.source === 'rsvp-form'
+      ? `<span style="background:#D4EDD9;color:#3D7A4A;font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:6px;">RSVP</span>`
+      : `<span style="background:var(--cream);color:var(--warm-gray);font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:6px;">Manual</span>`;
+
+    return `<tr>
+      <td><strong>${g.name}</strong>${g.dietary ? `<br><span style="font-size:.65rem;color:#C0607A">⚠ ${g.dietary}</span>` : ''}</td>
+      <td>${catTag(g.category || 'Sonstige')}</td>
+      <td>${rsvpBadge}</td>
+      <td>${g.menu || '–'}</td>
+      <td>${g.plusOne ? `👥 ${g.plusOne}${g.plusOneMenu ? ' · '+g.plusOneMenu : ''}` : '–'}</td>
+      <td>${g.table || '–'}</td>
+      <td>${sourceBadge}</td>
+      <td>
+        <button onclick="deleteGuest('${g.id}')" style="background:none;border:none;cursor:pointer;color:var(--warm-gray);font-size:.9rem;padding:2px 6px;border-radius:4px;transition:all .2s;" onmouseover="this.style.color='#C0607A'" onmouseout="this.style.color='var(--warm-gray)'">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  updateGuestStats();
+}
+
+// ── Gast löschen ─────────────────────────────────────────
+function deleteGuest(id) {
+  if (!confirm('Gast wirklich entfernen?')) return;
+  const list = getGuests().filter(g => g.id !== id);
+  saveGuests(list);
+  renderGuestTable();
+  showToast('🗑 Gast entfernt');
+}
+
+// ── Manuell hinzufügen Modal ─────────────────────────────
+function showAddGuestModal() {
+  document.getElementById('addGuestModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeAddGuestModal() {
+  document.getElementById('addGuestModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function saveNewGuest() {
+  const fn  = document.getElementById('agFirst').value.trim();
+  const ln  = document.getElementById('agLast').value.trim();
+  if (!fn || !ln) { showToast('⚠ Vor- und Nachname sind Pflicht'); return; }
+  const guest = {
+    id:       'manual_' + Date.now(),
+    name:     fn + ' ' + ln,
+    firstName: fn, lastName: ln,
+    category: document.getElementById('agCategory').value,
+    rsvp:     document.getElementById('agRsvp').value,
+    menu:     document.getElementById('agMenu').value || null,
+    dietary:  null,
+    plusOne:  document.getElementById('agPlusOne').value.trim() || null,
+    table:    null,
+    source:   'manual',
+    submittedAt: new Date().toISOString(),
+  };
+  const list = getGuests();
+  list.push(guest);
+  saveGuests(list);
+  closeAddGuestModal();
+  renderGuestTable();
+  showToast('✓ Gast hinzugefügt: ' + guest.name);
+  // Felder zurücksetzen
+  ['agFirst','agLast','agPlusOne'].forEach(id => document.getElementById(id).value = '');
+}
+document.getElementById('addGuestModal')?.addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeAddGuestModal();
+});
+
+// ── RSVP-Seite öffnen ────────────────────────────────────
+function openRSVP() {
+  window.open('forever-rsvp.html', '_blank');
+  showToast('💌 RSVP-Seite geöffnet – Daten fließen automatisch zurück');
+}
+
+// ── Aktualisieren + neue Anmeldungen Badge ───────────────
+let lastKnownCount = 0;
+function refreshGuests() {
+  const guests  = getGuests();
+  const newOnes = guests.filter(g => g.source === 'rsvp-form');
+  const diff    = newOnes.length - (lastKnownCount || 0);
+
+  renderGuestTable();
+
+  if (diff > 0) {
+    const banner = document.getElementById('newRsvpBanner');
+    document.getElementById('newRsvpText').textContent =
+      `${diff} neue RSVP-Anmeldung${diff > 1 ? 'en' : ''} eingegangen!`;
+    banner.style.display = 'flex';
+    lastKnownCount = newOnes.length;
+    showToast(`🆕 ${diff} neue Anmeldung${diff > 1 ? 'en' : ''} gefunden!`);
+  } else {
+    showToast('✓ Gästeliste ist aktuell');
+  }
+}
+function clearNewBadge() {
+  document.getElementById('newRsvpBanner').style.display = 'none';
+}
+
+// ── Storage-Event: Live-Sync wenn RSVP-Seite im anderen Tab ─
+window.addEventListener('storage', e => {
+  if (e.key === LS_KEY) {
+    const panel = document.getElementById('panel-guests');
+    if (panel?.classList.contains('active')) {
+      refreshGuests();
+    }
+  }
+});
+
 setTimeout(() => {
   document.querySelectorAll('.budget-fill, .score-fill').forEach(el => {
     const w = el.style.width;
@@ -1432,7 +2148,9 @@ setTimeout(() => {
   });
   renderVendors(VENDORS);
   renderCatGrid();
-  geocodeAddress(); // Startadresse direkt geocoden
+  geocodeAddress();
+  initGuests();
+  renderGuestTable();
 }, 300);
 </script>
 </body>
