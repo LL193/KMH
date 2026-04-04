@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOREVER – Dein Hochzeitsplaner</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ivory: #FAF7F2;
+  --cream: #F5EFE6;
+  --gold: #C9A96E;
+  --gold-light: #E8D5B0;
+  --gold-dark: #9E7C45;
+  --rose: #D4849A;
+  --rose-light: #F2D5DC;
+  --sage: #7E9E8A;
+  --sage-light: #C8DDD0;
+  --charcoal: #2C2C2C;
+  --warm-gray: #8A8078;
+  --border: rgba(201,169,110,0.25);
+  --shadow: 0 4px 32px rgba(44,44,44,0.08);
+  --shadow-hover: 0 8px 48px rgba(44,44,44,0.14);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--ivory);
+  color: var(--charcoal);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PETALS BACKGROUND ── */
+.petal {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+  font-size: 24px;
+  animation: petalFloat linear infinite;
+}
+@keyframes petalFloat {
+  0% { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.06; }
+  90% { opacity: 0.06; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+/* ── HEADER ── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250,247,242,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  box-shadow: 0 2px 12px rgba(201,169,110,0.4);
+}
+
+.logo-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--charcoal);
+}
+
+.logo-sub {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  font-weight: 400;
+  margin-top: -2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.days-badge {
+  background: linear-gradient(135deg, var(--rose), #C0607A);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 12px rgba(212,132,154,0.4);
+}
+
+.days-badge span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* ── NAV ── */
+.nav-tabs {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  padding: 0 32px;
+  gap: 0;
+  scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+
+.ntab {
+  padding: 14px 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.ntab:hover { color: var(--gold-dark); }
+.ntab.active {
+  color: var(--gold-dark);
+  border-bottom-color: var(--gold);
+  background: rgba(201,169,110,0.06);
+}
+.ntab .badge {
+  background: var(--gold-light);
+  color: var(--gold-dark);
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.ntab .badge.urgent { background: #FDDDE6; color: #C0607A; }
+
+/* ── MAIN ── */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.panel { display: none; animation: fadeSlide 0.3s ease; }
+.panel.active { display: block; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CARDS ── */
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.25s;
+}
+.card:hover { box-shadow: var(--shadow-hover); }
+
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title .icon { font-size: 1.1rem; }
+
+/* ── DASHBOARD GRID ── */
+.dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+.stat-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 20px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.gold::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.stat-card.rose::before { background: linear-gradient(90deg, var(--rose), var(--rose-light)); }
+.stat-card.sage::before { background: linear-gradient(90deg, var(--sage), var(--sage-light)); }
+.stat-card.charcoal::before { background: linear-gradient(90deg, var(--charcoal), #666); }
+
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+.stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-sub { font-size: 0.72rem; color: var(--warm-gray); }
+
+/* ── BUDGET BAR ── */
+.budget-bar {
+  height: 8px;
+  background: var(--cream);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px 0 4px;
+}
+.budget-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+.budget-fill.gold { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.budget-fill.rose { background: linear-gradient(90deg, var(--rose), var(--rose-light)); }
+.budget-fill.sage { background: linear-gradient(90deg, var(--sage), var(--sage-light)); }
+.budget-fill.warn { background: linear-gradient(90deg, #E67E73, #F5A59E); }
+
+/* ── TODO LIST ── */
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.todo-item:last-child { border-bottom: none; }
+.todo-item:hover { background: rgba(201,169,110,0.03); margin: 0 -32px; padding: 14px 32px; border-radius: 8px; }
+
+.todo-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.todo-check.done {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.todo-check.done::after { content: '✓'; color: white; font-size: 11px; font-weight: 700; }
+
+.todo-content { flex: 1; }
+.todo-title { font-size: 0.88rem; font-weight: 500; color: var(--charcoal); margin-bottom: 3px; }
+.todo-title.done { text-decoration: line-through; color: var(--warm-gray); }
+.todo-meta { font-size: 0.72rem; color: var(--warm-gray); display: flex; gap: 10px; }
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.priority-dot.high { background: #E67E73; }
+.priority-dot.medium { background: var(--gold); }
+.priority-dot.low { background: var(--sage); }
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tag.urgent { background: #FDDDE6; color: #C0607A; }
+.tag.done-tag { background: #D4EDD9; color: #3D7A4A; }
+.tag.pending { background: var(--cream); color: var(--warm-gray); }
+.tag.gold-tag { background: #FDF3E3; color: var(--gold-dark); }
+
+/* ── GUEST TABLE ── */
+.guest-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.guest-table th {
+  background: var(--cream);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  border-bottom: 2px solid var(--border);
+}
+.guest-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--charcoal);
+}
+.guest-table tr:hover td { background: rgba(201,169,110,0.04); }
+.guest-table tr:last-child td { border-bottom: none; }
+
+.rsvp-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.rsvp-badge.yes { background: #D4EDD9; color: #3D7A4A; }
+.rsvp-badge.no { background: #FDDDE6; color: #C0607A; }
+.rsvp-badge.pending { background: var(--cream); color: var(--warm-gray); }
+
+/* ── SEATING ── */
+.seating-canvas {
+  background: linear-gradient(135deg, #F8F5F0 0%, #F2EDE5 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  min-height: 420px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 32px;
+}
+
+.seating-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  border: 1px dashed rgba(201,169,110,0.3);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.table-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.table-item:hover { transform: scale(1.05); }
+
+.table-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--gold-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(201,169,110,0.2);
+  position: relative;
+}
+.table-circle .t-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+.table-circle .t-count {
+  font-size: 0.65rem;
+  color: var(--warm-gray);
+}
+
+.table-rect {
+  width: 120px;
+  height: 60px;
+  background: white;
+  border: 2px solid var(--gold-light);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(201,169,110,0.2);
+}
+
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--cream);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.score-label { font-size: 0.75rem; font-weight: 500; flex: 1; }
+.score-track { flex: 2; height: 6px; background: white; border-radius: 3px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 3px; transition: width 1.2s ease; }
+.score-num { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--charcoal); min-width: 36px; text-align: right; }
+
+/* ── VENDOR CARDS ── */
+.vendor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.vendor-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.vendor-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: var(--gold-light); }
+.vendor-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.vendor-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; }
+.vendor-status {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+.vendor-status.booked { background: #D4EDD9; color: #3D7A4A; }
+.vendor-status.searching { background: #FDDDE6; color: #C0607A; }
+.vendor-status.contacted { background: #FDF3E3; color: var(--gold-dark); }
+.vendor-price { font-size: 0.78rem; color: var(--warm-gray); margin-top: 8px; }
+
+/* ── BUDGET MODULE ── */
+.budget-cat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.budget-cat:last-child { border-bottom: none; }
+.budget-cat-icon { font-size: 1.2rem; width: 36px; }
+.budget-cat-name { font-size: 0.84rem; font-weight: 500; flex: 1; }
+.budget-cat-bar { flex: 2; }
+.budget-cat-amounts { text-align: right; min-width: 100px; }
+.budget-cat-ist { font-size: 0.88rem; font-weight: 600; color: var(--charcoal); }
+.budget-cat-soll { font-size: 0.7rem; color: var(--warm-gray); }
+
+/* ── TIMELINE ── */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold), var(--gold-light), transparent);
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px var(--gold-light);
+}
+.tl-item.done::before { background: var(--sage); box-shadow: 0 0 0 2px var(--sage-light); }
+.tl-item.urgent::before { background: var(--rose); box-shadow: 0 0 0 2px var(--rose-light); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 2px var(--rose-light); } 50% { box-shadow: 0 0 0 6px rgba(212,132,154,0.2); } }
+
+.tl-date { font-size: 0.65rem; color: var(--warm-gray); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.tl-title { font-size: 0.88rem; font-weight: 500; color: var(--charcoal); }
+.tl-note { font-size: 0.75rem; color: var(--warm-gray); margin-top: 2px; }
+
+/* ── MOODBOARD ── */
+.mood-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 160px 160px; gap: 8px; border-radius: 12px; overflow: hidden; }
+.mood-cell {
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.mood-cell:hover { opacity: 0.9; }
+.mood-cell:first-child { grid-row: 1 / 3; border-radius: 12px 0 0 12px; }
+.mood-cell:last-child { border-radius: 0 0 12px 0; }
+.mood-cell:nth-child(2) { border-radius: 0 12px 0 0; }
+
+.mood-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.palette-strip { display: flex; gap: 8px; margin-top: 12px; }
+.palette-color {
+  height: 32px;
+  flex: 1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+}
+.palette-color:hover { transform: scaleY(1.2); }
+.palette-color::after {
+  content: attr(data-name);
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  color: var(--warm-gray);
+  white-space: nowrap;
+}
+
+/* ── FORMS ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid.full { grid-template-columns: 1fr; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+}
+.field input, .field select, .field textarea {
+  padding: 10px 14px;
+  border: 1.5px solid var(--cream);
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.84rem;
+  color: var(--charcoal);
+  background: var(--ivory);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--gold);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(201,169,110,0.12);
+}
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white;
+  box-shadow: 0 3px 12px rgba(201,169,110,0.35);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,169,110,0.45); }
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--gold);
+  color: var(--gold-dark);
+}
+.btn-outline:hover { background: var(--cream); }
+.btn-rose {
+  background: linear-gradient(135deg, var(--rose), #C0607A);
+  color: white;
+}
+
+/* ── WELCOME HERO ── */
+.hero {
+  background: linear-gradient(135deg, #2C2C2C 0%, #3D3530 50%, #2C2820 100%);
+  border-radius: 20px;
+  padding: 48px 48px 48px 56px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  color: white;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,169,110,0.2) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 200px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(212,132,154,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.6rem;
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero-title strong { font-weight: 600; color: var(--gold-light); }
+.hero-subtitle {
+  font-size: 0.88rem;
+  opacity: 0.65;
+  margin-bottom: 28px;
+  max-width: 440px;
+  line-height: 1.6;
+}
+.hero-stats {
+  display: flex;
+  gap: 36px;
+}
+.hero-stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  display: block;
+  line-height: 1;
+}
+.hero-stat-label {
+  font-size: 0.68rem;
+  opacity: 0.6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ── AI ASSISTANT ── */
+.ai-bubble {
+  background: linear-gradient(135deg, var(--cream), white);
+  border: 1px solid var(--gold-light);
+  border-radius: 16px 16px 16px 4px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.ai-bubble::before {
+  content: '✦';
+  position: absolute;
+  top: -10px; left: 16px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+.ai-text { font-size: 0.84rem; color: var(--charcoal); line-height: 1.6; padding-top: 6px; }
+.ai-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.ai-chip {
+  padding: 5px 12px;
+  border: 1.5px solid var(--gold-light);
+  border-radius: 16px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  color: var(--gold-dark);
+  background: white;
+  transition: all 0.2s;
+}
+.ai-chip:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  header { padding: 0 16px; }
+  .nav-tabs { padding: 0 16px; }
+  main { padding: 20px 14px 60px; }
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 28px 24px; }
+  .hero-title { font-size: 1.8rem; }
+  .vendor-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .mood-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .mood-cell:first-child { grid-row: auto; border-radius: 12px 0 0 0; }
+}
+@media (max-width: 480px) {
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .hero-stats { flex-wrap: wrap; gap: 20px; }
+  .vendor-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating petals -->
+<script>
+['🌸','🌹','🌺','✿','❀','💮'].forEach((p, i) => {
+  const el = document.createElement('div');
+  el.className = 'petal';
+  el.textContent = p;
+  el.style.left = (Math.random() * 100) + 'vw';
+  el.style.animationDuration = (12 + Math.random() * 18) + 's';
+  el.style.animationDelay = (-Math.random() * 20) + 's';
+  el.style.fontSize = (16 + Math.random() * 14) + 'px';
+  document.body.appendChild(el);
+});
+</script>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">♦</div>
+    <div>
+      <div class="logo-text">FOREVER</div>
+      <div class="logo-sub">Hochzeitsplaner</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="days-badge"><span id="daysCount">247</span> Tage bis zur Hochzeit</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <div class="ntab active" onclick="showPanel('dashboard',this)">🏠 Dashboard</div>
+  <div class="ntab" onclick="showPanel('planning',this)">📋 Planung <span class="badge urgent">5</span></div>
+  <div class="ntab" onclick="showPanel('budget',this)">💰 Budget</div>
+  <div class="ntab" onclick="showPanel('guests',this)">👥 Gäste <span class="badge">84</span></div>
+  <div class="ntab" onclick="showPanel('seating',this)">🪑 Sitzplan</div>
+  <div class="ntab" onclick="showPanel('vendors',this)">🤝 Dienstleister</div>
+  <div class="ntab" onclick="showPanel('inspiration',this)">✨ Inspiration</div>
+  <div class="ntab" onclick="showPanel('assistant',this)">🤖 KI-Assistent</div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-dashboard">
+
+  <div class="hero">
+    <div class="hero-label">♦ Willkommen zurück, Julia & Maximilian</div>
+    <h1 class="hero-title">Euer großer Tag<br><strong>rückt näher.</strong></h1>
+    <p class="hero-subtitle">Ihr habt bereits 68% eurer Planung abgeschlossen. Noch 3 dringende Aufgaben warten auf euch.</p>
+    <div class="hero-stats">
+      <div>
+        <span class="hero-stat-val">247</span>
+        <div class="hero-stat-label">Tage verbleibend</div>
+      </div>
+      <div>
+        <span class="hero-stat-val">68%</span>
+        <div class="hero-stat-label">Planung abgeschlossen</div>
+      </div>
+      <div>
+        <span class="hero-stat-val">84</span>
+        <div class="hero-stat-label">Gäste bestätigt</div>
+      </div>
+      <div>
+        <span class="hero-stat-val">12.450 €</span>
+        <div class="hero-stat-label">Budget verplant</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="stat-card gold">
+      <div class="stat-label">Gesamtbudget</div>
+      <div class="stat-value">18.000 €</div>
+      <div class="budget-bar"><div class="budget-fill gold" style="width:69%"></div></div>
+      <div class="stat-sub">12.450 € ausgegeben · 5.550 € verfügbar</div>
+    </div>
+    <div class="stat-card rose">
+      <div class="stat-label">Gäste</div>
+      <div class="stat-value">84 / 110</div>
+      <div class="budget-bar"><div class="budget-fill rose" style="width:76%"></div></div>
+      <div class="stat-sub">76% RSVP bestätigt · 8 ausstehend</div>
+    </div>
+    <div class="stat-card sage">
+      <div class="stat-label">Aufgaben</div>
+      <div class="stat-value">34 / 50</div>
+      <div class="budget-bar"><div class="budget-fill sage" style="width:68%"></div></div>
+      <div class="stat-sub">5 dringend · 11 in Bearbeitung</div>
+    </div>
+    <div class="stat-card charcoal">
+      <div class="stat-label">Dienstleister</div>
+      <div class="stat-value">7 / 12</div>
+      <div class="budget-bar"><div class="budget-fill gold" style="width:58%"></div></div>
+      <div class="stat-sub">7 gebucht · 5 noch offen</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:20px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">⚡</span> Dringende Aufgaben</div>
+      <div class="todo-item">
+        <div class="priority-dot high"></div>
+        <div class="todo-check" onclick="toggleTodo(this)"></div>
+        <div class="todo-content">
+          <div class="todo-title">Fotografin final bestätigen & Anzahlung leisten</div>
+          <div class="todo-meta"><span>📅 Fällig in 3 Tagen</span><span class="tag urgent">Dringend</span></div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="priority-dot high"></div>
+        <div class="todo-check" onclick="toggleTodo(this)"></div>
+        <div class="todo-content">
+          <div class="todo-title">Menüauswahl an Catering übermitteln</div>
+          <div class="todo-meta"><span>📅 Fällig in 7 Tagen</span><span class="tag urgent">Dringend</span></div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="priority-dot medium"></div>
+        <div class="todo-check" onclick="toggleTodo(this)"></div>
+        <div class="todo-content">
+          <div class="todo-title">Sitzplan finalisieren</div>
+          <div class="todo-meta"><span>📅 Fällig in 14 Tagen</span><span class="tag gold-tag">Mittel</span></div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="priority-dot medium"></div>
+        <div class="todo-check" onclick="toggleTodo(this)"></div>
+        <div class="todo-content">
+          <div class="todo-title">Hotel-Kontingent für Gäste reservieren</div>
+          <div class="todo-meta"><span>📅 Fällig in 21 Tagen</span><span class="tag gold-tag">Mittel</span></div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="priority-dot low"></div>
+        <div class="todo-check done" onclick="toggleTodo(this)"></div>
+        <div class="todo-content">
+          <div class="todo-title done">Location gebucht – Schloss Nymphenburg</div>
+          <div class="todo-meta"><span>✅ Erledigt am 15.02.2026</span><span class="tag done-tag">Fertig</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span> Zeitstrahl</div>
+      <div class="timeline">
+        <div class="tl-item urgent">
+          <div class="tl-date">In 3 Tagen</div>
+          <div class="tl-title">Fotografin bestätigen</div>
+          <div class="tl-note">Anzahlung 800 €</div>
+        </div>
+        <div class="tl-item urgent">
+          <div class="tl-date">In 7 Tagen</div>
+          <div class="tl-title">Menü an Catering</div>
+          <div class="tl-note">Fleisch / Vegi / Vegan</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">In 3 Wochen</div>
+          <div class="tl-title">Einladungen versenden</div>
+          <div class="tl-note">84 Karten druckfertig</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">In 6 Wochen</div>
+          <div class="tl-title">Brautkleid Anprobe</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">In 8 Wochen</div>
+          <div class="tl-title">DJ buchen</div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-date">Erledigt</div>
+          <div class="tl-title">Location gebucht ✓</div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-date">Erledigt</div>
+          <div class="tl-title">Trauringdesign fertig ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PLANUNG
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-planning">
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Vollständiger Aufgabenplan</div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="filterTodos('all')" style="padding:6px 14px;font-size:.75rem;">Alle (50)</button>
+      <button class="btn btn-outline btn-sm" onclick="filterTodos('urgent')" style="padding:6px 14px;font-size:.75rem;">Dringend (5)</button>
+      <button class="btn btn-outline btn-sm" onclick="filterTodos('open')" style="padding:6px 14px;font-size:.75rem;">Offen (16)</button>
+      <button class="btn btn-outline btn-sm" onclick="filterTodos('done')" style="padding:6px 14px;font-size:.75rem;">Erledigt (34)</button>
+    </div>
+
+    <!-- 12 Monate vorher -->
+    <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin:16px 0 8px;padding:8px 12px;background:var(--cream);border-radius:6px;">12 Monate vorher</div>
+    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Hochzeitsdatum festlegen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Budget festlegen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Location besichtigen & buchen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Standesamt-Termin vereinbaren</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+
+    <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin:16px 0 8px;padding:8px 12px;background:var(--cream);border-radius:6px;">9 Monate vorher</div>
+    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Brautkleid Shopping</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot high"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Fotografin final bestätigen</div><div class="todo-meta"><span>📅 In 3 Tagen</span><span class="tag urgent">Dringend</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Catering-Angebote vergleichen</div><div class="todo-meta"><span>📅 In 2 Wochen</span><span class="tag gold-tag">Offen</span></div></div></div>
+
+    <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin:16px 0 8px;padding:8px 12px;background:var(--cream);border-radius:6px;">6 Monate vorher</div>
+    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Einladungen gestalten & drucken</div><div class="todo-meta"><span>📅 In 3 Wochen</span><span class="tag pending">Offen</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">DJ / Band buchen</div><div class="todo-meta"><span>📅 In 6 Wochen</span><span class="tag pending">Offen</span></div></div></div>
+    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Floral-Design besprechen</div><div class="todo-meta"><span>📅 In 5 Wochen</span><span class="tag pending">Offen</span></div></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     BUDGET
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-budget">
+
+  <div class="dash-grid" style="margin-bottom:20px;">
+    <div class="stat-card gold">
+      <div class="stat-label">Gesamtbudget</div>
+      <div class="stat-value">18.000 €</div>
+      <div class="stat-sub">Festgelegt am 01.01.2026</div>
+    </div>
+    <div class="stat-card rose">
+      <div class="stat-label">Verplant</div>
+      <div class="stat-value">12.450 €</div>
+      <div class="budget-bar"><div class="budget-fill rose" style="width:69%"></div></div>
+      <div class="stat-sub">69% des Budgets</div>
+    </div>
+    <div class="stat-card sage">
+      <div class="stat-label">Verfügbar</div>
+      <div class="stat-value">5.550 €</div>
+      <div class="stat-sub">Noch nicht verplant</div>
+    </div>
+    <div class="stat-card charcoal">
+      <div class="stat-label">Prognose</div>
+      <div class="stat-value">17.200 €</div>
+      <div class="stat-sub">KI-Schätzung Gesamtkosten</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💰</span> Budget nach Kategorien</div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">🏛️</div>
+      <div class="budget-cat-name">Location</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill gold" style="width:100%"></div></div>
+        <div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Voll ausgeschöpft</div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">4.800 €</div>
+        <div class="budget-cat-soll">von 4.800 €</div>
+      </div>
+    </div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">🍽️</div>
+      <div class="budget-cat-name">Catering</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill sage" style="width:60%"></div></div>
+        <div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Anzahlung geleistet</div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">2.400 €</div>
+        <div class="budget-cat-soll">von 4.000 €</div>
+      </div>
+    </div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">📸</div>
+      <div class="budget-cat-name">Fotografie & Video</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill rose" style="width:0%"></div></div>
+        <div style="font-size:.65rem;color:#C0607A;margin-top:2px;">⚠ Noch nicht gebucht</div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">0 €</div>
+        <div class="budget-cat-soll">von 2.200 €</div>
+      </div>
+    </div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">💐</div>
+      <div class="budget-cat-name">Blumen & Dekoration</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill gold" style="width:75%"></div></div>
+        <div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Angebot angenommen</div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">1.050 €</div>
+        <div class="budget-cat-soll">von 1.400 €</div>
+      </div>
+    </div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">👗</div>
+      <div class="budget-cat-name">Kleidung & Ringe</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill sage" style="width:83%"></div></div>
+        <div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Brautkleid gekauft</div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">2.500 €</div>
+        <div class="budget-cat-soll">von 3.000 €</div>
+      </div>
+    </div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">🎵</div>
+      <div class="budget-cat-name">Musik & Entertainment</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill warn" style="width:0%"></div></div>
+        <div style="font-size:.65rem;color:#C0607A;margin-top:2px;">⚠ Noch nicht gebucht</div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">0 €</div>
+        <div class="budget-cat-soll">von 1.200 €</div>
+      </div>
+    </div>
+
+    <div class="budget-cat">
+      <div class="budget-cat-icon">🚗</div>
+      <div class="budget-cat-name">Transport & Unterkunft</div>
+      <div class="budget-cat-bar">
+        <div class="budget-bar" style="height:10px"><div class="budget-fill gold" style="width:45%"></div></div>
+      </div>
+      <div class="budget-cat-amounts">
+        <div class="budget-cat-ist">900 €</div>
+        <div class="budget-cat-soll">von 800 €*</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#FFF3E0,#FFF8F0);border:1px solid var(--gold-light);border-radius:10px;font-size:.8rem;color:var(--gold-dark);">
+      💡 <strong>KI-Hinweis:</strong> Fotografie & Musik sind noch nicht gebucht. Bei 247 Tagen bis zur Hochzeit sollte dies in den nächsten 4 Wochen erfolgen. Beliebte Fotografen sind oft früh ausgebucht.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     GÄSTE
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-guests">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+    <div class="stat-card rose"><div class="stat-label">Gesamt eingeladen</div><div class="stat-value">110</div></div>
+    <div class="stat-card sage"><div class="stat-label">Zugesagt</div><div class="stat-value">84</div></div>
+    <div class="stat-card charcoal"><div class="stat-label">Ausstehend</div><div class="stat-value">18</div></div>
+    <div class="stat-card gold"><div class="stat-label">Abgesagt</div><div class="stat-value">8</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">👥</span> Gästeliste
+      <button class="btn btn-primary" style="margin-left:auto;padding:7px 16px;font-size:.75rem;">+ Gast hinzufügen</button>
+    </div>
+    <table class="guest-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Kategorie</th>
+          <th>RSVP</th>
+          <th>Menü</th>
+          <th>Tisch</th>
+          <th>Plus One</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Elisabeth Müller</strong></td><td><span class="tag gold-tag">Familie</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Fleisch</td><td>Tisch 1</td><td>–</td></tr>
+        <tr><td><strong>Thomas & Sandra Weber</strong></td><td><span class="tag gold-tag">Familie</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Fleisch / Vegi</td><td>Tisch 1</td><td>2 Kinder</td></tr>
+        <tr><td><strong>Laura Schneider</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Vegetarisch</td><td>Tisch 3</td><td>Florian K.</td></tr>
+        <tr><td><strong>Markus Hoffmann</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge pending">Ausstehend</span></td><td>–</td><td>–</td><td>–</td></tr>
+        <tr><td><strong>Dr. Anna Fischer</strong></td><td><span class="tag" style="background:#EDE7F6;color:#673AB7">Kollegen</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Vegan</td><td>Tisch 6</td><td>–</td></tr>
+        <tr><td><strong>Peter & Monika Bauer</strong></td><td><span class="tag gold-tag">Familie</span></td><td><span class="rsvp-badge yes">Zugesagt</span></td><td>Fleisch / Fleisch</td><td>Tisch 2</td><td>–</td></tr>
+        <tr><td><strong>Sophie Braun</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge no">Abgesagt</span></td><td>–</td><td>–</td><td>–</td></tr>
+        <tr><td><strong>Jonas & Lena Klein</strong></td><td><span class="tag" style="background:#E8F4FD;color:#2E6DA4">Freunde</span></td><td><span class="rsvp-badge pending">Ausstehend</span></td><td>–</td><td>–</td><td>–</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SITZPLAN
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-seating">
+
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
+    <div>
+      <div class="card" style="padding:20px;">
+        <div class="card-title"><span class="icon">🪑</span> Visueller Sitzplan – Schloss Nymphenburg</div>
+        <div class="seating-canvas">
+
+          <!-- Ehrentisch -->
+          <div class="table-item" onclick="selectTable(this,'Ehrentisch','8 Personen')">
+            <div class="table-rect" style="width:200px;height:56px;border-color:var(--gold);background:linear-gradient(135deg,#FDF8EE,white);">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:.88rem;color:var(--gold-dark);">♦ Ehrentisch</div>
+              <div style="font-size:.65rem;color:var(--warm-gray);">8 Personen</div>
+            </div>
+          </div>
+
+          <!-- Tisch 1 -->
+          <div class="table-item" onclick="selectTable(this,'Tisch 1','8/10 Personen')">
+            <div class="table-circle">
+              <div class="t-name">Tisch 1</div>
+              <div class="t-count">8/10</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Familie Müller</div>
+          </div>
+
+          <!-- Tisch 2 -->
+          <div class="table-item" onclick="selectTable(this,'Tisch 2','9/10 Personen')">
+            <div class="table-circle">
+              <div class="t-name">Tisch 2</div>
+              <div class="t-count">9/10</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Familie Weber</div>
+          </div>
+
+          <!-- Tisch 3 -->
+          <div class="table-item" onclick="selectTable(this,'Tisch 3','7/10 Personen')">
+            <div class="table-circle" style="border-color:var(--rose-light);">
+              <div class="t-name">Tisch 3</div>
+              <div class="t-count">7/10</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Studienfreunde</div>
+          </div>
+
+          <!-- Tisch 4 -->
+          <div class="table-item" onclick="selectTable(this,'Tisch 4','6/10 Personen')">
+            <div class="table-circle" style="border-color:var(--sage-light);">
+              <div class="t-name">Tisch 4</div>
+              <div class="t-count">6/10</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Schulfreunde</div>
+          </div>
+
+          <!-- Tisch 5 -->
+          <div class="table-item" onclick="selectTable(this,'Tisch 5','8/10 Personen')">
+            <div class="table-circle">
+              <div class="t-name">Tisch 5</div>
+              <div class="t-count">8/10</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Arbeitskollegen</div>
+          </div>
+
+          <!-- Tisch 6 -->
+          <div class="table-item" onclick="selectTable(this,'Tisch 6','5/10 Personen')">
+            <div class="table-circle" style="border-color:var(--rose-light);">
+              <div class="t-name">Tisch 6</div>
+              <div class="t-count">5/10</div>
+            </div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Mix / Frei</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">🤖</span> KI-Harmonie-Score</div>
+
+        <div class="score-bar">
+          <div class="score-label">Harmonie gesamt</div>
+          <div class="score-track"><div class="score-fill" style="width:87%;background:linear-gradient(90deg,var(--sage),var(--sage-light))"></div></div>
+          <div class="score-num">87</div>
+        </div>
+        <div class="score-bar">
+          <div class="score-label">Tisch 1 – Familie</div>
+          <div class="score-track"><div class="score-fill" style="width:95%;background:linear-gradient(90deg,var(--gold),var(--gold-light))"></div></div>
+          <div class="score-num">95</div>
+        </div>
+        <div class="score-bar">
+          <div class="score-label">Tisch 3 – Freunde</div>
+          <div class="score-track"><div class="score-fill" style="width:92%;background:linear-gradient(90deg,var(--gold),var(--gold-light))"></div></div>
+          <div class="score-num">92</div>
+        </div>
+        <div class="score-bar">
+          <div class="score-label">Tisch 6 – Mix ⚠</div>
+          <div class="score-track"><div class="score-fill" style="width:61%;background:linear-gradient(90deg,#E67E73,#F5A59E)"></div></div>
+          <div class="score-num">61</div>
+        </div>
+
+        <div style="margin-top:12px;padding:10px 12px;background:#FDDDE6;border-radius:8px;font-size:.75rem;color:#C0607A;">
+          ⚠ Tisch 6: Markus H. und Anna F. haben eine negative Beziehung definiert.
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="optimizeSeating()">✦ Sitzplan optimieren</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">📊</span> Übersicht</div>
+        <div style="font-size:.8rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">6</div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Tische</div>
+          </div>
+          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">43/60</div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Plätze belegt</div>
+          </div>
+          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">2</div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Konflikte</div>
+          </div>
+          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">87%</div>
+            <div style="font-size:.65rem;color:var(--warm-gray);">Harmonie</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     DIENSTLEISTER
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-vendors">
+  <div class="card">
+    <div class="card-title"><span class="icon">🤝</span> Dienstleister-Übersicht</div>
+    <div class="vendor-grid">
+      <div class="vendor-card">
+        <div class="vendor-icon">🏛️</div>
+        <div class="vendor-name">Schloss Nymphenburg</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Location · München</div>
+        <span class="vendor-status booked">✓ Gebucht</span>
+        <div class="vendor-price">4.800 € · 200 Personen max.</div>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-icon">🍽️</div>
+        <div class="vendor-name">Catering Weißbauer</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Catering · München</div>
+        <span class="vendor-status booked">✓ Gebucht</span>
+        <div class="vendor-price">4.000 € · inkl. Service</div>
+      </div>
+      <div class="vendor-card" style="border-color:#FDDDE6;">
+        <div class="vendor-icon">📸</div>
+        <div class="vendor-name">Fotografin gesucht</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Fotografie & Video</div>
+        <span class="vendor-status searching">⚡ Dringend gesucht</span>
+        <div class="vendor-price">Budget: 2.200 €</div>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-icon">💐</div>
+        <div class="vendor-name">Blumenatelier Rosen</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Floristik · München</div>
+        <span class="vendor-status contacted">○ Angebot angenommen</span>
+        <div class="vendor-price">1.050 € · 3 Arrangements</div>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-icon">💍</div>
+        <div class="vendor-name">Goldschmiede Meier</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Trauringe · München</div>
+        <span class="vendor-status booked">✓ Gebucht</span>
+        <div class="vendor-price">1.800 € · Weißgold</div>
+      </div>
+      <div class="vendor-card" style="border-color:#FDDDE6;">
+        <div class="vendor-icon">🎵</div>
+        <div class="vendor-name">DJ / Band gesucht</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Musik & Entertainment</div>
+        <span class="vendor-status searching">○ Noch nicht gebucht</span>
+        <div class="vendor-price">Budget: 1.200 €</div>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-icon">🚗</div>
+        <div class="vendor-name">Limousinen-Service</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Transport</div>
+        <span class="vendor-status booked">✓ Gebucht</span>
+        <div class="vendor-price">450 € · Vintage Mercedes</div>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-icon">🎂</div>
+        <div class="vendor-name">Konditorei Süß</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Hochzeitstorte</div>
+        <span class="vendor-status contacted">○ In Verhandlung</span>
+        <div class="vendor-price">Budget: 600 €</div>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-icon">✉️</div>
+        <div class="vendor-name">Papeterie Letterpress</div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:6px;">Einladungen & Karten</div>
+        <span class="vendor-status booked">✓ In Produktion</span>
+        <div class="vendor-price">320 € · 110 Stück</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     INSPIRATION
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-inspiration">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">🎨</span> Moodboard – Romantic Garden</div>
+      <div class="mood-grid">
+        <div class="mood-cell">
+          <div class="mood-bg" style="background:linear-gradient(135deg,#F2D5DC,#E8A8B8);font-size:4rem;">🌹</div>
+        </div>
+        <div class="mood-cell">
+          <div class="mood-bg" style="background:linear-gradient(135deg,#D4EDD9,#A8C8B0);font-size:2.5rem;">🌿</div>
+        </div>
+        <div class="mood-cell">
+          <div class="mood-bg" style="background:linear-gradient(135deg,#FDF8EE,#F5ECD8);font-size:2.5rem;">🕯️</div>
+        </div>
+        <div class="mood-cell">
+          <div class="mood-bg" style="background:linear-gradient(135deg,#E8D5B0,#D4AF5A);font-size:2.5rem;">💐</div>
+        </div>
+        <div class="mood-cell">
+          <div class="mood-bg" style="background:linear-gradient(135deg,#F0E6FF,#D4B8E8);font-size:2.5rem;">🦋</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px;">Farbpalette</div>
+        <div class="palette-strip">
+          <div class="palette-color" style="background:#F2D5DC;" data-name="Blush"></div>
+          <div class="palette-color" style="background:#C9A96E;" data-name="Gold"></div>
+          <div class="palette-color" style="background:#7E9E8A;" data-name="Sage"></div>
+          <div class="palette-color" style="background:#FDF8EE;" data-name="Ivory"></div>
+          <div class="palette-color" style="background:#2C2C2C;" data-name="Charcoal"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">✨</span> Stil & Thema</div>
+      <div style="display:grid;gap:10px;">
+        <div style="padding:14px;background:linear-gradient(135deg,#FDF8EE,white);border:1px solid var(--gold-light);border-radius:10px;cursor:pointer;">
+          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🌸 Romantic Garden</div>
+          <div style="font-size:.75rem;color:var(--warm-gray);">Zarte Blüten, weiche Farben, üppige Floristik – ein Märchen im Freien.</div>
+          <div style="margin-top:8px;"><span class="tag done-tag">Ausgewählt</span></div>
+        </div>
+        <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:10px;cursor:pointer;opacity:0.6;">
+          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🏛️ Klassisch-Elegant</div>
+          <div style="font-size:.75rem;color:var(--warm-gray);">Zeitlose Eleganz, klare Linien, luxuriöse Details.</div>
+        </div>
+        <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:10px;cursor:pointer;opacity:0.6;">
+          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🌾 Boho Rustic</div>
+          <div style="font-size:.75rem;color:var(--warm-gray);">Natürliche Materialien, Pampasgras, warme Erdtöne.</div>
+        </div>
+        <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:10px;cursor:pointer;opacity:0.6;">
+          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🌊 Coastal Chic</div>
+          <div style="font-size:.75rem;color:var(--warm-gray);">Blau, Weiß, maritimes Flair – elegant und frisch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     KI-ASSISTENT
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-assistant">
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">🤖</span> FOREVER KI-Assistent</div>
+
+      <div class="ai-bubble">
+        <div class="ai-text">Guten Tag, Julia & Maximilian! 🌸 Ich habe euren Planungsstand analysiert. Ihr seid auf einem sehr guten Weg – 68% der Aufgaben sind abgeschlossen. Es gibt jedoch 3 Punkte, die eure Aufmerksamkeit benötigen:</div>
+        <div class="ai-actions">
+          <div class="ai-chip">📸 Fotografin buchen</div>
+          <div class="ai-chip">🎵 DJ/Band suchen</div>
+          <div class="ai-chip">🪑 Sitzplan optimieren</div>
+        </div>
+      </div>
+
+      <div class="ai-bubble" style="margin-top:16px;">
+        <div class="ai-text">⚡ <strong>Dringend:</strong> Eure Fotografin muss in den nächsten 3 Tagen bestätigt werden. Ich habe 5 verfügbare Fotografinnen in München gefunden, die in eurem Stilbereich arbeiten und noch frei sind. Soll ich eine Vergleichsliste erstellen?</div>
+        <div class="ai-actions">
+          <div class="ai-chip" onclick="aiResponse('Ja, zeige Vergleich')">Ja, Vergleich zeigen</div>
+          <div class="ai-chip" onclick="aiResponse('Später')">Später</div>
+        </div>
+      </div>
+
+      <div class="ai-bubble" style="margin-top:16px;">
+        <div class="ai-text">💡 <strong>Sitzplan-Hinweis:</strong> Ich habe analysiert, dass Tisch 6 einen Harmonie-Score von nur 61 hat. Markus H. und Anna F. sollten nicht am selben Tisch sitzen. Ich kann einen optimierten Sitzplan berechnen, der alle Konflikte vermeidet.</div>
+        <div class="ai-actions">
+          <div class="ai-chip" onclick="optimizeSeating()">✦ Jetzt optimieren</div>
+          <div class="ai-chip">Manuell anpassen</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <input type="text" id="aiInput" placeholder="Frag mich alles zur Hochzeitsplanung..." style="flex:1;padding:12px 16px;border:1.5px solid var(--cream);border-radius:10px;font-family:'Jost',sans-serif;font-size:.84rem;outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream)'" onkeypress="if(event.key==='Enter')sendAI()">
+        <button class="btn btn-primary" onclick="sendAI()">✦ Senden</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">📊</span> Risiko-Analyse</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:10px 12px;background:#FDDDE6;border-radius:8px;border-left:3px solid #C0607A;">
+            <div style="font-size:.72rem;font-weight:700;color:#C0607A;margin-bottom:3px;">🔴 Hohes Risiko</div>
+            <div style="font-size:.75rem;color:var(--charcoal);">Fotografie noch nicht gebucht – 247 Tage bis zur Hochzeit</div>
+          </div>
+          <div style="padding:10px 12px;background:#FDF3E3;border-radius:8px;border-left:3px solid var(--gold);">
+            <div style="font-size:.72rem;font-weight:700;color:var(--gold-dark);margin-bottom:3px;">🟡 Mittleres Risiko</div>
+            <div style="font-size:.75rem;color:var(--charcoal);">DJ / Band noch offen</div>
+          </div>
+          <div style="padding:10px 12px;background:#FDF3E3;border-radius:8px;border-left:3px solid var(--gold);">
+            <div style="font-size:.72rem;font-weight:700;color:var(--gold-dark);margin-bottom:3px;">🟡 Mittleres Risiko</div>
+            <div style="font-size:.75rem;color:var(--charcoal);">18 RSVP noch ausstehend – Deadline in 3 Wochen</div>
+          </div>
+          <div style="padding:10px 12px;background:#D4EDD9;border-radius:8px;border-left:3px solid var(--sage);">
+            <div style="font-size:.72rem;font-weight:700;color:#3D7A4A;margin-bottom:3px;">🟢 Gering</div>
+            <div style="font-size:.75rem;color:var(--charcoal);">Budget im grünen Bereich</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">💡</span> Proaktive Tipps</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.78rem;color:var(--charcoal);">
+          <div style="padding:8px 10px;border-left:2px solid var(--gold);padding-left:12px;line-height:1.5;">Schicke RSVP-Erinnerungen an die 18 ausstehenden Gäste – am besten per WhatsApp.</div>
+          <div style="padding:8px 10px;border-left:2px solid var(--rose);padding-left:12px;line-height:1.5;">Beliebte Fotografen in München sind oft 8–12 Monate im Voraus ausgebucht.</div>
+          <div style="padding:8px 10px;border-left:2px solid var(--sage);padding-left:12px;line-height:1.5;">Bestätige die Menüauswahl bis nächste Woche beim Catering.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAVIGATION ─────────────────────────────────────────
+function showPanel(id, tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  tab.classList.add('active');
+}
+
+// ── TODO TOGGLE ────────────────────────────────────────
+function toggleTodo(el) {
+  el.classList.toggle('done');
+  const title = el.nextElementSibling?.querySelector('.todo-title');
+  if (title) title.classList.toggle('done');
+}
+
+// ── TABLE SELECT ───────────────────────────────────────
+function selectTable(el, name, count) {
+  document.querySelectorAll('.table-item').forEach(t => {
+    t.querySelector('.table-circle, .table-rect')?.style && 
+    (t.querySelector('.table-circle, .table-rect').style.borderColor = '');
+  });
+  const circle = el.querySelector('.table-circle, .table-rect');
+  if (circle) circle.style.borderColor = 'var(--gold)';
+  showToast('✦ ' + name + ' – ' + count + ' ausgewählt');
+}
+
+// ── SEATING OPTIMIZE ───────────────────────────────────
+function optimizeSeating() {
+  showToast('🤖 KI analysiert Beziehungsmatrix... Optimierter Sitzplan wird berechnet.');
+}
+
+// ── AI RESPONSE ────────────────────────────────────────
+function aiResponse(msg) {
+  showToast('✦ ' + msg);
+}
+
+function sendAI() {
+  const input = document.getElementById('aiInput');
+  if (input.value.trim()) {
+    showToast('🤖 FOREVER analysiert: "' + input.value.substring(0, 40) + '"');
+    input.value = '';
+  }
+}
+
+// ── TOAST ──────────────────────────────────────────────
+function showToast(msg) {
+  const existing = document.getElementById('toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'toast';
+  toast.textContent = msg;
+  toast.style.cssText = `
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--charcoal); color: var(--gold-light);
+    padding: 12px 24px; border-radius: 24px; font-size: .8rem;
+    font-family: 'Jost', sans-serif; font-weight: 500;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    z-index: 9999; white-space: nowrap;
+    animation: toastIn .25s ease;
+    border: 1px solid rgba(201,169,110,0.3);
+  `;
+  document.head.insertAdjacentHTML('beforeend',
+    '<style>@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}</style>');
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ── DAYS COUNTER ───────────────────────────────────────
+const weddingDate = new Date('2026-12-05');
+const today = new Date();
+const days = Math.ceil((weddingDate - today) / (1000 * 60 * 60 * 24));
+document.getElementById('daysCount').textContent = Math.max(0, days);
+
+// ── ANIMATE BARS ON LOAD ───────────────────────────────
+setTimeout(() => {
+  document.querySelectorAll('.budget-fill, .score-fill').forEach(el => {
+    const w = el.style.width;
+    el.style.width = '0%';
+    setTimeout(() => el.style.width = w, 100);
+  });
+}, 300);
+</script>
+</body>
+</html>
