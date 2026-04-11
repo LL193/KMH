@@ -57,8 +57,96 @@ header {
   color: white; padding: 6px 16px; border-radius: 20px;
   font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em;
   box-shadow: 0 2px 12px rgba(212,132,154,0.4);
+  cursor: pointer; transition: all .2s; user-select: none;
+  display: flex; align-items: center; gap: 6px;
 }
-.days-badge span { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; margin-right: 4px; }
+.days-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(212,132,154,0.5); }
+.days-badge span { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; }
+.days-badge .edit-hint { font-size: .6rem; opacity: .75; letter-spacing: .04em; }
+
+/* ── Namen-Edit ── */
+.name-editable {
+  cursor: pointer; border-bottom: 1px dashed rgba(201,169,110,0.4);
+  transition: border-color .2s;
+}
+.name-editable:hover { border-color: var(--gold-light); }
+.name-popup {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 600; background: white;
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 28px 30px; min-width: 320px;
+  box-shadow: 0 16px 60px rgba(44,44,44,0.2);
+  display: none;
+}
+.name-popup.open { display: block; animation: popIn .2s ease; }
+.name-popup-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem; font-weight: 600;
+  margin-bottom: 16px; color: var(--charcoal);
+}
+.name-popup .np-field { margin-bottom: 12px; }
+.name-popup .np-field label {
+  display: block; font-size: .6rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--warm-gray); margin-bottom: 5px;
+}
+.name-popup .np-field input {
+  width: 100%; padding: 9px 14px;
+  border: 1.5px solid var(--cream); border-radius: 8px;
+  font-family: 'Jost', sans-serif; font-size: .9rem;
+  color: var(--charcoal); background: var(--ivory); outline: none;
+  transition: border-color .2s;
+}
+.name-popup .np-field input:focus { border-color: var(--gold); background: white; }
+.name-popup-backdrop {
+  position: fixed; inset: 0; background: rgba(44,44,44,0.35);
+  backdrop-filter: blur(3px); z-index: 599; display: none;
+}
+.name-popup-backdrop.open { display: block; }
+
+/* Datum-Edit Popup */
+.date-popup {
+  position: fixed; top: 80px; right: 24px; z-index: 500;
+  background: white; border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px 22px;
+  box-shadow: 0 8px 40px rgba(44,44,44,0.18);
+  min-width: 280px;
+  animation: popIn .2s ease;
+  display: none;
+}
+.date-popup.open { display: block; }
+@keyframes popIn { from { opacity:0; transform:translateY(-6px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+.date-popup-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 600; margin-bottom: 14px;
+  color: var(--charcoal);
+}
+.date-popup input[type=date] {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--cream); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: .9rem;
+  color: var(--charcoal); background: var(--ivory);
+  outline: none; transition: border-color .2s;
+  margin-bottom: 12px;
+}
+.date-popup input[type=date]:focus { border-color: var(--gold); }
+.date-popup-actions { display: flex; gap: 8px; }
+
+/* Wetter-Widget im Header */
+.weather-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.9); backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 5px 14px; cursor: pointer; transition: all .2s;
+  text-decoration: none; color: var(--charcoal);
+}
+.weather-badge:hover { border-color: var(--gold); background: white; transform: translateY(-1px); }
+.weather-icon { font-size: 1.2rem; }
+.weather-info { display: flex; flex-direction: column; }
+.weather-main { font-size: .72rem; font-weight: 600; color: var(--charcoal); line-height: 1.2; }
+.weather-sub  { font-size: .6rem;  color: var(--warm-gray); }
+.weather-separator { width: 1px; height: 24px; background: var(--border); }
 
 /* ── NAV ── */
 .nav-tabs {
@@ -144,19 +232,58 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 .rsvp-badge.pending { background: var(--cream); color: var(--warm-gray); }
 
 /* ── SEATING ── */
-.seating-canvas { background: linear-gradient(135deg, #F8F5F0 0%, #F2EDE5 100%); border: 1px solid var(--border); border-radius: 12px; min-height: 420px; position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 24px; padding: 32px; }
-.seating-canvas::before { content: ''; position: absolute; inset: 20px; border: 1px dashed rgba(201,169,110,0.3); border-radius: 8px; pointer-events: none; }
-.table-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.2s; }
-.table-item:hover { transform: scale(1.05); }
-.table-circle { width: 90px; height: 90px; border-radius: 50%; background: white; border: 2px solid var(--gold-light); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(201,169,110,0.2); position: relative; }
-.table-circle .t-name { font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; font-weight: 600; color: var(--charcoal); }
-.table-circle .t-count { font-size: 0.65rem; color: var(--warm-gray); }
-.table-rect { width: 120px; height: 60px; background: white; border: 2px solid var(--gold-light); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(201,169,110,0.2); }
+/* ── SITZPLAN – neu & dynamisch ── */
+.seating-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+.seating-canvas {
+  background: linear-gradient(135deg, #F8F5F0 0%, #F2EDE5 100%);
+  border: 1px solid var(--border); border-radius: 12px;
+  min-height: 480px; position: relative; overflow: visible;
+  padding: 40px 32px; display: flex;
+  flex-wrap: wrap; align-content: flex-start;
+  justify-content: center; gap: 28px;
+}
+.seating-canvas::before { content: ''; position: absolute; inset: 16px; border: 1px dashed rgba(201,169,110,0.25); border-radius: 8px; pointer-events: none; }
+.table-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform .2s; position: relative; }
+.table-item:hover { transform: scale(1.04); }
+.table-item.selected .table-shape { outline: 3px solid var(--gold); outline-offset: 3px; }
+.table-shape { display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; border: 2px solid var(--gold-light); box-shadow: 0 4px 16px rgba(201,169,110,0.18); transition: all .2s; }
+.table-shape.round  { border-radius: 50%; width: 88px; height: 88px; }
+.table-shape.oval   { border-radius: 50%; }
+.table-shape.rect   { border-radius: 8px; }
+.table-shape.bankett{ border-radius: 4px; }
+.table-shape.honor  { border-radius: 10px; width: 200px; height: 54px; border-color: var(--gold); background: linear-gradient(135deg,#FDF8EE,white); }
+.t-name  { font-family:'Cormorant Garamond',serif; font-size:.85rem; font-weight:600; color:var(--charcoal); text-align:center; line-height:1.1; }
+.t-count { font-size:.62rem; color:var(--warm-gray); }
+.t-group { font-size:.62rem; color:var(--warm-gray); max-width:110px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Hover-Aktionen */
+.table-actions { position:absolute; top:-14px; right:-14px; display:none; gap:3px; z-index:10; }
+.table-item:hover .table-actions { display:flex; }
+.tbl-btn { width:22px; height:22px; border-radius:50%; border:1px solid var(--border); background:white; cursor:pointer; font-size:.65rem; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.12); transition:all .15s; }
+.tbl-btn:hover { transform:scale(1.2); }
+/* Score bars */
 .score-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--cream); border-radius: 10px; margin-bottom: 10px; }
 .score-label { font-size: 0.75rem; font-weight: 500; flex: 1; }
 .score-track { flex: 2; height: 6px; background: white; border-radius: 3px; overflow: hidden; }
 .score-fill { height: 100%; border-radius: 3px; transition: width 1.2s ease; }
 .score-num { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--charcoal); min-width: 36px; text-align: right; }
+/* Tisch-Edit Modal */
+.table-edit-backdrop { position:fixed; inset:0; background:rgba(44,44,44,.4); backdrop-filter:blur(3px); z-index:699; display:none; }
+.table-edit-backdrop.open { display:block; }
+.table-edit-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:700; background:white; border:1px solid var(--border); border-radius:20px; padding:26px 28px; width:380px; box-shadow:0 20px 60px rgba(44,44,44,.2); display:none; }
+.table-edit-modal.open { display:block; animation:popIn .2s ease; }
+.shape-picker { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin-bottom:4px; }
+.shape-opt { padding:8px 4px; border:1.5px solid var(--border); border-radius:8px; text-align:center; cursor:pointer; transition:all .15s; background:var(--ivory); font-size:.62rem; color:var(--warm-gray); }
+.shape-opt:hover,.shape-opt.active { border-color:var(--gold); background:#FDF9F0; color:var(--gold-dark); font-weight:600; }
+.shape-opt .so-icon { font-size:1.1rem; display:block; margin-bottom:2px; }
+.size-presets { display:flex; gap:6px; flex-wrap:wrap; }
+.size-preset { padding:3px 9px; border-radius:12px; border:1.5px solid var(--border); background:var(--ivory); font-family:'Jost',sans-serif; font-size:.66rem; font-weight:500; cursor:pointer; color:var(--warm-gray); transition:all .15s; }
+.size-preset:hover,.size-preset.active { background:var(--gold); color:white; border-color:var(--gold); }
+/* Sidebar */
+.seating-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.seating-stat { background:var(--cream); border-radius:10px; padding:10px 12px; text-align:center; }
+.seating-stat-val { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:600; color:var(--charcoal); display:block; }
+.seating-stat-lbl { font-size:.6rem; color:var(--warm-gray); margin-top:1px; }
+@media (max-width:900px) { .seating-layout { grid-template-columns:1fr; } }
 
 /* ── VENDOR CARDS (enhanced) ── */
 .vendor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -483,7 +610,384 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   .prox-cat-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ── MENTOR PANEL ── */
+/* ── PLANUNGS-CHECKLISTEN ── */
+.checklist-section { margin-bottom: 28px; }
+.checklist-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 8px;
+  margin-bottom: 4px; cursor: pointer;
+  background: var(--cream); transition: background .2s;
+}
+.checklist-header:hover { background: var(--gold-light); }
+.checklist-header-icon { font-size: 1.1rem; }
+.checklist-header-title {
+  font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--warm-gray); flex: 1;
+}
+.checklist-header-badge {
+  font-size: .62rem; font-weight: 700; padding: 2px 8px;
+  border-radius: 10px; background: var(--gold-light); color: var(--gold-dark);
+}
+.checklist-header-badge.done { background: #D4EDD9; color: #3D7A4A; }
+.checklist-header-badge.urgent { background: #FDDDE6; color: #C0607A; }
+
+/* Aufgaben-Item erweitert */
+.todo-item .todo-note {
+  font-size: .72rem; color: var(--warm-gray);
+  margin-top: 4px; line-height: 1.5;
+  background: var(--ivory); border-radius: 6px;
+  padding: 6px 10px; border-left: 2px solid var(--gold-light);
+}
+
+/* Location-Checkliste Karte */
+.location-check-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-top: 4px;
+}
+.loc-check-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: white;
+  transition: all .2s; cursor: pointer;
+}
+.loc-check-item:hover { border-color: var(--gold-light); background: #FDFAF5; }
+.loc-check-item.checked { border-color: var(--sage); background: #F0FBF4; }
+.loc-check-item.checked .loc-check-icon { background: var(--sage); }
+.loc-check-item.checked .loc-check-icon::after { content: '✓'; color: white; font-size: .7rem; font-weight: 700; }
+.loc-check-icon {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--gold); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px; transition: all .2s;
+}
+.loc-check-text { flex: 1; }
+.loc-check-title { font-size: .82rem; font-weight: 600; color: var(--charcoal); margin-bottom: 2px; }
+.loc-check-desc  { font-size: .7rem; color: var(--warm-gray); line-height: 1.4; }
+.loc-check-item.warn { border-color: rgba(212,132,154,.4); background: #FFF8FA; }
+.loc-check-item.warn .loc-check-icon { border-color: var(--rose); }
+
+/* Save-the-Date Tracker */
+.std-tracker {
+  background: linear-gradient(135deg, #2C2C2C, #3D3530);
+  border-radius: 14px; padding: 22px 24px; color: white; margin-bottom: 20px;
+}
+.std-tracker-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; color: var(--gold-light);
+}
+.std-tracker-sub { font-size: .75rem; opacity: .6; margin-bottom: 18px; }
+.std-phases { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.std-phase {
+  background: rgba(255,255,255,.07); border-radius: 10px;
+  padding: 14px; border: 1px solid rgba(201,169,110,.2);
+  position: relative; transition: all .2s; cursor: pointer;
+}
+.std-phase:hover { background: rgba(255,255,255,.12); }
+.std-phase.active { border-color: var(--gold); background: rgba(201,169,110,.15); }
+.std-phase.done   { border-color: var(--sage);  background: rgba(126,158,138,.15); }
+.std-phase-icon { font-size: 1.4rem; margin-bottom: 8px; }
+.std-phase-title { font-size: .78rem; font-weight: 600; margin-bottom: 4px; }
+.std-phase-date  { font-size: .65rem; opacity: .6; margin-bottom: 6px; }
+.std-phase-status {
+  font-size: .6rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 8px;
+  display: inline-block;
+}
+.std-phase.done   .std-phase-status { background: rgba(126,158,138,.3); color: #A8D8B5; }
+.std-phase.active .std-phase-status { background: rgba(201,169,110,.3); color: var(--gold-light); }
+.std-phase.future .std-phase-status { background: rgba(255,255,255,.1); color: rgba(255,255,255,.5); }
+
+/* Band-Suche Card */
+.band-search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.band-option {
+  padding: 14px; border-radius: 10px; border: 1.5px solid var(--border);
+  background: white; cursor: pointer; transition: all .2s;
+}
+.band-option:hover { border-color: var(--gold-light); transform: translateY(-2px); box-shadow: var(--shadow); }
+.band-option.selected { border-color: var(--gold); background: #FDFAF5; }
+.band-option-icon { font-size: 1.6rem; margin-bottom: 8px; }
+.band-option-title { font-size: .84rem; font-weight: 700; margin-bottom: 4px; color: var(--charcoal); }
+.band-option-desc  { font-size: .72rem; color: var(--warm-gray); line-height: 1.5; }
+.band-option-price { font-size: .7rem; font-weight: 600; color: var(--gold-dark); margin-top: 8px; }
+
+@media (max-width:768px) {
+  .location-check-grid { grid-template-columns: 1fr; }
+  .std-phases { grid-template-columns: 1fr; }
+  .band-search-grid { grid-template-columns: 1fr; }
+}
+.budget-summary-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px;
+}
+.budget-summary-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 18px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transition: all .25s;
+}
+.budget-summary-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.budget-summary-card.gold::before  { background: linear-gradient(90deg,var(--gold),var(--gold-light)); }
+.budget-summary-card.rose::before  { background: linear-gradient(90deg,var(--rose),var(--rose-light)); }
+.budget-summary-card.sage::before  { background: linear-gradient(90deg,var(--sage),var(--sage-light)); }
+.budget-summary-card.warn::before  { background: linear-gradient(90deg,#E67E73,#F5A59E); }
+.budget-summary-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.bsc-label { font-size:.62rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--warm-gray); margin-bottom:8px; }
+.bsc-value { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--charcoal); line-height:1; margin-bottom:4px; }
+.bsc-sub   { font-size:.72rem; color:var(--warm-gray); }
+.bsc-edit-btn {
+  position: absolute; top: 12px; right: 12px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--cream); border: none; cursor: pointer;
+  font-size: .75rem; display: flex; align-items: center; justify-content: center;
+  transition: all .2s; color: var(--warm-gray);
+}
+.bsc-edit-btn:hover { background: var(--gold); color: white; }
+
+/* Budget Row */
+.budget-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 2fr 130px 130px 80px;
+  align-items: center; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+  transition: background .15s;
+}
+.budget-row:last-child { border-bottom: none; }
+.budget-row:hover { background: rgba(201,169,110,.03); margin: 0 -20px; padding: 14px 20px; border-radius: 8px; }
+.budget-row.over-budget .br-ist { color: #C0607A !important; font-weight: 700; }
+
+.br-icon  { font-size: 1.2rem; text-align: center; }
+.br-name  { font-size: .86rem; font-weight: 500; }
+.br-bar   { display: flex; flex-direction: column; gap: 3px; }
+.br-bar-track { height: 8px; background: var(--cream); border-radius: 4px; overflow: hidden; }
+.br-bar-fill  { height: 100%; border-radius: 4px; transition: width .8s ease; }
+.br-bar-note  { font-size: .62rem; color: var(--warm-gray); }
+
+.br-ist, .br-soll {
+  text-align: right;
+}
+.br-ist .amount-display {
+  font-size: .9rem; font-weight: 600; color: var(--charcoal);
+  cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  transition: background .15s; display: inline-block;
+}
+.br-ist .amount-display:hover { background: var(--cream); }
+.br-soll .amount-display {
+  font-size: .78rem; color: var(--warm-gray);
+  cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  transition: background .15s; display: inline-block;
+}
+.br-soll .amount-display:hover { background: var(--cream); }
+
+/* Inline edit input */
+.amount-input {
+  width: 110px; padding: 5px 10px;
+  border: 1.5px solid var(--gold); border-radius: 6px;
+  font-family: 'Jost', sans-serif; font-size: .88rem;
+  font-weight: 600; color: var(--charcoal);
+  background: white; outline: none;
+  box-shadow: 0 0 0 3px rgba(201,169,110,.12);
+  text-align: right;
+}
+
+.br-actions { display: flex; gap: 5px; justify-content: flex-end; }
+.br-action-btn {
+  width: 26px; height: 26px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--ivory);
+  cursor: pointer; font-size: .7rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; color: var(--warm-gray);
+}
+.br-action-btn:hover { background: var(--gold); color: white; border-color: var(--gold); }
+.br-action-btn.danger:hover { background: #C0607A; border-color: #C0607A; }
+
+/* Add Category */
+.budget-add-row {
+  display: flex; gap: 10px; align-items: center;
+  padding: 14px 0 0; border-top: 1px dashed var(--border); margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* Budget donut summary */
+.budget-donut-wrap {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px; padding: 20px 0 8px; flex-wrap: wrap;
+}
+.budget-legend { display: flex; flex-direction: column; gap: 8px; }
+.budget-legend-item { display: flex; align-items: center; gap: 8px; font-size: .78rem; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+@media (max-width:768px) {
+  .budget-summary-grid { grid-template-columns: 1fr 1fr; }
+  .budget-row { grid-template-columns: 28px 1fr 100px; }
+  .budget-row .br-bar, .budget-row .br-soll { display: none; }
+}
+.insp-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+/* Stil-Kacheln */
+.style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.style-tile {
+  border-radius: 14px; padding: 18px 16px;
+  border: 2px solid var(--border); background: white;
+  cursor: pointer; transition: all 0.25s; position: relative;
+  overflow: hidden;
+}
+.style-tile::before {
+  content: ''; position: absolute; inset: 0;
+  opacity: 0; transition: opacity 0.25s;
+}
+.style-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.style-tile.selected { border-width: 2px; }
+.style-tile.selected .style-check { opacity: 1; transform: scale(1); }
+.style-check {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: white; display: flex; align-items: center; justify-content: center;
+  font-size: .7rem; opacity: 0; transform: scale(0.5);
+  transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-weight: 700; z-index: 2;
+}
+.style-tile-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+.style-tile-name { font-weight: 700; font-size: .9rem; margin-bottom: 4px; }
+.style-tile-desc { font-size: .72rem; line-height: 1.5; opacity: .75; }
+.style-tile-keywords {
+  display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px;
+}
+.style-kw {
+  padding: 2px 7px; border-radius: 8px; font-size: .6rem;
+  font-weight: 600; background: rgba(255,255,255,0.6);
+  letter-spacing: .04em;
+}
+
+/* Moodboard */
+.mood-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+}
+.mood-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 600;
+}
+.mood-search-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 20px;
+  background: #E60023; color: white; border: none;
+  font-family: 'Jost', sans-serif; font-size: .72rem;
+  font-weight: 600; cursor: pointer; transition: all .2s;
+  text-decoration: none;
+}
+.mood-search-btn:hover { background: #C0001C; transform: translateY(-1px); }
+
+.moodboard {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 155px 155px;
+  gap: 6px; border-radius: 14px; overflow: hidden;
+  margin-bottom: 16px;
+}
+.mood-cell {
+  position: relative; overflow: hidden; cursor: pointer;
+  transition: all 0.25s;
+}
+.mood-cell:hover .mood-overlay { opacity: 1; }
+.mood-cell:hover .mood-bg { transform: scale(1.05); }
+.mood-cell:first-child { grid-row: 1 / 3; }
+.mood-bg {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.3s ease;
+  font-size: 3.5rem;
+}
+.mood-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+}
+.mood-overlay-text {
+  color: white; font-size: .7rem; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.mood-label {
+  position: absolute; bottom: 7px; left: 9px;
+  background: rgba(255,255,255,0.88); backdrop-filter: blur(4px);
+  padding: 2px 8px; border-radius: 6px;
+  font-size: .58rem; font-weight: 700;
+  color: var(--charcoal); letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+/* Farbpalette */
+.palette-section { margin-top: 16px; }
+.palette-label-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.palette-section-title {
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--warm-gray);
+}
+.palette-strip { display: flex; gap: 6px; }
+.palette-swatch {
+  flex: 1; height: 44px; border-radius: 8px;
+  cursor: pointer; position: relative;
+  transition: all 0.2s; border: 2px solid transparent;
+}
+.palette-swatch:hover { transform: scaleY(1.15) translateY(-3px); border-color: rgba(0,0,0,0.15); }
+.palette-swatch.copied { border-color: var(--sage) !important; }
+.palette-swatch::after {
+  content: attr(data-name);
+  position: absolute; bottom: -20px; left: 50%;
+  transform: translateX(-50%);
+  font-size: .58rem; color: var(--warm-gray);
+  white-space: nowrap; font-weight: 500;
+}
+.palette-swatch::before {
+  content: attr(data-hex);
+  position: absolute; top: -28px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--charcoal); color: white;
+  font-size: .58rem; font-weight: 600;
+  padding: 2px 6px; border-radius: 4px;
+  white-space: nowrap; opacity: 0;
+  transition: opacity 0.15s; pointer-events: none;
+}
+.palette-swatch:hover::before { opacity: 1; }
+
+/* Sidebar Inspiration */
+.insp-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.insp-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+.insp-mini-stat {
+  background: var(--cream); border-radius: 10px;
+  padding: 12px; text-align: center;
+}
+.insp-mini-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 600; color: var(--charcoal);
+  display: block;
+}
+.insp-mini-label { font-size: .62rem; color: var(--warm-gray); margin-top: 2px; }
+
+.insp-links { display: flex; flex-direction: column; gap: 8px; }
+.insp-link-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: white;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  color: var(--charcoal); font-family: 'Jost', sans-serif;
+}
+.insp-link-btn:hover { border-color: var(--gold); background: #FDFAF5; transform: translateX(3px); }
+.insp-link-icon { font-size: 1.2rem; flex-shrink: 0; }
+.insp-link-text { font-size: .8rem; font-weight: 500; }
+.insp-link-sub { font-size: .68rem; color: var(--warm-gray); margin-top: 1px; }
+
+@media (max-width: 900px) {
+  .insp-layout { grid-template-columns: 1fr; }
+  .style-grid { grid-template-columns: 1fr; }
+  .moodboard { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .mood-cell:first-child { grid-row: auto; }
+}
 .mentor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
 .mentor-chat-wrap { display: flex; flex-direction: column; gap: 0; }
 
@@ -688,9 +1192,55 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
     </div>
   </div>
   <div class="header-right">
-    <div class="days-badge"><span id="daysCount">247</span> Tage bis zur Hochzeit</div>
+    <!-- Wetter-Widget -->
+    <a id="weatherBadge" href="#" target="_blank" rel="noopener" class="weather-badge" title="Wetter für Hochzeitsort öffnen">
+      <span class="weather-icon" id="weatherIcon">🌨️</span>
+      <div class="weather-separator"></div>
+      <div class="weather-info">
+        <div class="weather-main" id="weatherMain">München · Dez.</div>
+        <div class="weather-sub"  id="weatherSub">Ø 2°C · wetter.de öffnen ↗</div>
+      </div>
+    </a>
+
+    <!-- Countdown Badge (klickbar) -->
+    <div class="days-badge" onclick="toggleDatePopup()" title="Hochzeitsdatum ändern">
+      <span id="daysCount">247</span>
+      <div>
+        <div>Tage bis zur Hochzeit</div>
+        <div class="edit-hint">✏️ Datum anpassen</div>
+      </div>
+    </div>
   </div>
 </header>
+
+<!-- Namen-Edit Popup -->
+<div class="name-popup-backdrop" id="nameBackdrop" onclick="closeNamePopup()"></div>
+<div class="name-popup" id="namePopup">
+  <div class="name-popup-title">💍 Namen ändern</div>
+  <div class="np-field">
+    <label>Name 1 (Braut / Partner 1)</label>
+    <input type="text" id="nameInput1" placeholder="Julia">
+  </div>
+  <div class="np-field">
+    <label>Name 2 (Bräutigam / Partner 2)</label>
+    <input type="text" id="nameInput2" placeholder="Maximilian">
+  </div>
+  <div style="display:flex;gap:8px;margin-top:16px;">
+    <button class="btn btn-primary" style="flex:1;" onclick="saveNames()">✓ Speichern</button>
+    <button class="btn btn-outline" onclick="closeNamePopup()">Abbrechen</button>
+  </div>
+</div>
+
+<!-- Datum-Edit Popup -->
+<div class="date-popup" id="datePopup">
+  <div class="date-popup-title">💍 Hochzeitsdatum ändern</div>
+  <input type="date" id="weddingDateInput">
+  <div id="datePopupPreview" style="font-size:.78rem;color:var(--warm-gray);margin-bottom:12px;"></div>
+  <div class="date-popup-actions">
+    <button class="btn btn-primary" style="flex:1;" onclick="saveWeddingDate()">✓ Speichern</button>
+    <button class="btn btn-outline" onclick="closeDatePopup()">Abbrechen</button>
+  </div>
+</div>
 
 <!-- NAV -->
 <div class="nav-tabs">
@@ -710,7 +1260,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 <!-- ══ DASHBOARD ══ -->
 <div class="panel active" id="panel-dashboard">
   <div class="hero">
-    <div class="hero-label">♦ Willkommen zurück, Julia & Maximilian</div>
+    <div class="hero-label">♦ Willkommen zurück, <span class="name-editable" id="heroNames" onclick="openNamePopup()" title="Namen ändern">Julia & Maximilian</span></div>
     <h1 class="hero-title">Euer großer Tag<br><strong>rückt näher.</strong></h1>
     <p class="hero-subtitle">Ihr habt bereits 68% eurer Planung abgeschlossen. Noch 3 dringende Aufgaben warten auf euch.</p>
     <div class="hero-stats">
@@ -809,50 +1359,298 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 
 <!-- ══ PLANUNG ══ -->
 <div class="panel" id="panel-planning">
-  <div class="card">
-    <div class="card-title"><span class="icon">📋</span> Vollständiger Aufgabenplan</div>
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="filterTodos('all')" style="padding:6px 14px;font-size:.75rem;">Alle (50)</button>
-      <button class="btn btn-outline" onclick="filterTodos('urgent')" style="padding:6px 14px;font-size:.75rem;">Dringend (5)</button>
-      <button class="btn btn-outline" onclick="filterTodos('open')" style="padding:6px 14px;font-size:.75rem;">Offen (16)</button>
-      <button class="btn btn-outline" onclick="filterTodos('done')" style="padding:6px 14px;font-size:.75rem;">Erledigt (34)</button>
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
+
+    <!-- Linke Spalte: Aufgaben -->
+    <div>
+
+      <!-- Save the Date Tracker -->
+      <div class="std-tracker">
+        <div class="std-tracker-title">💌 Save the Date · Einladungen</div>
+        <div class="std-tracker-sub">Hochzeit 05.12.2026 · Empfehlung: 12 Monate vorher versenden</div>
+        <div class="std-phases">
+          <div class="std-phase done" onclick="toggleStdPhase(this,'std1')">
+            <div class="std-phase-icon">📅</div>
+            <div class="std-phase-title">Save the Date</div>
+            <div class="std-phase-date">Bis Dez. 2025 · 12 Monate vorher</div>
+            <div class="std-phase-status">✓ Versendet</div>
+          </div>
+          <div class="std-phase active" onclick="toggleStdPhase(this,'std2')">
+            <div class="std-phase-icon">✉️</div>
+            <div class="std-phase-title">Formelle Einladungen</div>
+            <div class="std-phase-date">Bis Jun. 2026 · 6 Monate vorher</div>
+            <div class="std-phase-status">In Produktion</div>
+          </div>
+          <div class="std-phase future" onclick="toggleStdPhase(this,'std3')">
+            <div class="std-phase-icon">📋</div>
+            <div class="std-phase-title">RSVP-Deadline</div>
+            <div class="std-phase-date">01. Oktober 2026 · 2 Monate vorher</div>
+            <div class="std-phase-status">Ausstehend</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aufgaben -->
+      <div class="card">
+        <div class="card-title"><span class="icon">📋</span> Vollständiger Aufgabenplan
+          <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="filterTodos('all')" style="padding:5px 12px;font-size:.72rem;">Alle</button>
+            <button class="btn btn-outline" onclick="filterTodos('urgent')" style="padding:5px 12px;font-size:.72rem;">⚡ Dringend</button>
+            <button class="btn btn-outline" onclick="filterTodos('open')" style="padding:5px 12px;font-size:.72rem;">Offen</button>
+            <button class="btn btn-outline" onclick="filterTodos('done')" style="padding:5px 12px;font-size:.72rem;">✓ Erledigt</button>
+          </div>
+        </div>
+
+        <!-- 12 Monate vorher -->
+        <div class="checklist-header"><span class="checklist-header-icon">🗓️</span><span class="checklist-header-title">12 Monate vorher</span><span class="checklist-header-badge done">4/4 ✓</span></div>
+        <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Hochzeitsdatum festlegen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Budget festlegen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Location besichtigen & buchen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Save the Date versenden</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+
+        <!-- 9 Monate vorher -->
+        <div class="checklist-header" style="margin-top:8px;"><span class="checklist-header-icon">📷</span><span class="checklist-header-title">9 Monate vorher</span><span class="checklist-header-badge urgent">1 dringend</span></div>
+        <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Brautkleid Shopping</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot high"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Fotografin final bestätigen & Anzahlung</div><div class="todo-meta"><span>📅 Fällig in 3 Tagen</span><span class="tag urgent">Dringend</span></div><div class="todo-note">Beliebte Fotografinnen in München sind 8–12 Monate vorher ausgebucht. Budget: 2.200 €</div></div></div>
+        <div class="todo-item"><div class="priority-dot high"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Live-Band oder DJ buchen</div><div class="todo-meta"><span>📅 Nicht vergessen!</span><span class="tag urgent">Dringend</span></div><div class="todo-note">Band: ca. 2.500–5.000 €. DJ: ca. 800–1.500 €. Beide oft ein Jahr im Voraus ausgebucht — jetzt handeln!</div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Standesamt-Unterlagen einreichen</div><div class="todo-meta"><span>📅 In 4 Wochen</span><span class="tag gold-tag">Offen</span></div></div></div>
+
+        <!-- 6 Monate vorher -->
+        <div class="checklist-header" style="margin-top:8px;"><span class="checklist-header-icon">✉️</span><span class="checklist-header-title">6 Monate vorher</span><span class="checklist-header-badge">3 offen</span></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Formelle Einladungen versenden</div><div class="todo-meta"><span>📅 Bis Juni 2026</span><span class="tag gold-tag">Offen</span></div><div class="todo-note">110 Karten inkl. RSVP-Rückantwort und Infokarte zur Location. Papeterie Letterpress ist in Produktion.</div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Catering Menü finalisieren</div><div class="todo-meta"><span>📅 In 7 Tagen</span><span class="tag urgent">Dringend</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Floral-Design mit Blumenatelier besprechen</div><div class="todo-meta"><span>📅 In 5 Wochen</span><span class="tag pending">Offen</span></div></div></div>
+
+        <!-- 3 Monate vorher -->
+        <div class="checklist-header" style="margin-top:8px;"><span class="checklist-header-icon">🪑</span><span class="checklist-header-title">3 Monate vorher</span><span class="checklist-header-badge">2 offen</span></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">RSVP-Deadline setzen & nachfassen</div><div class="todo-meta"><span>📅 01. Oktober 2026</span><span class="tag gold-tag">Offen</span></div><div class="todo-note">18 Gäste haben noch nicht geantwortet. WhatsApp-Erinnerung empfohlen.</div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Sitzplan finalisieren</div><div class="todo-meta"><span>📅 Nach RSVP-Deadline</span><span class="tag gold-tag">Offen</span></div></div></div>
+
+        <!-- 1 Monat vorher -->
+        <div class="checklist-header" style="margin-top:8px;"><span class="checklist-header-icon">⚡</span><span class="checklist-header-title">1 Monat vorher · Die heißen Wochen</span><span class="checklist-header-badge">5 offen</span></div>
+        <div class="todo-item"><div class="priority-dot high"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Location: Dekorations-Aufbau klären</div><div class="todo-meta"><span>📅 Spätestens 4 Wochen vorher</span><span class="tag urgent">Wichtig</span></div><div class="todo-note">Kann am Vortag (04.12.) dekoriert werden? Gibt es eine Veranstaltung davor? Aufbauzeiten und Schlüsselübergabe schriftlich bestätigen.</div></div></div>
+        <div class="todo-item"><div class="priority-dot high"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Zeitplan für den Hochzeitstag erstellen</div><div class="todo-meta"><span>📅 3 Wochen vorher</span><span class="tag urgent">Wichtig</span></div><div class="todo-note">Aufbau → Ankunft Gäste → Zeremonie → Empfang → Dinner → Party → Abbau. Alle Dienstleister informieren.</div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Endgültige Gästezahl an Catering melden</div><div class="todo-meta"><span>📅 2 Wochen vorher</span><span class="tag gold-tag">Offen</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Trauringe abholen & Gravur prüfen</div><div class="todo-meta"><span class="tag gold-tag">Offen</span></div></div></div>
+        <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Notfallkit packen</div><div class="todo-meta"><span class="tag pending">Offen</span></div><div class="todo-note">Nähset, Pflaster, Schmerzmittel, Lippenstift, Ersatzstrümpfe, Klebeband — alles was am Tag schiefgehen kann.</div></div></div>
+      </div>
     </div>
-    <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin:16px 0 8px;padding:8px 12px;background:var(--cream);border-radius:6px;">12 Monate vorher</div>
-    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Hochzeitsdatum festlegen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Budget festlegen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Location besichtigen & buchen</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Standesamt-Termin vereinbaren</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
-    <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin:16px 0 8px;padding:8px 12px;background:var(--cream);border-radius:6px;">9 Monate vorher</div>
-    <div class="todo-item"><div class="priority-dot low"></div><div class="todo-check done" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title done">Brautkleid Shopping</div><div class="todo-meta"><span class="tag done-tag">Erledigt</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot high"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Fotografin final bestätigen</div><div class="todo-meta"><span>📅 In 3 Tagen</span><span class="tag urgent">Dringend</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Catering-Angebote vergleichen</div><div class="todo-meta"><span>📅 In 2 Wochen</span><span class="tag gold-tag">Offen</span></div></div></div>
-    <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin:16px 0 8px;padding:8px 12px;background:var(--cream);border-radius:6px;">6 Monate vorher</div>
-    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Einladungen gestalten & drucken</div><div class="todo-meta"><span>📅 In 3 Wochen</span><span class="tag pending">Offen</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">DJ / Band buchen</div><div class="todo-meta"><span>📅 In 6 Wochen</span><span class="tag pending">Offen</span></div></div></div>
-    <div class="todo-item"><div class="priority-dot medium"></div><div class="todo-check" onclick="toggleTodo(this)"></div><div class="todo-content"><div class="todo-title">Floral-Design besprechen</div><div class="todo-meta"><span>📅 In 5 Wochen</span><span class="tag pending">Offen</span></div></div></div>
+
+    <!-- Rechte Spalte: Location-Checkliste & Band -->
+    <div>
+
+      <!-- Location Checkliste -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">🏛️</span> Location-Checkliste
+          <span style="margin-left:auto;font-size:.65rem;color:var(--warm-gray);font-weight:400;">Klick = erledigt</span>
+        </div>
+        <div style="font-size:.72rem;color:var(--warm-gray);margin-bottom:14px;line-height:1.5;">
+          Die kritischsten Fragen die Paare vergessen — vor der Buchung <strong>und</strong> danach.
+        </div>
+        <div class="location-check-grid" id="locationChecklist">
+
+          <div class="loc-check-item warn" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Aufbau am Vortag?</div>
+              <div class="loc-check-desc">Kann am 04.12. dekoriert werden oder ist eine andere Veranstaltung davor?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item warn" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Veranstaltung davor?</div>
+              <div class="loc-check-desc">Wann endet die vorherige Buchung? Reinigung und Übergabe eingeplant?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Schlüsselübergabe</div>
+              <div class="loc-check-desc">Wer hat wann Zugang? Ansprechpartner am Hochzeitstag direkt?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Abbau & Abreise</div>
+              <div class="loc-check-desc">Bis wann muss alles abgebaut sein? Folgt am 06.12. eine Veranstaltung?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Akustik bei 110 Gästen</div>
+              <div class="loc-check-desc">Hohe Decken = starker Nachhall. Probebesuch bei vollem Betrieb machen.</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Heizung im Dezember</div>
+              <div class="loc-check-desc">Schloss = Steinwände. Wann wird aufgeheizt? Temperatur bei Ankunft?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Stromanschlüsse</div>
+              <div class="loc-check-desc">Ausreichend für Band/DJ, Licht, Catering? Sicherungsplan vorhanden?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Lärmschutz / Sperrstunde</div>
+              <div class="loc-check-desc">Bis wann darf Musik gespielt werden? Anwohner-Beschwerden bekannt?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Parkplätze für 110 Gäste</div>
+              <div class="loc-check-desc">Anzahl, Entfernung, Shuttlebus nötig? Barrierefreier Zugang?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Stornobedingungen</div>
+              <div class="loc-check-desc">Was passiert bei Krankheit, Force Majeure? Anzahlung zurück?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Exklusivnutzung bestätigt</div>
+              <div class="loc-check-desc">Keine anderen Gäste oder Führungen gleichzeitig? Schriftlich?</div>
+            </div>
+          </div>
+
+          <div class="loc-check-item" onclick="toggleLocCheck(this)">
+            <div class="loc-check-icon"></div>
+            <div class="loc-check-text">
+              <div class="loc-check-title">Foto-Locations gescoutet</div>
+              <div class="loc-check-desc">Beste Spots für Brautpaar-Shooting? Licht im Dezember um 15 Uhr?</div>
+            </div>
+          </div>
+
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:var(--cream);border-radius:8px;font-size:.75rem;color:var(--warm-gray);line-height:1.5;" id="locationProgress">
+          0 von 12 Punkten abgehakt
+        </div>
+      </div>
+
+      <!-- Band / Musik Suche -->
+      <div class="card">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">🎵</span> Band oder DJ?</div>
+        <div style="font-size:.78rem;color:var(--charcoal);margin-bottom:14px;line-height:1.6;">
+          Noch nicht gebucht — Budget 1.200 € (ggf. anpassen). Beide Optionen für den <strong>05.12.2026</strong> im Schloss Nymphenburg:
+        </div>
+        <div class="band-search-grid">
+          <div class="band-option" onclick="toggleBandOption(this,'band')">
+            <div class="band-option-icon">🎸</div>
+            <div class="band-option-title">Live-Band</div>
+            <div class="band-option-desc">3–5 Musiker. Unvergesslich. Flexibel bei Wünschen. Benötigt mehr Platz und Strom.</div>
+            <div class="band-option-price">ca. 2.500 – 5.000 €</div>
+          </div>
+          <div class="band-option" onclick="toggleBandOption(this,'dj')">
+            <div class="band-option-icon">🎧</div>
+            <div class="band-option-title">DJ</div>
+            <div class="band-option-desc">Flexibles Programm, jeder Wunschsong. Weniger Platzbedarf, günstiger.</div>
+            <div class="band-option-price">ca. 800 – 1.500 €</div>
+          </div>
+          <div class="band-option" onclick="toggleBandOption(this,'combo')">
+            <div class="band-option-icon">🎹</div>
+            <div class="band-option-title">Band + DJ Kombi</div>
+            <div class="band-option-desc">Band für Abendessen & Tanz, DJ übernimmt ab Mitternacht. Beliebteste Option.</div>
+            <div class="band-option-price">ca. 3.500 – 6.000 €</div>
+          </div>
+          <div class="band-option" onclick="toggleBandOption(this,'acoustic')">
+            <div class="band-option-icon">🎻</div>
+            <div class="band-option-title">Akustik-Duo</div>
+            <div class="band-option-desc">Perfekt für Empfang & Dinner. Klassik oder Jazz. Ruhige Atmosphäre.</div>
+            <div class="band-option-price">ca. 600 – 1.200 €</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="https://www.google.com/maps/search/Hochzeitsband+Live+München" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;background:#4285F4;color:white;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:600;text-decoration:none;transition:all .2s;"
+             onmouseover="this.style.background='#2563EB'" onmouseout="this.style.background='#4285F4'">
+            📍 Bands in München
+          </a>
+          <a href="https://www.google.com/maps/search/Hochzeits+DJ+München" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;background:#4285F4;color:white;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:600;text-decoration:none;transition:all .2s;"
+             onmouseover="this.style.background='#2563EB'" onmouseout="this.style.background='#4285F4'">
+            📍 DJs in München
+          </a>
+          <a href="https://www.pinterest.de/search/pins/?q=Hochzeit+live+band+wedding+music" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;background:#E60023;color:white;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:600;text-decoration:none;transition:all .2s;"
+             onmouseover="this.style.background='#C0001C'" onmouseout="this.style.background='#E60023'">
+            📌 Pinterest Inspiration
+          </a>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <!-- ══ BUDGET ══ -->
 <div class="panel" id="panel-budget">
-  <div class="dash-grid" style="margin-bottom:20px;">
-    <div class="stat-card gold"><div class="stat-label">Gesamtbudget</div><div class="stat-value">18.000 €</div><div class="stat-sub">Festgelegt am 01.01.2026</div></div>
-    <div class="stat-card rose"><div class="stat-label">Verplant</div><div class="stat-value">12.450 €</div><div class="budget-bar"><div class="budget-fill rose" style="width:69%"></div></div><div class="stat-sub">69% des Budgets</div></div>
-    <div class="stat-card sage"><div class="stat-label">Verfügbar</div><div class="stat-value">5.550 €</div><div class="stat-sub">Noch nicht verplant</div></div>
-    <div class="stat-card charcoal"><div class="stat-label">Prognose</div><div class="stat-value">17.200 €</div><div class="stat-sub">KI-Schätzung Gesamtkosten</div></div>
-  </div>
+
+  <!-- Summary Cards (dynamisch) -->
+  <div class="budget-summary-grid" id="budgetSummaryCards"></div>
+
+  <!-- Kategorien-Tabelle -->
   <div class="card">
-    <div class="card-title"><span class="icon">💰</span> Budget nach Kategorien</div>
-    <div class="budget-cat"><div class="budget-cat-icon">🏛️</div><div class="budget-cat-name">Location</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill gold" style="width:100%"></div></div><div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Voll ausgeschöpft</div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">4.800 €</div><div class="budget-cat-soll">von 4.800 €</div></div></div>
-    <div class="budget-cat"><div class="budget-cat-icon">🍽️</div><div class="budget-cat-name">Catering</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill sage" style="width:60%"></div></div><div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Anzahlung geleistet</div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">2.400 €</div><div class="budget-cat-soll">von 4.000 €</div></div></div>
-    <div class="budget-cat"><div class="budget-cat-icon">📸</div><div class="budget-cat-name">Fotografie & Video</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill rose" style="width:0%"></div></div><div style="font-size:.65rem;color:#C0607A;margin-top:2px;">⚠ Noch nicht gebucht</div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">0 €</div><div class="budget-cat-soll">von 2.200 €</div></div></div>
-    <div class="budget-cat"><div class="budget-cat-icon">💐</div><div class="budget-cat-name">Blumen & Dekoration</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill gold" style="width:75%"></div></div><div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Angebot angenommen</div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">1.050 €</div><div class="budget-cat-soll">von 1.400 €</div></div></div>
-    <div class="budget-cat"><div class="budget-cat-icon">👗</div><div class="budget-cat-name">Kleidung & Ringe</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill sage" style="width:83%"></div></div><div style="font-size:.65rem;color:var(--warm-gray);margin-top:2px;">Brautkleid gekauft</div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">2.500 €</div><div class="budget-cat-soll">von 3.000 €</div></div></div>
-    <div class="budget-cat"><div class="budget-cat-icon">🎵</div><div class="budget-cat-name">Musik & Entertainment</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill warn" style="width:0%"></div></div><div style="font-size:.65rem;color:#C0607A;margin-top:2px;">⚠ Noch nicht gebucht</div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">0 €</div><div class="budget-cat-soll">von 1.200 €</div></div></div>
-    <div class="budget-cat"><div class="budget-cat-icon">🚗</div><div class="budget-cat-name">Transport & Unterkunft</div><div class="budget-cat-bar"><div class="budget-bar" style="height:10px"><div class="budget-fill gold" style="width:45%"></div></div></div><div class="budget-cat-amounts"><div class="budget-cat-ist">900 €</div><div class="budget-cat-soll">von 800 €*</div></div></div>
-    <div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#FFF3E0,#FFF8F0);border:1px solid var(--gold-light);border-radius:10px;font-size:.8rem;color:var(--gold-dark);">
-      💡 <strong>KI-Hinweis:</strong> Fotografie & Musik sind noch nicht gebucht. Bei <span id="budgetDays">247</span> Tagen bis zur Hochzeit sollte dies in den nächsten 4 Wochen erfolgen.
+    <div class="card-title">
+      <span class="icon">💰</span> Budget nach Kategorien
+      <span style="margin-left:auto;font-size:.7rem;color:var(--warm-gray);font-weight:400;">Klick auf Betrag zum Bearbeiten</span>
     </div>
+
+    <!-- Tabellen-Header -->
+    <div style="display:grid;grid-template-columns:36px 1fr 2fr 130px 130px 80px;gap:12px;padding:0 0 10px;border-bottom:2px solid var(--border);margin-bottom:4px;">
+      <div></div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);">Kategorie</div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);">Fortschritt</div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);text-align:right;">Ausgegeben</div>
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);text-align:right;">Geplant / Max.</div>
+      <div></div>
+    </div>
+
+    <div id="budgetRows"></div>
+
+    <!-- Neue Kategorie hinzufügen -->
+    <div class="budget-add-row">
+      <select id="newCatIcon" style="padding:7px 10px;border:1.5px solid var(--cream);border-radius:8px;font-size:.88rem;background:var(--ivory);outline:none;font-family:'Jost',sans-serif;">
+        <option value="🎁">🎁 Sonstiges</option>
+        <option value="💒">💒 Zeremonie</option>
+        <option value="🏨">🏨 Hotel</option>
+        <option value="💇">💇 Friseur</option>
+        <option value="🎆">🎆 Feuerwerk</option>
+        <option value="🎤">🎤 Redner</option>
+        <option value="🌙">🌙 Flitterwochen</option>
+        <option value="📱">📱 App & Software</option>
+      </select>
+      <input type="text" id="newCatName" placeholder="Kategorie-Name" style="flex:1;min-width:140px;padding:7px 12px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.84rem;color:var(--charcoal);background:var(--ivory);outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream)'">
+      <input type="number" id="newCatSoll" placeholder="Geplant €" style="width:120px;padding:7px 12px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.84rem;color:var(--charcoal);background:var(--ivory);outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream)'">
+      <input type="number" id="newCatIst" placeholder="Ausgegeben €" style="width:130px;padding:7px 12px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.84rem;color:var(--charcoal);background:var(--ivory);outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream)'">
+      <button class="btn btn-primary" onclick="addBudgetCategory()" style="padding:7px 16px;font-size:.78rem;white-space:nowrap;">+ Kategorie</button>
+    </div>
+
+    <!-- KI-Hinweis -->
+    <div id="budgetAiHint" style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#FFF3E0,#FFF8F0);border:1px solid var(--gold-light);border-radius:10px;font-size:.8rem;color:var(--gold-dark);"></div>
   </div>
 </div>
 
@@ -971,45 +1769,108 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 </div>
 
 <!-- ══ SITZPLAN ══ -->
+<!-- ══ SITZPLAN ══ -->
 <div class="panel" id="panel-seating">
-  <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
-    <div>
-      <div class="card" style="padding:20px;">
-        <div class="card-title"><span class="icon">🪑</span> Visueller Sitzplan – Schloss Nymphenburg</div>
-        <div class="seating-canvas">
-          <div class="table-item" onclick="selectTable(this,'Ehrentisch','8 Personen')">
-            <div class="table-rect" style="width:200px;height:56px;border-color:var(--gold);background:linear-gradient(135deg,#FDF8EE,white);">
-              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:.88rem;color:var(--gold-dark);">♦ Ehrentisch</div>
-              <div style="font-size:.65rem;color:var(--warm-gray);">8 Personen</div>
-            </div>
+
+  <!-- Tisch-Edit Modal -->
+  <div class="table-edit-backdrop" id="tableEditBackdrop" onclick="closeTableEdit()"></div>
+  <div class="table-edit-modal" id="tableEditModal">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;margin-bottom:16px;" id="tableEditTitle">Tisch bearbeiten</div>
+
+    <div style="display:grid;gap:12px;">
+      <div class="field"><label>Tischname</label>
+        <input type="text" id="teeName" placeholder="z.B. Tisch 1, Ehrentisch …">
+      </div>
+      <div class="field"><label>Gruppe / Beschreibung</label>
+        <input type="text" id="teeGroup" placeholder="z.B. Familie, Freunde …">
+      </div>
+      <div class="field"><label>Sitzplätze</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="number" id="teeSeats" min="1" max="30" placeholder="10" style="width:80px;">
+          <span style="font-size:.75rem;color:var(--warm-gray);">/ Max-Plätze</span>
+          <input type="number" id="teeMax" min="1" max="30" placeholder="10" style="width:80px;">
+        </div>
+      </div>
+
+      <div class="field"><label>Tischform</label>
+        <div class="shape-picker" id="shapePicker">
+          <div class="shape-opt" data-shape="round"   onclick="pickShape('round',this)">  <span class="so-icon">⭕</span>Rund</div>
+          <div class="shape-opt" data-shape="oval"    onclick="pickShape('oval',this)">   <span class="so-icon">🥚</span>Oval</div>
+          <div class="shape-opt" data-shape="rect"    onclick="pickShape('rect',this)">   <span class="so-icon">⬜</span>Recht.</div>
+          <div class="shape-opt" data-shape="bankett" onclick="pickShape('bankett',this)"><span class="so-icon">🍽️</span>Bankett</div>
+          <div class="shape-opt" data-shape="honor"   onclick="pickShape('honor',this)"> <span class="so-icon">👑</span>Ehren</div>
+        </div>
+      </div>
+
+      <div class="field" id="sizePickerWrap"><label>Tischgröße</label>
+        <div class="size-presets" id="sizePicker"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <div>
+            <div style="font-size:.6rem;color:var(--warm-gray);margin-bottom:3px;">Breite (px)</div>
+            <input type="number" id="teeW" min="60" max="400" style="width:100%;padding:6px 10px;border:1.5px solid var(--cream);border-radius:7px;font-family:'Jost',sans-serif;font-size:.82rem;background:var(--ivory);outline:none;">
           </div>
-          <div class="table-item" onclick="selectTable(this,'Tisch 1','8/10 Personen')"><div class="table-circle"><div class="t-name">Tisch 1</div><div class="t-count">8/10</div></div><div style="font-size:.65rem;color:var(--warm-gray);">Familie Müller</div></div>
-          <div class="table-item" onclick="selectTable(this,'Tisch 2','9/10 Personen')"><div class="table-circle"><div class="t-name">Tisch 2</div><div class="t-count">9/10</div></div><div style="font-size:.65rem;color:var(--warm-gray);">Familie Weber</div></div>
-          <div class="table-item" onclick="selectTable(this,'Tisch 3','7/10 Personen')"><div class="table-circle" style="border-color:var(--rose-light);"><div class="t-name">Tisch 3</div><div class="t-count">7/10</div></div><div style="font-size:.65rem;color:var(--warm-gray);">Studienfreunde</div></div>
-          <div class="table-item" onclick="selectTable(this,'Tisch 4','6/10 Personen')"><div class="table-circle" style="border-color:var(--sage-light);"><div class="t-name">Tisch 4</div><div class="t-count">6/10</div></div><div style="font-size:.65rem;color:var(--warm-gray);">Schulfreunde</div></div>
-          <div class="table-item" onclick="selectTable(this,'Tisch 5','8/10 Personen')"><div class="table-circle"><div class="t-name">Tisch 5</div><div class="t-count">8/10</div></div><div style="font-size:.65rem;color:var(--warm-gray);">Arbeitskollegen</div></div>
-          <div class="table-item" onclick="selectTable(this,'Tisch 6','5/10 Personen')"><div class="table-circle" style="border-color:var(--rose-light);"><div class="t-name">Tisch 6</div><div class="t-count">5/10</div></div><div style="font-size:.65rem;color:var(--warm-gray);">Mix / Frei</div></div>
+          <div>
+            <div style="font-size:.6rem;color:var(--warm-gray);margin-bottom:3px;">Höhe (px)</div>
+            <input type="number" id="teeH" min="40" max="400" style="width:100%;padding:6px 10px;border:1.5px solid var(--cream);border-radius:7px;font-family:'Jost',sans-serif;font-size:.82rem;background:var(--ivory);outline:none;">
+          </div>
+        </div>
+      </div>
+
+      <div class="field"><label>Tischfarbe</label>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;" id="colorPicker">
+          <div class="size-preset" data-color="gold"  onclick="pickColor('gold',this)"  style="background:#FDF9F0;border-color:var(--gold-light);">🥇 Gold</div>
+          <div class="size-preset" data-color="rose"  onclick="pickColor('rose',this)"  style="background:#FFF5F7;border-color:var(--rose-light);">🌸 Rose</div>
+          <div class="size-preset" data-color="sage"  onclick="pickColor('sage',this)"  style="background:#F0FBF4;border-color:var(--sage-light);">🌿 Sage</div>
+          <div class="size-preset" data-color="white" onclick="pickColor('white',this)" >⬜ Weiß</div>
+          <div class="size-preset" data-color="dark"  onclick="pickColor('dark',this)"  style="background:#2C2C2C;color:white;border-color:#444;">🖤 Dunkel</div>
         </div>
       </div>
     </div>
+
+    <div style="display:flex;gap:8px;margin-top:18px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveTableEdit()">✓ Speichern</button>
+      <button class="btn btn-outline" onclick="closeTableEdit()">Abbrechen</button>
+    </div>
+  </div>
+
+  <div class="seating-layout">
+    <!-- Canvas -->
     <div>
-      <div class="card" style="margin-bottom:16px;">
-        <div class="card-title" style="font-size:1rem;"><span class="icon">🤖</span> KI-Harmonie-Score</div>
-        <div class="score-bar"><div class="score-label">Harmonie gesamt</div><div class="score-track"><div class="score-fill" style="width:87%;background:linear-gradient(90deg,var(--sage),var(--sage-light))"></div></div><div class="score-num">87</div></div>
-        <div class="score-bar"><div class="score-label">Tisch 1 – Familie</div><div class="score-track"><div class="score-fill" style="width:95%;background:linear-gradient(90deg,var(--gold),var(--gold-light))"></div></div><div class="score-num">95</div></div>
-        <div class="score-bar"><div class="score-label">Tisch 3 – Freunde</div><div class="score-track"><div class="score-fill" style="width:92%;background:linear-gradient(90deg,var(--gold),var(--gold-light))"></div></div><div class="score-num">92</div></div>
-        <div class="score-bar"><div class="score-label">Tisch 6 – Mix ⚠</div><div class="score-track"><div class="score-fill" style="width:61%;background:linear-gradient(90deg,#E67E73,#F5A59E)"></div></div><div class="score-num">61</div></div>
-        <div style="margin-top:12px;padding:10px 12px;background:#FDDDE6;border-radius:8px;font-size:.75rem;color:#C0607A;">⚠ Tisch 6: Markus H. und Anna F. haben eine negative Beziehung definiert.</div>
+      <div class="card" style="padding:20px;">
+        <div class="card-title">
+          <span class="icon">🪑</span>
+          <span id="seatingTitle">Visueller Sitzplan</span>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-outline" onclick="openTableEdit(null)" style="padding:6px 12px;font-size:.75rem;">+ Tisch</button>
+            <button class="btn btn-outline" onclick="resetSeating()" style="padding:6px 12px;font-size:.75rem;" title="Zurücksetzen">↺</button>
+          </div>
+        </div>
+        <div class="seating-canvas" id="seatingCanvas">
+          <!-- Wird per JS gerendert -->
+        </div>
+        <div style="margin-top:12px;font-size:.7rem;color:var(--warm-gray);text-align:center;">
+          ✏️ Tisch anklicken zum Bearbeiten &nbsp;·&nbsp; + Tisch für neuen Tisch
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">📊</span> Übersicht</div>
+        <div class="seating-stat-grid" id="seatingSummary"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">🤖</span> KI-Harmonie</div>
+        <div id="harmonyBars"></div>
+        <div id="harmonyWarning"></div>
         <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="optimizeSeating()">✦ Sitzplan optimieren</button>
       </div>
+
       <div class="card">
-        <div class="card-title" style="font-size:1rem;"><span class="icon">📊</span> Übersicht</div>
-        <div style="font-size:.8rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">6</div><div style="font-size:.65rem;color:var(--warm-gray);">Tische</div></div>
-          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">43/60</div><div style="font-size:.65rem;color:var(--warm-gray);">Plätze belegt</div></div>
-          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">2</div><div style="font-size:.65rem;color:var(--warm-gray);">Konflikte</div></div>
-          <div style="padding:10px;background:var(--cream);border-radius:8px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;">87%</div><div style="font-size:.65rem;color:var(--warm-gray);">Harmonie</div></div>
-        </div>
+        <div class="card-title" style="font-size:1rem;"><span class="icon">📋</span> Tischliste</div>
+        <div id="tableList" style="display:flex;flex-direction:column;gap:6px;font-size:.78rem;"></div>
       </div>
     </div>
   </div>
@@ -1095,48 +1956,94 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 
 <!-- ══ INSPIRATION ══ -->
 <div class="panel" id="panel-inspiration">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-    <div class="card">
-      <div class="card-title"><span class="icon">🎨</span> Moodboard – Romantic Garden</div>
-      <div class="mood-grid">
-        <div class="mood-cell"><div class="mood-bg" style="background:linear-gradient(135deg,#F2D5DC,#E8A8B8);font-size:4rem;">🌹</div></div>
-        <div class="mood-cell"><div class="mood-bg" style="background:linear-gradient(135deg,#D4EDD9,#A8C8B0);font-size:2.5rem;">🌿</div></div>
-        <div class="mood-cell"><div class="mood-bg" style="background:linear-gradient(135deg,#FDF8EE,#F5ECD8);font-size:2.5rem;">🕯️</div></div>
-        <div class="mood-cell"><div class="mood-bg" style="background:linear-gradient(135deg,#E8D5B0,#D4AF5A);font-size:2.5rem;">💐</div></div>
-        <div class="mood-cell"><div class="mood-bg" style="background:linear-gradient(135deg,#F0E6FF,#D4B8E8);font-size:2.5rem;">🦋</div></div>
-      </div>
-      <div style="margin-top:16px;">
-        <div style="font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px;">Farbpalette</div>
-        <div class="palette-strip">
-          <div class="palette-color" style="background:#F2D5DC;" data-name="Blush"></div>
-          <div class="palette-color" style="background:#C9A96E;" data-name="Gold"></div>
-          <div class="palette-color" style="background:#7E9E8A;" data-name="Sage"></div>
-          <div class="palette-color" style="background:#FDF8EE;" data-name="Ivory"></div>
-          <div class="palette-color" style="background:#2C2C2C;" data-name="Charcoal"></div>
+  <div class="insp-layout">
+
+    <!-- Linke Spalte: Stil + Moodboard -->
+    <div>
+
+      <!-- Stil-Auswahl -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="icon">✨</span> Stil & Thema wählen</div>
+        <div class="style-grid" id="styleGrid">
+          <!-- Wird per JS gerendert -->
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:14px 16px;font-size:.8rem;color:var(--charcoal);line-height:1.6;" id="styleDescription">
+          Wähle einen Stil, um das passende Moodboard zu sehen.
         </div>
       </div>
+
+      <!-- Moodboard -->
+      <div class="card">
+        <div class="mood-header">
+          <div class="mood-title" id="moodTitle">🌸 Romantic Garden</div>
+          <a id="pinterestBtn" href="#" target="_blank" rel="noopener" class="mood-search-btn" onclick="return openPinterest()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            Pinterest
+          </a>
+        </div>
+
+        <div class="moodboard" id="moodboard">
+          <!-- Wird per JS gerendert -->
+        </div>
+
+        <div class="palette-section">
+          <div class="palette-label-row">
+            <div class="palette-section-title">Farbpalette · Klick kopiert HEX</div>
+            <div style="font-size:.65rem;color:var(--warm-gray);" id="copyHint"></div>
+          </div>
+          <div class="palette-strip" id="paletteStrip">
+            <!-- Wird per JS gerendert -->
+          </div>
+          <div style="height:22px;"></div><!-- Platz für data-name labels -->
+        </div>
+      </div>
+
     </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">✨</span> Stil & Thema</div>
-      <div style="display:grid;gap:10px;">
-        <div style="padding:14px;background:linear-gradient(135deg,#FDF8EE,white);border:1px solid var(--gold-light);border-radius:10px;cursor:pointer;">
-          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🌸 Romantic Garden</div>
-          <div style="font-size:.75rem;color:var(--warm-gray);">Zarte Blüten, weiche Farben, üppige Floristik – ein Märchen im Freien.</div>
-          <div style="margin-top:8px;"><span class="tag done-tag">Ausgewählt</span></div>
-        </div>
-        <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:10px;cursor:pointer;opacity:0.6;">
-          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🏛️ Klassisch-Elegant</div>
-          <div style="font-size:.75rem;color:var(--warm-gray);">Zeitlose Eleganz, klare Linien, luxuriöse Details.</div>
-        </div>
-        <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:10px;cursor:pointer;opacity:0.6;">
-          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🌾 Boho Rustic</div>
-          <div style="font-size:.75rem;color:var(--warm-gray);">Natürliche Materialien, Pampasgras, warme Erdtöne.</div>
-        </div>
-        <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:10px;cursor:pointer;opacity:0.6;">
-          <div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">🌊 Coastal Chic</div>
-          <div style="font-size:.75rem;color:var(--warm-gray);">Blau, Weiß, maritimes Flair – elegant und frisch.</div>
+
+    <!-- Rechte Sidebar -->
+    <div class="insp-sidebar">
+
+      <!-- Stil-Stats -->
+      <div class="card">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">📊</span> Stil-Übersicht</div>
+        <div class="insp-stat-row">
+          <div class="insp-mini-stat">
+            <span class="insp-mini-val" id="inspStyle">🌸</span>
+            <div class="insp-mini-label">Gewählter Stil</div>
+          </div>
+          <div class="insp-mini-stat">
+            <span class="insp-mini-val">5</span>
+            <div class="insp-mini-label">Farben definiert</div>
+          </div>
+          <div class="insp-mini-stat">
+            <span class="insp-mini-val" id="inspSeason">Winter</span>
+            <div class="insp-mini-label">Jahreszeit</div>
+          </div>
+          <div class="insp-mini-stat">
+            <span class="insp-mini-val" id="inspMood">Romantisch</span>
+            <div class="insp-mini-label">Stimmung</div>
+          </div>
         </div>
       </div>
+
+      <!-- Inspirationsquellen -->
+      <div class="card">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">🔍</span> Inspiration suchen</div>
+        <div class="insp-links" id="inspLinks">
+          <!-- Wird per JS gerendert -->
+        </div>
+      </div>
+
+      <!-- Stil-Notizen -->
+      <div class="card">
+        <div class="card-title" style="font-size:1rem;"><span class="icon">📝</span> Stil-Notizen</div>
+        <textarea id="styleNotes" placeholder="Notiere deine Stil-Ideen, Wünsche, Must-Haves …"
+          style="width:100%;min-height:100px;padding:10px 14px;border:1.5px solid var(--cream);border-radius:8px;font-family:'Jost',sans-serif;font-size:.82rem;color:var(--charcoal);background:var(--ivory);outline:none;resize:vertical;line-height:1.6;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--cream)';saveStyleNotes()"
+        ></textarea>
+        <div style="font-size:.65rem;color:var(--warm-gray);margin-top:6px;">Wird automatisch gespeichert</div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1900,15 +2807,188 @@ function toggleTodo(el) {
 }
 
 // ─── Seating ─────────────────────────────────────────────
-function selectTable(el, name, count) {
-  document.querySelectorAll('.table-circle, .table-rect').forEach(t => t.style.borderColor = '');
-  const shape = el.querySelector('.table-circle, .table-rect');
-  if (shape) shape.style.borderColor = 'var(--gold)';
-  showToast('🪑 ' + name + ' – ' + count + ' ausgewählt');
+// ═══════════════════════════════════════════════════════
+//  SITZPLAN – dynamisch, editierbar, localStorage
+// ═══════════════════════════════════════════════════════
+const LS_SEATING = 'forever_seating_v1';
+
+const SHAPE_SIZES = {
+  round:   [{label:'Klein (6)',w:76,h:76},{label:'Mittel (8)',w:90,h:90},{label:'Groß (10)',w:108,h:108}],
+  oval:    [{label:'Klein',w:110,h:72},{label:'Mittel',w:140,h:88},{label:'Groß',w:170,h:105}],
+  rect:    [{label:'4er',w:100,h:60},{label:'6er',w:130,h:72},{label:'8er',w:160,h:80},{label:'10er',w:190,h:90}],
+  bankett: [{label:'10er',w:200,h:56},{label:'14er',w:260,h:60},{label:'20er',w:340,h:64}],
+  honor:   [{label:'6 Pers.',w:180,h:52},{label:'8 Pers.',w:220,h:56},{label:'10 Pers.',w:270,h:60}],
+};
+const TABLE_COLORS = {
+  gold:  {bg:'#FDF9F0',border:'#C9A96E'},
+  rose:  {bg:'#FFF5F7',border:'#D4849A'},
+  sage:  {bg:'#F0FBF4',border:'#7E9E8A'},
+  white: {bg:'#FFFFFF',border:'#E8D5B0'},
+  dark:  {bg:'#2C2C2C',border:'#4A4A4A'},
+};
+const SEATING_SEED = [
+  {id:'t0',name:'Ehrentisch',group:'Brautpaar & Familie',shape:'honor',  w:220,h:56, seats:8, max:8,  color:'gold'},
+  {id:'t1',name:'Tisch 1',   group:'Familie Müller',     shape:'round',  w:90, h:90, seats:8, max:10, color:'gold'},
+  {id:'t2',name:'Tisch 2',   group:'Familie Weber',      shape:'round',  w:90, h:90, seats:9, max:10, color:'gold'},
+  {id:'t3',name:'Tisch 3',   group:'Studienfreunde',     shape:'round',  w:90, h:90, seats:7, max:10, color:'rose'},
+  {id:'t4',name:'Tisch 4',   group:'Schulfreunde',       shape:'round',  w:90, h:90, seats:6, max:10, color:'sage'},
+  {id:'t5',name:'Tisch 5',   group:'Arbeitskollegen',    shape:'round',  w:90, h:90, seats:8, max:10, color:'white'},
+  {id:'t6',name:'Tisch 6',   group:'Mix / Offen',        shape:'round',  w:90, h:90, seats:5, max:10, color:'rose'},
+];
+
+let seatingData = [];
+let editingTableId = null;
+let editShape = 'round';
+let editColor = 'gold';
+
+function getSeating() { try { return JSON.parse(localStorage.getItem(LS_SEATING))||null; } catch { return null; } }
+function saveSeating() { try { localStorage.setItem(LS_SEATING,JSON.stringify(seatingData)); } catch(e){} }
+
+function initSeating() {
+  seatingData = getSeating() || JSON.parse(JSON.stringify(SEATING_SEED));
+  renderSeating();
+}
+function resetSeating() {
+  if (!confirm('Sitzplan zurücksetzen?')) return;
+  seatingData = JSON.parse(JSON.stringify(SEATING_SEED));
+  saveSeating(); renderSeating(); showToast('↺ Zurückgesetzt');
 }
 
+function renderSeating() {
+  const canvas = document.getElementById('seatingCanvas');
+  if (!canvas) return;
+  canvas.innerHTML = seatingData.map(t => {
+    const col = TABLE_COLORS[t.color]||TABLE_COLORS.white;
+    const isDark = t.color==='dark';
+    const tc = isDark?'white':'var(--charcoal)';
+    const sc = isDark?'rgba(255,255,255,.6)':'var(--warm-gray)';
+    let ss = `width:${t.w}px;height:${t.h}px;background:${col.bg};border-color:${col.border};`;
+    if (t.shape==='round'||t.shape==='oval') ss+='border-radius:50%;';
+    else if (t.shape==='bankett') ss+='border-radius:4px;';
+    else if (t.shape==='honor') ss+='border-radius:10px;';
+    else ss+='border-radius:8px;';
+    return `<div class="table-item" id="ti-${t.id}" onclick="selectTableNew('${t.id}')">
+      <div class="table-actions">
+        <div class="tbl-btn edit" onclick="event.stopPropagation();openTableEdit('${t.id}')" title="Bearbeiten">✏️</div>
+        <div class="tbl-btn del"  onclick="event.stopPropagation();deleteTable('${t.id}')"  title="Löschen">✕</div>
+      </div>
+      <div class="table-shape" style="${ss}">
+        <div class="t-name" style="color:${tc};${t.shape==='honor'?'font-size:.82rem;':''}">${t.shape==='honor'?'♦ ':''}${t.name}</div>
+        <div class="t-count" style="color:${sc};">${t.seats}/${t.max}</div>
+      </div>
+      <div class="t-group">${t.group}</div>
+    </div>`;
+  }).join('');
+  renderSeatingSidebar();
+}
+
+function selectTableNew(id) {
+  document.querySelectorAll('.table-item').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('ti-'+id)?.classList.add('selected');
+  showToast('🪑 '+seatingData.find(t=>t.id===id)?.name+' ausgewählt');
+}
+
+function renderSeatingSidebar() {
+  const ts = seatingData.reduce((s,t)=>s+t.seats,0);
+  const tm = seatingData.reduce((s,t)=>s+t.max,0);
+  const sf = document.getElementById('seatingSummary');
+  if(sf) sf.innerHTML = [
+    {val:seatingData.length,lbl:'Tische'},
+    {val:`${ts}/${tm}`,lbl:'Plätze'},
+    {val:seatingData.filter(t=>t.seats>=t.max).length,lbl:'Voll belegt'},
+    {val:Math.round(ts/Math.max(tm,1)*100)+'%',lbl:'Auslastung'},
+  ].map(s=>`<div class="seating-stat"><span class="seating-stat-val">${s.val}</span><div class="seating-stat-lbl">${s.lbl}</div></div>`).join('');
+
+  const hb = document.getElementById('harmonyBars');
+  if(hb) hb.innerHTML = seatingData.map(t=>{
+    const pct=t.seats===0?0:Math.min(95,60+Math.round(t.seats/t.max*35));
+    const col=pct>=85?'linear-gradient(90deg,var(--sage),var(--sage-light))':pct>=70?'linear-gradient(90deg,var(--gold),var(--gold-light))':'linear-gradient(90deg,#E67E73,#F5A59E)';
+    return `<div class="score-bar"><div class="score-label" style="font-size:.7rem;">${t.name}</div><div class="score-track"><div class="score-fill" style="width:${pct}%;background:${col};"></div></div><div class="score-num" style="font-size:.9rem;">${pct}</div></div>`;
+  }).join('');
+
+  const tl = document.getElementById('tableList');
+  if(tl) tl.innerHTML = seatingData.map(t=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:white;">
+      <div style="width:9px;height:9px;border-radius:50%;background:${TABLE_COLORS[t.color]?.border||'#ccc'};flex-shrink:0;"></div>
+      <div style="flex:1;font-size:.76rem;font-weight:500;">${t.name}</div>
+      <div style="font-size:.68rem;color:var(--warm-gray);flex:1;">${t.group}</div>
+      <div style="font-size:.72rem;font-weight:600;">${t.seats}/${t.max}</div>
+      <div class="tbl-btn edit" style="display:flex;" onclick="openTableEdit('${t.id}')">✏️</div>
+    </div>`).join('');
+}
+
+function openTableEdit(id) {
+  editingTableId = id;
+  const t = id ? seatingData.find(x=>x.id===id) : null;
+  document.getElementById('teeName').value  = t?t.name:`Tisch ${seatingData.length+1}`;
+  document.getElementById('teeGroup').value = t?t.group:'';
+  document.getElementById('teeSeats').value = t?t.seats:8;
+  document.getElementById('teeMax').value   = t?t.max:10;
+  document.getElementById('teeW').value     = t?t.w:90;
+  document.getElementById('teeH').value     = t?t.h:90;
+  document.getElementById('tableEditTitle').textContent = t?`✏️ ${t.name} bearbeiten`:'+ Neuer Tisch';
+  editShape = t?t.shape:'round';
+  editColor = t?t.color:'gold';
+  document.querySelectorAll('.shape-opt').forEach(el=>el.classList.toggle('active',el.dataset.shape===editShape));
+  document.querySelectorAll('#colorPicker .size-preset').forEach(el=>el.classList.toggle('active',el.dataset.color===editColor));
+  renderSizePresets(editShape, t);
+  document.getElementById('tableEditModal').classList.add('open');
+  document.getElementById('tableEditBackdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeTableEdit() {
+  document.getElementById('tableEditModal').classList.remove('open');
+  document.getElementById('tableEditBackdrop').classList.remove('open');
+  document.body.style.overflow='';
+}
+function pickShape(shape, el) {
+  editShape=shape;
+  document.querySelectorAll('.shape-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  renderSizePresets(shape,null);
+}
+function pickColor(color, el) {
+  editColor=color;
+  document.querySelectorAll('#colorPicker .size-preset').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+function renderSizePresets(shape, cur) {
+  const presets = SHAPE_SIZES[shape]||SHAPE_SIZES.round;
+  document.getElementById('sizePicker').innerHTML = presets.map(p=>
+    `<div class="size-preset ${cur&&cur.w===p.w?'active':''}" onclick="applySizePreset(${p.w},${p.h},this)">${p.label}</div>`
+  ).join('');
+}
+function applySizePreset(w,h,el) {
+  document.getElementById('teeW').value=w;
+  document.getElementById('teeH').value=h;
+  document.querySelectorAll('#sizePicker .size-preset').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+function saveTableEdit() {
+  const name  = document.getElementById('teeName').value.trim();
+  const group = document.getElementById('teeGroup').value.trim();
+  const seats = parseInt(document.getElementById('teeSeats').value)||0;
+  const max   = parseInt(document.getElementById('teeMax').value)||seats;
+  const w     = parseInt(document.getElementById('teeW').value)||90;
+  const h     = parseInt(document.getElementById('teeH').value)||90;
+  if (!name) { showToast('⚠ Tischname fehlt'); return; }
+  if (editingTableId) {
+    const t = seatingData.find(x=>x.id===editingTableId);
+    if(t) Object.assign(t,{name,group,seats,max,w,h,shape:editShape,color:editColor});
+  } else {
+    seatingData.push({id:'t'+Date.now(),name,group,shape:editShape,w,h,seats,max,color:editColor});
+  }
+  saveSeating(); renderSeating(); closeTableEdit();
+  showToast('✓ '+name+' gespeichert');
+}
+function deleteTable(id) {
+  const t=seatingData.find(x=>x.id===id);
+  if(!confirm(`„${t?.name}" löschen?`)) return;
+  seatingData=seatingData.filter(x=>x.id!==id);
+  saveSeating(); renderSeating(); showToast('🗑 Tisch entfernt');
+}
 function optimizeSeating() {
-  showToast('🤖 KI analysiert Beziehungsmatrix … Optimierter Sitzplan wird berechnet.');
+  showToast('🤖 KI analysiert Gästebeziehungen … Sitzplan wird optimiert.');
 }
 
 // ─── Toast ────────────────────────────────────────────────
@@ -1934,14 +3014,247 @@ function showToast(msg) {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// ─── Countdown ───────────────────────────────────────────
-const weddingDate = new Date('2026-12-05');
-const today = new Date();
-const days = Math.max(0, Math.ceil((weddingDate - today) / (1000 * 60 * 60 * 24)));
-['daysCount','herodays','budgetDays','riskDays'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.textContent = days;
+// ═══════════════════════════════════════════════════════
+//  HOCHZEITSDATUM – editierbar, localStorage
+// ═══════════════════════════════════════════════════════
+const LS_DATE     = 'forever_wedding_date_v1';
+const LS_LOCATION = 'forever_wedding_location_v1';
+const DEFAULT_DATE = '2026-12-05';
+const DEFAULT_LOCATION = { city: 'München', slug: 'muenchen' };
+
+function getWeddingDate() {
+  try { return localStorage.getItem(LS_DATE) || DEFAULT_DATE; }
+  catch { return DEFAULT_DATE; }
+}
+function getWeddingLocation() {
+  try { return JSON.parse(localStorage.getItem(LS_LOCATION)) || DEFAULT_LOCATION; }
+  catch { return DEFAULT_LOCATION; }
+}
+
+function calcDays(dateStr) {
+  return Math.max(0, Math.ceil((new Date(dateStr) - new Date()) / 86400000));
+}
+
+function formatDateDE(dateStr) {
+  const d = new Date(dateStr);
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  return `${days[d.getDay()]}, ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function updateCountdown() {
+  const dateStr = getWeddingDate();
+  const days    = calcDays(dateStr);
+  ['daysCount','herodays','budgetDays','riskDays'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = days;
+  });
+}
+
+// ── Datum-Popup ──────────────────────────────────────────
+let datePopupOpen = false;
+
+function toggleDatePopup() {
+  datePopupOpen ? closeDatePopup() : openDatePopup();
+}
+
+function openDatePopup() {
+  const popup = document.getElementById('datePopup');
+  const input = document.getElementById('weddingDateInput');
+  input.value = getWeddingDate();
+  updateDatePreview();
+  popup.classList.add('open');
+  datePopupOpen = true;
+  input.addEventListener('input', updateDatePreview);
+}
+
+function closeDatePopup() {
+  document.getElementById('datePopup').classList.remove('open');
+  datePopupOpen = false;
+}
+
+function updateDatePreview() {
+  const val = document.getElementById('weddingDateInput').value;
+  const prev = document.getElementById('datePopupPreview');
+  if (!val || !prev) return;
+  const d = calcDays(val);
+  prev.innerHTML = `<strong>${formatDateDE(val)}</strong> · noch <strong>${d}</strong> Tage`;
+}
+
+function saveWeddingDate() {
+  const val = document.getElementById('weddingDateInput').value;
+  if (!val) return;
+  try { localStorage.setItem(LS_DATE, val); } catch(e) {}
+  updateCountdown();
+  updateWeatherWidget();
+  closeDatePopup();
+  showToast('💍 Datum gespeichert: ' + formatDateDE(val));
+}
+
+// Klick außerhalb schließt Popup
+document.addEventListener('click', e => {
+  if (datePopupOpen && !e.target.closest('.date-popup') && !e.target.closest('.days-badge')) {
+    closeDatePopup();
+  }
 });
+
+// ═══════════════════════════════════════════════════════
+//  WETTER-WIDGET
+//  wetter.de Klimadaten + Deep-Link für echte Vorhersage
+// ═══════════════════════════════════════════════════════
+
+// Klima-Durchschnittswerte für deutsche Städte im Hochzeitsmonat
+const KLIMA_DATA = {
+  'muenchen':  { Jan:'−2/3°C',Feb:'−1/5°C',Mar:'3/11°C',Apr:'6/16°C',Mai:'11/21°C',Jun:'14/24°C',Jul:'16/26°C',Aug:'16/26°C',Sep:'12/21°C',Okt:'7/15°C',Nov:'2/8°C',Dez:'−2/3°C',  icons:{ Jan:'❄️',Feb:'🌨️',Mar:'🌤️',Apr:'🌸',Mai:'☀️',Jun:'☀️',Jul:'🌞',Aug:'🌞',Sep:'🍂',Okt:'🌧️',Nov:'🌧️',Dez:'❄️' } },
+  'berlin':    { Jan:'−3/2°C',Feb:'−2/4°C',Mar:'2/9°C', Apr:'6/16°C',Mai:'11/21°C',Jun:'14/24°C',Jul:'16/26°C',Aug:'16/25°C',Sep:'12/20°C',Okt:'7/14°C',Nov:'2/7°C', Dez:'−2/2°C',  icons:{ Jan:'❄️',Feb:'❄️',Mar:'🌤️',Apr:'🌸',Mai:'☀️',Jun:'☀️',Jul:'🌞',Aug:'🌞',Sep:'🍂',Okt:'🌧️',Nov:'🌧️',Dez:'❄️' } },
+  'hamburg':   { Jan:'1/4°C', Feb:'1/5°C', Mar:'3/9°C', Apr:'7/14°C',Mai:'11/19°C',Jun:'14/22°C',Jul:'16/23°C',Aug:'16/23°C',Sep:'13/19°C',Okt:'9/14°C',Nov:'5/8°C', Dez:'2/5°C',   icons:{ Jan:'🌧️',Feb:'🌧️',Mar:'🌤️',Apr:'🌸',Mai:'☀️',Jun:'☀️',Jul:'🌤️',Aug:'🌤️',Sep:'🌧️',Okt:'🌧️',Nov:'🌧️',Dez:'🌧️' } },
+  'koeln':     { Jan:'1/5°C', Feb:'2/7°C', Mar:'5/12°C',Apr:'8/17°C',Mai:'13/21°C',Jun:'15/24°C',Jul:'17/26°C',Aug:'17/26°C',Sep:'14/21°C',Okt:'9/15°C',Nov:'5/9°C', Dez:'2/6°C',   icons:{ Jan:'🌧️',Feb:'🌤️',Mar:'🌸',Apr:'🌸',Mai:'☀️',Jun:'☀️',Jul:'🌞',Aug:'🌞',Sep:'🌤️',Okt:'🌧️',Nov:'🌧️',Dez:'🌧️' } },
+  'augsburg':  { Jan:'−3/2°C',Feb:'−1/5°C',Mar:'3/11°C',Apr:'7/16°C',Mai:'11/21°C',Jun:'14/23°C',Jul:'16/25°C',Aug:'15/25°C',Sep:'12/20°C',Okt:'6/14°C',Nov:'1/7°C', Dez:'−2/3°C',  icons:{ Jan:'❄️',Feb:'🌨️',Mar:'🌤️',Apr:'🌸',Mai:'☀️',Jun:'☀️',Jul:'🌞',Aug:'🌞',Sep:'🍂',Okt:'🌧️',Nov:'🌧️',Dez:'❄️' } },
+  'default':   { Jan:'0/4°C', Feb:'1/6°C', Mar:'4/11°C',Apr:'8/16°C',Mai:'12/21°C',Jun:'15/24°C',Jul:'17/26°C',Aug:'17/25°C',Sep:'13/20°C',Okt:'8/14°C',Nov:'3/8°C', Dez:'0/4°C',   icons:{ Jan:'❄️',Feb:'🌨️',Mar:'🌤️',Apr:'🌸',Mai:'☀️',Jun:'☀️',Jul:'🌞',Aug:'🌞',Sep:'🍂',Okt:'🌧️',Nov:'🌧️',Dez:'❄️' } },
+};
+
+const MONTH_KEYS = ['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+// Wetter.de Stadt-Slug Mapping (für Deep-Link)
+const WETTER_SLUGS = {
+  'münchen': 'muenchen', 'munich': 'muenchen', 'muenchen': 'muenchen',
+  'berlin': 'berlin', 'hamburg': 'hamburg', 'köln': 'koeln', 'koeln': 'koeln',
+  'augsburg': 'augsburg', 'nürnberg': 'nuernberg', 'frankfurt': 'frankfurt-am-main',
+  'stuttgart': 'stuttgart', 'düsseldorf': 'duesseldorf', 'leipzig': 'leipzig',
+  'dresden': 'dresden', 'hannover': 'hannover', 'bremen': 'bremen',
+};
+
+function slugify_city(city) {
+  return city.toLowerCase()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+}
+
+function getKlimaKey(city) {
+  const s = city.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');
+  if (s.includes('münchen') || s.includes('munich') || s.includes('muenchen')) return 'muenchen';
+  if (s.includes('berlin'))  return 'berlin';
+  if (s.includes('hamburg')) return 'hamburg';
+  if (s.includes('köln') || s.includes('koeln')) return 'koeln';
+  if (s.includes('augsburg')) return 'augsburg';
+  return 'default';
+}
+
+function getWetterSlug(city) {
+  const key = city.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').trim();
+  return WETTER_SLUGS[key] || slugify_city(city);
+}
+
+function updateWeatherWidget() {
+  const dateStr  = getWeddingDate();
+  const date     = new Date(dateStr);
+  const monthKey = MONTH_KEYS[date.getMonth()];
+  const year     = date.getFullYear();
+  const days     = calcDays(dateStr);
+
+  // Stadt aus Geocoding-Feld oder localStorage holen
+  let city = 'München';
+  const proxAddr = document.getElementById('proxAddress');
+  if (proxAddr && proxAddr.value.trim()) {
+    // Ersten Teil der Adresse als Stadt nutzen
+    const parts = proxAddr.value.split(',');
+    city = parts[parts.length > 1 ? parts.length - 1 : 0].trim() || 'München';
+    // Wenn "Schloss Nymphenburg, München" → nimm letzten Part
+    if (parts.length > 1) city = parts[parts.length - 1].trim();
+  }
+  try { localStorage.setItem(LS_LOCATION, JSON.stringify({ city, slug: getWetterSlug(city) })); } catch(e) {}
+
+  const klimaKey  = getKlimaKey(city);
+  const klima     = KLIMA_DATA[klimaKey] || KLIMA_DATA.default;
+  const icon      = klima.icons[monthKey];
+  const temp      = klima[monthKey];
+  const wetterSlug = getWetterSlug(city);
+
+  // Wetter.de URL: wenn innerhalb 14 Tage → Vorhersage, sonst Klimainfo
+  const wetterUrl = days <= 14
+    ? `https://www.wetter.de/deutschland/${wetterSlug}.html`
+    : `https://www.wetter.de/klima/europa/deutschland/${wetterSlug}.html`;
+
+  const badge = document.getElementById('weatherBadge');
+  const iconEl = document.getElementById('weatherIcon');
+  const mainEl = document.getElementById('weatherMain');
+  const subEl  = document.getElementById('weatherSub');
+
+  if (badge) badge.href = wetterUrl;
+  if (iconEl) iconEl.textContent = icon;
+  if (mainEl) mainEl.textContent = `${city} · ${monthKey}. ${year}`;
+  if (subEl)  subEl.textContent  = days <= 14
+    ? `Vorhersage verfügbar → wetter.de ↗`
+    : `Ø Klima ${temp} · wetter.de ↗ (30-J.-Ø)`;
+}
+
+// Wetter-Widget aktualisieren wenn Geocoding-Adresse sich ändert
+const proxAddrEl = document.getElementById('proxAddress');
+if (proxAddrEl) {
+  proxAddrEl.addEventListener('change', updateWeatherWidget);
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAMEN – editierbar, localStorage
+// ═══════════════════════════════════════════════════════
+const LS_NAMES = 'forever_names_v1';
+const DEFAULT_NAMES = { p1: 'Julia', p2: 'Maximilian' };
+
+function getNames() {
+  try { return JSON.parse(localStorage.getItem(LS_NAMES)) || DEFAULT_NAMES; }
+  catch { return DEFAULT_NAMES; }
+}
+
+function applyNames() {
+  const { p1, p2 } = getNames();
+  const full = `${p1} & ${p2}`;
+
+  // Alle Stellen aktualisieren
+  const heroNames = document.getElementById('heroNames');
+  if (heroNames) heroNames.textContent = full;
+
+  // AI System Prompt aktualisiert sich beim nächsten Aufruf
+  // über getPlanningContext() → kein extra Update nötig
+}
+
+function openNamePopup() {
+  const { p1, p2 } = getNames();
+  document.getElementById('nameInput1').value = p1;
+  document.getElementById('nameInput2').value = p2;
+  document.getElementById('namePopup').classList.add('open');
+  document.getElementById('nameBackdrop').classList.add('open');
+  setTimeout(() => document.getElementById('nameInput1').focus(), 50);
+}
+
+function closeNamePopup() {
+  document.getElementById('namePopup').classList.remove('open');
+  document.getElementById('nameBackdrop').classList.remove('open');
+}
+
+function saveNames() {
+  const p1 = document.getElementById('nameInput1').value.trim();
+  const p2 = document.getElementById('nameInput2').value.trim();
+  if (!p1 || !p2) { showToast('⚠ Bitte beide Namen eintragen'); return; }
+  try { localStorage.setItem(LS_NAMES, JSON.stringify({ p1, p2 })); } catch(e) {}
+  applyNames();
+  closeNamePopup();
+  showToast(`💍 Namen gespeichert: ${p1} & ${p2}`);
+}
+
+// Enter speichert
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('namePopup').classList.contains('open')) {
+    saveNames();
+  }
+  if (e.key === 'Escape' && document.getElementById('namePopup').classList.contains('open')) {
+    closeNamePopup();
+  }
+});
+
+// ─── Initialisierung ─────────────────────────────────────
+updateCountdown();
+applyNames();
+updateWeatherWidget();
 
 // ─── Animate Bars ────────────────────────────────────────
 // ═══════════════════════════════════════════════════════
@@ -2140,6 +3453,706 @@ window.addEventListener('storage', e => {
   }
 });
 
+// ── Location Checkliste ──────────────────────────────────
+const LS_LOC = 'forever_location_checks_v1';
+
+function toggleLocCheck(el) {
+  el.classList.toggle('checked');
+  saveLocChecks();
+  updateLocationProgress();
+}
+
+function saveLocChecks() {
+  const items = document.querySelectorAll('.loc-check-item');
+  const state = Array.from(items).map(el => el.classList.contains('checked'));
+  try { localStorage.setItem(LS_LOC, JSON.stringify(state)); } catch(e) {}
+}
+
+function updateLocationProgress() {
+  const items   = document.querySelectorAll('.loc-check-item');
+  const checked = Array.from(items).filter(el => el.classList.contains('checked')).length;
+  const total   = items.length;
+  const prog    = document.getElementById('locationProgress');
+  if (prog) {
+    const pct = Math.round(checked / total * 100);
+    prog.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--sage),var(--sage-light));border-radius:3px;transition:width .5s;"></div>
+        </div>
+        <span style="font-weight:600;color:${pct===100?'#3D7A4A':'var(--warm-gray)'};">${checked}/${total} ${pct===100?'✓ Alles geklärt!':''}</span>
+      </div>`;
+  }
+}
+
+function initLocChecks() {
+  try {
+    const state = JSON.parse(localStorage.getItem(LS_LOC) || '[]');
+    const items = document.querySelectorAll('.loc-check-item');
+    items.forEach((el, i) => { if (state[i]) el.classList.add('checked'); });
+  } catch(e) {}
+  updateLocationProgress();
+}
+
+// ── Save-the-Date Phasen ─────────────────────────────────
+function toggleStdPhase(el, id) {
+  const classes = ['done', 'active', 'future'];
+  const current = classes.find(c => el.classList.contains(c)) || 'future';
+  const next    = { future: 'active', active: 'done', done: 'future' };
+  classes.forEach(c => el.classList.remove(c));
+  el.classList.add(next[current]);
+  const statusEl = el.querySelector('.std-phase-status');
+  const labels   = { done: '✓ Erledigt', active: 'In Bearbeitung', future: 'Ausstehend' };
+  if (statusEl) statusEl.textContent = labels[next[current]];
+  showToast('📅 ' + el.querySelector('.std-phase-title').textContent + ': ' + labels[next[current]]);
+}
+
+// ── Band-Option Auswahl ──────────────────────────────────
+let selectedBandOption = null;
+function toggleBandOption(el, type) {
+  document.querySelectorAll('.band-option').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedBandOption = type;
+  const names = { band:'Live-Band', dj:'DJ', combo:'Band + DJ Kombi', acoustic:'Akustik-Duo' };
+  showToast('🎵 Favorit gesetzt: ' + names[type]);
+  try { localStorage.setItem('forever_band_option', type); } catch(e) {}
+}
+
+function initBandOption() {
+  try {
+    const saved = localStorage.getItem('forever_band_option');
+    if (saved) {
+      const map = { band:0, dj:1, combo:2, acoustic:3 };
+      const options = document.querySelectorAll('.band-option');
+      if (options[map[saved]]) options[map[saved]].classList.add('selected');
+    }
+  } catch(e) {}
+}
+const LS_BUDGET = 'forever_budget_v1';
+
+const BUDGET_SEED = {
+  total: 18000,
+  categories: [
+    { id:'b001', icon:'🏛️', name:'Location',            soll:4800,  ist:4800, note:'Gebucht',             color:'gold' },
+    { id:'b002', icon:'🍽️', name:'Catering',            soll:4000,  ist:2400, note:'Anzahlung geleistet', color:'sage' },
+    { id:'b003', icon:'📸', name:'Fotografie & Video',  soll:2200,  ist:0,    note:'⚠ Noch nicht gebucht',color:'rose' },
+    { id:'b004', icon:'💐', name:'Blumen & Dekoration', soll:1400,  ist:1050, note:'Angebot angenommen',   color:'gold' },
+    { id:'b005', icon:'👗', name:'Kleidung & Ringe',    soll:3000,  ist:2500, note:'Brautkleid gekauft',   color:'sage' },
+    { id:'b006', icon:'🎵', name:'Musik & Entertainment',soll:1200, ist:0,    note:'⚠ Noch nicht gebucht',color:'rose' },
+    { id:'b007', icon:'🚗', name:'Transport',           soll:800,   ist:900,  note:'⚠ Über Budget',       color:'warn' },
+    { id:'b008', icon:'🎂', name:'Hochzeitstorte',      soll:600,   ist:0,    note:'In Verhandlung',       color:'gold' },
+    { id:'b009', icon:'✉️', name:'Einladungen',         soll:400,   ist:320,  note:'In Produktion',        color:'sage' },
+  ]
+};
+
+function getBudget() {
+  try { return JSON.parse(localStorage.getItem(LS_BUDGET)) || null; }
+  catch { return null; }
+}
+function saveBudget(data) {
+  localStorage.setItem(LS_BUDGET, JSON.stringify(data));
+}
+function initBudget() {
+  if (!getBudget()) saveBudget(BUDGET_SEED);
+}
+
+// ── Hilfsfunktion: Farbe für Füllbalken ─────────────────
+function barColor(pct, color) {
+  if (pct > 100) return 'linear-gradient(90deg,#E67E73,#C0607A)';
+  const map = {
+    gold: 'linear-gradient(90deg,var(--gold),var(--gold-light))',
+    rose: 'linear-gradient(90deg,var(--rose),var(--rose-light))',
+    sage: 'linear-gradient(90deg,var(--sage),var(--sage-light))',
+    warn: 'linear-gradient(90deg,#E67E73,#F5A59E)',
+  };
+  return map[color] || map.gold;
+}
+
+// ── Zahl formatieren ─────────────────────────────────────
+function fmt(n) {
+  return Number(n).toLocaleString('de-DE') + ' €';
+}
+
+// ── Summary-Cards rendern ────────────────────────────────
+function renderBudgetSummary() {
+  const bd = getBudget();
+  if (!bd) return;
+  const totalIst  = bd.categories.reduce((s,c) => s+c.ist, 0);
+  const totalSoll = bd.categories.reduce((s,c) => s+c.soll, 0);
+  const verfügbar = bd.total - totalIst;
+  const pct = Math.round(totalIst / bd.total * 100);
+
+  const cards = [
+    { cls:'gold',  label:'Gesamtbudget', val: fmt(bd.total),   sub:'Klick zum Anpassen', id:'totalCard', editable: true },
+    { cls:'rose',  label:'Ausgegeben',   val: fmt(totalIst),   sub:`${pct}% des Budgets`, bar: pct, id:'istCard'   },
+    { cls: verfügbar < 0 ? 'warn':'sage', label:'Verfügbar', val: fmt(Math.abs(verfügbar)), sub: verfügbar < 0 ? '⚠ Budget überschritten!' : 'Noch frei', id:'freeCard' },
+    { cls:'charcoal', label:'Geplant gesamt', val: fmt(totalSoll), sub:'Summe aller Kategorien', id:'sollCard' },
+  ];
+
+  document.getElementById('budgetSummaryCards').innerHTML = cards.map(c => `
+    <div class="budget-summary-card ${c.cls}" id="${c.id}">
+      ${c.editable ? `<button class="bsc-edit-btn" onclick="editTotalBudget()" title="Gesamtbudget ändern">✏️</button>` : ''}
+      <div class="bsc-label">${c.label}</div>
+      <div class="bsc-value" id="${c.id}Val">${c.val}</div>
+      ${c.bar != null ? `<div class="budget-bar" style="margin:8px 0 4px;"><div class="budget-fill rose" style="width:${Math.min(c.bar,100)}%"></div></div>` : ''}
+      <div class="bsc-sub">${c.sub}</div>
+    </div>
+  `).join('');
+
+  // Dashboard-Karten auch aktualisieren (falls sichtbar)
+  document.getElementById('budgetDays') && (document.getElementById('budgetDays').textContent = Math.max(0, Math.ceil((new Date('2026-12-05') - new Date()) / 86400000)));
+}
+
+// ── Zeilen rendern ───────────────────────────────────────
+function renderBudgetRows() {
+  const bd = getBudget();
+  if (!bd) return;
+  const rows = document.getElementById('budgetRows');
+
+  rows.innerHTML = bd.categories.map(cat => {
+    const pct     = cat.soll > 0 ? Math.min(Math.round(cat.ist / cat.soll * 100), 100) : 0;
+    const isOver  = cat.ist > cat.soll;
+    const fill    = barColor(cat.ist/cat.soll*100, cat.color);
+
+    return `
+    <div class="budget-row ${isOver ? 'over-budget' : ''}" id="row-${cat.id}">
+      <div class="br-icon">${cat.icon}</div>
+      <div class="br-name">${cat.name}</div>
+      <div class="br-bar">
+        <div class="br-bar-track">
+          <div class="br-bar-fill" style="width:${pct}%;background:${fill};"></div>
+        </div>
+        <div class="br-bar-note">${isOver ? '⚠ '+Math.round(cat.ist/cat.soll*100)+'% – über Budget' : cat.note}</div>
+      </div>
+      <div class="br-ist">
+        <span class="amount-display" onclick="startEdit('${cat.id}','ist',this)" title="Klick zum Bearbeiten">
+          ${fmt(cat.ist)}
+        </span>
+      </div>
+      <div class="br-soll">
+        <span class="amount-display" onclick="startEdit('${cat.id}','soll',this)" title="Klick zum Bearbeiten">
+          ${fmt(cat.soll)}
+        </span>
+      </div>
+      <div class="br-actions">
+        <button class="br-action-btn" onclick="startEditName('${cat.id}')" title="Umbenennen">✏️</button>
+        <button class="br-action-btn danger" onclick="deleteBudgetCat('${cat.id}')" title="Löschen">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderBudgetHint();
+}
+
+// ── Inline-Edit: Betrag ──────────────────────────────────
+function startEdit(id, field, el) {
+  const bd  = getBudget();
+  const cat = bd.categories.find(c => c.id === id);
+  const val = cat[field];
+
+  const input = document.createElement('input');
+  input.type      = 'number';
+  input.className = 'amount-input';
+  input.value     = val;
+  input.min       = '0';
+
+  const finish = () => {
+    const newVal = Math.max(0, parseFloat(input.value) || 0);
+    cat[field] = newVal;
+    if (field === 'ist' && newVal > cat.soll) {
+      cat.note = '⚠ Über Budget';
+      cat.color = 'warn';
+    } else if (field === 'ist' && newVal === 0) {
+      cat.note = cat.note.startsWith('⚠') ? '⚠ Noch nicht gebucht' : cat.note;
+    }
+    saveBudget(bd);
+    renderBudgetSummary();
+    renderBudgetRows();
+    showToast(`✓ ${cat.name}: ${fmt(newVal)} gespeichert`);
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); finish(); }
+    if (e.key === 'Escape') { renderBudgetRows(); }
+  });
+
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+// ── Inline-Edit: Kategorienname ──────────────────────────
+function startEditName(id) {
+  const bd  = getBudget();
+  const cat = bd.categories.find(c => c.id === id);
+  const row = document.getElementById('row-' + id);
+  const nameEl = row.querySelector('.br-name');
+
+  const input = document.createElement('input');
+  input.type      = 'text';
+  input.className = 'amount-input';
+  input.value     = cat.name;
+  input.style.width = '100%';
+  input.style.textAlign = 'left';
+
+  const finish = () => {
+    const v = input.value.trim();
+    if (v) { cat.name = v; saveBudget(bd); }
+    renderBudgetRows();
+    showToast('✓ Umbenannt: ' + (v || cat.name));
+  };
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') finish();
+    if (e.key === 'Escape') renderBudgetRows();
+  });
+  nameEl.replaceWith(input);
+  input.focus(); input.select();
+}
+
+// ── Gesamtbudget bearbeiten ──────────────────────────────
+function editTotalBudget() {
+  const bd  = getBudget();
+  const card = document.getElementById('totalCardVal');
+  const old  = bd.total;
+
+  const input = document.createElement('input');
+  input.type      = 'number';
+  input.className = 'amount-input';
+  input.value     = old;
+  input.min       = '0';
+  input.style.fontSize = '1.4rem';
+  input.style.width    = '160px';
+
+  const finish = () => {
+    const v = Math.max(0, parseFloat(input.value) || old);
+    bd.total = v;
+    saveBudget(bd);
+    renderBudgetSummary();
+    renderBudgetRows();
+    showToast(`✓ Gesamtbudget: ${fmt(v)}`);
+  };
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') finish();
+    if (e.key === 'Escape') renderBudgetSummary();
+  });
+  card.replaceWith(input);
+  input.focus(); input.select();
+}
+
+// ── Kategorie löschen ────────────────────────────────────
+function deleteBudgetCat(id) {
+  if (!confirm('Kategorie wirklich löschen?')) return;
+  const bd = getBudget();
+  const cat = bd.categories.find(c => c.id === id);
+  bd.categories = bd.categories.filter(c => c.id !== id);
+  saveBudget(bd);
+  renderBudgetSummary();
+  renderBudgetRows();
+  showToast('🗑 ' + cat.name + ' entfernt');
+}
+
+// ── Kategorie hinzufügen ─────────────────────────────────
+function addBudgetCategory() {
+  const icon = document.getElementById('newCatIcon').value;
+  const name = document.getElementById('newCatName').value.trim();
+  const soll = parseFloat(document.getElementById('newCatSoll').value) || 0;
+  const ist  = parseFloat(document.getElementById('newCatIst').value)  || 0;
+
+  if (!name) { showToast('⚠ Bitte einen Kategorie-Namen eingeben'); return; }
+
+  const bd  = getBudget();
+  const newCat = {
+    id:    'b' + Date.now(),
+    icon, name, soll, ist,
+    note:  ist === 0 ? 'Neu hinzugefügt' : ist > soll ? '⚠ Über Budget' : 'Manuell erfasst',
+    color: ist > soll ? 'warn' : 'gold',
+  };
+  bd.categories.push(newCat);
+  saveBudget(bd);
+  renderBudgetSummary();
+  renderBudgetRows();
+
+  // Felder leeren
+  document.getElementById('newCatName').value = '';
+  document.getElementById('newCatSoll').value = '';
+  document.getElementById('newCatIst').value  = '';
+  showToast('✓ Kategorie hinzugefügt: ' + name);
+}
+
+// ── KI-Hinweis generieren ────────────────────────────────
+function renderBudgetHint() {
+  const bd      = getBudget();
+  const totalIst = bd.categories.reduce((s,c) => s+c.ist, 0);
+  const pct      = Math.round(totalIst / bd.total * 100);
+  const missing  = bd.categories.filter(c => c.ist === 0 && c.soll > 0);
+  const over     = bd.categories.filter(c => c.ist > c.soll);
+  const days     = Math.max(0, Math.ceil((new Date('2026-12-05') - new Date()) / 86400000));
+
+  let hint = '💡 <strong>Budget-Übersicht:</strong> ';
+  if (over.length > 0)     hint += `⚠ ${over.map(c=>c.name).join(', ')} überziehen das Budget. `;
+  if (missing.length > 0)  hint += `${missing.map(c=>c.icon+' '+c.name).join(', ')} noch nicht gebucht. `;
+  if (pct > 90)            hint += `Du hast ${pct}% des Budgets verplant — kaum noch Puffer. `;
+  else if (pct < 50)       hint += `Noch ${100-pct}% des Budgets verfügbar. `;
+  hint += `Noch ${days} Tage bis zur Hochzeit.`;
+
+  document.getElementById('budgetAiHint').innerHTML = hint;
+}
+
+function initBudgetPanel() {
+  initBudget();
+  renderBudgetSummary();
+  renderBudgetRows();
+}
+
+const STYLES = [
+  {
+    id: 'romantic',
+    icon: '🌸',
+    name: 'Romantic Garden',
+    desc: 'Zarte Blüten, weiche Farben, üppige Floristik. Ein Märchen im Freien — Pfingstrosen, Wildblumen und goldenes Kerzenlicht.',
+    mood: 'Romantisch',
+    season: 'Frühling / Sommer',
+    keywords: ['Pfingstrosen', 'Candlelight', 'Pastelltöne', 'Outdoor'],
+    tileGrad: 'linear-gradient(135deg,#FDF2F5,#FBE8EE)',
+    tileBorder: '#E8C4D0',
+    checkColor: '#C0607A',
+    palette: [
+      { name:'Blush',   hex:'#F2D5DC', bg:'#F2D5DC' },
+      { name:'Rose',    hex:'#D4849A', bg:'#D4849A' },
+      { name:'Gold',    hex:'#C9A96E', bg:'#C9A96E' },
+      { name:'Sage',    hex:'#7E9E8A', bg:'#7E9E8A' },
+      { name:'Ivory',   hex:'#FAF7F2', bg:'#FAF7F2' },
+    ],
+    moodCells: [
+      { bg:'linear-gradient(135deg,#F2D5DC,#E8A8B8)', icon:'🌹', size:'4rem',  label:'Blumen' },
+      { bg:'linear-gradient(135deg,#D4EDD9,#A8C8B0)', icon:'🌿', size:'2.5rem',label:'Grün' },
+      { bg:'linear-gradient(135deg,#FDF8EE,#F5ECD8)', icon:'🕯️', size:'2.5rem',label:'Licht' },
+      { bg:'linear-gradient(135deg,#E8D5B0,#D4AF5A)', icon:'💐', size:'2.5rem',label:'Strauß' },
+      { bg:'linear-gradient(135deg,#FBF0F4,#F2D5DC)', icon:'🦋', size:'2.5rem',label:'Leichtigkeit' },
+    ],
+    pinterest: 'romantic+garden+wedding+decoration',
+    links: [
+      { icon:'📌', label:'Pinterest: Romantic Garden', sub:'Brautstrauß & Tischdeko Ideen', q:'romantic+garden+wedding+flowers' },
+      { icon:'🔍', label:'Google: Floristik Inspiration', sub:'Pfingstrosen Hochzeit München', q:'Pfingstrosen Hochzeit Floristik München' },
+      { icon:'📷', label:'Instagram: #RomanticWedding', sub:'Echte Hochzeitsfotos ohne Filter', q:'%23romanticwedding', platform:'instagram' },
+    ],
+  },
+  {
+    id: 'classic',
+    icon: '🏛️',
+    name: 'Klassisch-Elegant',
+    desc: 'Zeitlose Grandezza. Weiß, Schwarz, Gold. Kristallleuchter, Orchideen und edles Leinengeschirr — Hochzeit wie in einem alten Film.',
+    mood: 'Grandios',
+    season: 'Ganzjährig',
+    keywords: ['Weiß & Schwarz', 'Orchideen', 'Kristall', 'Ballsaal'],
+    tileGrad: 'linear-gradient(135deg,#F8F8F8,#EFEFEF)',
+    tileBorder: '#CCCCCC',
+    checkColor: '#2C2C2C',
+    palette: [
+      { name:'Reinweiß', hex:'#FFFFFF', bg:'#F5F5F5' },
+      { name:'Champagne',hex:'#F7E7CE', bg:'#F7E7CE' },
+      { name:'Gold',     hex:'#C9A96E', bg:'#C9A96E' },
+      { name:'Anthrazit',hex:'#4A4A4A', bg:'#4A4A4A' },
+      { name:'Schwarz',  hex:'#1A1A1A', bg:'#1A1A1A' },
+    ],
+    moodCells: [
+      { bg:'linear-gradient(135deg,#F5F5F5,#EBEBEB)',  icon:'🤍', size:'4rem',  label:'Reinheit' },
+      { bg:'linear-gradient(135deg,#F7E7CE,#E8D5B0)',  icon:'✨', size:'2.5rem',label:'Glamour' },
+      { bg:'linear-gradient(135deg,#2C2C2C,#4A4A4A)',  icon:'🥂', size:'2.5rem',label:'Champagner' },
+      { bg:'linear-gradient(135deg,#FDF8EE,#FAF2E0)',  icon:'💎', size:'2.5rem',label:'Kristall' },
+      { bg:'linear-gradient(135deg,#F0ECE8,#E8E0D8)',  icon:'🌾', size:'2.5rem',label:'Schlichtheit' },
+    ],
+    pinterest: 'classic+elegant+wedding+ballroom+white+gold',
+    links: [
+      { icon:'📌', label:'Pinterest: Klassisch-Elegant', sub:'Ballsaal & Kristall Dekoration', q:'classic+elegant+wedding+white+gold+ballroom' },
+      { icon:'🔍', label:'Google: Orchideen Hochzeit', sub:'Weiße Orchideen & Lilien Deko', q:'Orchideen Hochzeit Dekoration elegant' },
+      { icon:'📷', label:'Instagram: #ClassicWedding', sub:'Zeitlose Hochzeitsfotos', q:'%23classicwedding', platform:'instagram' },
+    ],
+  },
+  {
+    id: 'boho',
+    icon: '🌾',
+    name: 'Boho Rustic',
+    desc: 'Freie Seele, warme Erde. Pampasgras, Makramee, rustikale Tischplatten und Wildblumen — ehrlich, natürlich, unvergesslich.',
+    mood: 'Verspielt',
+    season: 'Sommer / Herbst',
+    keywords: ['Pampasgras', 'Makramee', 'Erdtöne', 'Outdoor'],
+    tileGrad: 'linear-gradient(135deg,#FDF6ED,#F5E9D5)',
+    tileBorder: '#D4A96A',
+    checkColor: '#8B5E3C',
+    palette: [
+      { name:'Terracotta',hex:'#C17F5A', bg:'#C17F5A' },
+      { name:'Sand',      hex:'#E8D5B0', bg:'#E8D5B0' },
+      { name:'Sage',      hex:'#7E9E8A', bg:'#7E9E8A' },
+      { name:'Warm-Braun',hex:'#8B5E3C', bg:'#8B5E3C' },
+      { name:'Creme',     hex:'#FDF6ED', bg:'#FDF6ED' },
+    ],
+    moodCells: [
+      { bg:'linear-gradient(135deg,#E8D5B0,#D4A96A)',  icon:'🌾', size:'4rem',  label:'Pampasgras' },
+      { bg:'linear-gradient(135deg,#C17F5A,#A0623A)',  icon:'🍂', size:'2.5rem',label:'Herbst' },
+      { bg:'linear-gradient(135deg,#7E9E8A,#5A8070)',  icon:'🌿', size:'2.5rem',label:'Natur' },
+      { bg:'linear-gradient(135deg,#FDF6ED,#F0E4CC)',  icon:'🪵', size:'2.5rem',label:'Holz' },
+      { bg:'linear-gradient(135deg,#D4A96A,#C17F5A)',  icon:'🌻', size:'2.5rem',label:'Wildblumen' },
+    ],
+    pinterest: 'boho+rustic+wedding+pampas+grass+terracotta',
+    links: [
+      { icon:'📌', label:'Pinterest: Boho Rustic', sub:'Pampasgras & Makramee Ideen', q:'boho+rustic+wedding+pampas+grass' },
+      { icon:'🔍', label:'Google: Boho Hochzeit Bayern', sub:'Rustikale Scheune & Open Air', q:'Boho Hochzeit Bayern rustikal Scheune' },
+      { icon:'📷', label:'Instagram: #BohoWedding', sub:'Echte Boho-Hochzeiten', q:'%23bohowedding', platform:'instagram' },
+    ],
+  },
+  {
+    id: 'coastal',
+    icon: '🌊',
+    name: 'Coastal Chic',
+    desc: 'Meeresrauschen trifft Luxus. Blau-Weiß mit Goldakzenten, Muscheln, Leinen und frische Brise — elegant, kühl, unvergesslich.',
+    mood: 'Frisch & Frei',
+    season: 'Sommer',
+    keywords: ['Meeresblau', 'Leinen', 'Muscheln', 'Weiß-Gold'],
+    tileGrad: 'linear-gradient(135deg,#EBF5FB,#D6EAF8)',
+    tileBorder: '#85C1E9',
+    checkColor: '#1A5276',
+    palette: [
+      { name:'Ozeanblau', hex:'#2E86C1', bg:'#2E86C1' },
+      { name:'Himmel',    hex:'#85C1E9', bg:'#85C1E9' },
+      { name:'Meergrün',  hex:'#76D7C4', bg:'#76D7C4' },
+      { name:'Sand',      hex:'#FDEBD0', bg:'#FDEBD0' },
+      { name:'Weiß',      hex:'#FDFEFE', bg:'#F0F8FF' },
+    ],
+    moodCells: [
+      { bg:'linear-gradient(135deg,#2E86C1,#1A5276)', icon:'🌊', size:'4rem',  label:'Ozean' },
+      { bg:'linear-gradient(135deg,#85C1E9,#5DADE2)', icon:'🐚', size:'2.5rem',label:'Muscheln' },
+      { bg:'linear-gradient(135deg,#FDEBD0,#FAD7A0)', icon:'🌞', size:'2.5rem',label:'Sommer' },
+      { bg:'linear-gradient(135deg,#76D7C4,#48C9B0)', icon:'⚓', size:'2.5rem',label:'Maritime' },
+      { bg:'linear-gradient(135deg,#EBF5FB,#D6EAF8)', icon:'🦢', size:'2.5rem',label:'Eleganz' },
+    ],
+    pinterest: 'coastal+chic+wedding+blue+white+nautical',
+    links: [
+      { icon:'📌', label:'Pinterest: Coastal Chic', sub:'Maritim & elegant am Wasser', q:'coastal+chic+wedding+nautical+blue+white' },
+      { icon:'🔍', label:'Google: Hochzeit am See Bayern', sub:'Starnberger See & Chiemsee Locations', q:'Hochzeit am See Bayern Location' },
+      { icon:'📷', label:'Instagram: #CoastalWedding', sub:'Maritime Hochzeitsfotos', q:'%23coastalwedding', platform:'instagram' },
+    ],
+  },
+  {
+    id: 'winter',
+    icon: '❄️',
+    name: 'Winter Wonderland',
+    desc: 'Märchenhafter Dezember-Zauber. Silber, Weiß, Eisblau und warmes Kerzenlicht. Perfekt für die Hochzeit am 05.12.2026!',
+    mood: 'Magisch',
+    season: 'Winter',
+    keywords: ['Silber & Weiß', 'Kerzenlicht', 'Tannenzweige', 'Kristall'],
+    tileGrad: 'linear-gradient(135deg,#EBF5FB,#E8F0FE)',
+    tileBorder: '#A9CCE3',
+    checkColor: '#1B4F72',
+    palette: [
+      { name:'Eisblau',  hex:'#AED6F1', bg:'#AED6F1' },
+      { name:'Silber',   hex:'#BFC9CA', bg:'#BFC9CA' },
+      { name:'Kristall', hex:'#EBF5FB', bg:'#EBF5FB' },
+      { name:'Gold',     hex:'#C9A96E', bg:'#C9A96E' },
+      { name:'Nachtblau',hex:'#1B2631', bg:'#1B2631' },
+    ],
+    moodCells: [
+      { bg:'linear-gradient(135deg,#1B2631,#2E4057)', icon:'❄️', size:'4rem',  label:'Winterzauber' },
+      { bg:'linear-gradient(135deg,#AED6F1,#85C1E9)', icon:'🤍', size:'2.5rem',label:'Eis & Schnee' },
+      { bg:'linear-gradient(135deg,#FDF8EE,#F5ECD8)', icon:'🕯️', size:'2.5rem',label:'Kerzenschein' },
+      { bg:'linear-gradient(135deg,#C9A96E,#9E7C45)', icon:'✨', size:'2.5rem',label:'Goldglanz' },
+      { bg:'linear-gradient(135deg,#2D6A4F,#1B4332)', icon:'🌲', size:'2.5rem',label:'Tanne' },
+    ],
+    pinterest: 'winter+wonderland+wedding+silver+white+december',
+    links: [
+      { icon:'📌', label:'Pinterest: Winter Wedding', sub:'Silber, Weiß & Kerzenlicht', q:'winter+wonderland+wedding+december+silver' },
+      { icon:'🔍', label:'Google: Winterhochzeit Schloss', sub:'Nymphenburg im Dezember', q:'Winterhochzeit Schloss Bayern Kerzenlicht' },
+      { icon:'📷', label:'Instagram: #WinterWedding', sub:'Winterliche Hochzeitsfotos', q:'%23winterwedding', platform:'instagram' },
+    ],
+  },
+  {
+    id: 'modern',
+    icon: '🖤',
+    name: 'Modern Minimal',
+    desc: 'Weniger ist mehr. Klare Geometrie, große Kontraste, ein Statement-Element. Strukturierte Grüns, Weißraum und präzise Details.',
+    mood: 'Sophisticated',
+    season: 'Ganzjährig',
+    keywords: ['Weißraum', 'Statement-Grün', 'Geometrie', 'Editorial'],
+    tileGrad: 'linear-gradient(135deg,#FAFAFA,#F0F0F0)',
+    tileBorder: '#CCCCCC',
+    checkColor: '#1A1A1A',
+    palette: [
+      { name:'Schwarz',  hex:'#1A1A1A', bg:'#1A1A1A' },
+      { name:'Weiß',     hex:'#FAFAFA', bg:'#F0F0F0' },
+      { name:'Schiefergr',hex:'#64748B', bg:'#64748B' },
+      { name:'Olive',    hex:'#4D5645', bg:'#4D5645' },
+      { name:'Creme',    hex:'#F5F0E8', bg:'#F5F0E8' },
+    ],
+    moodCells: [
+      { bg:'linear-gradient(135deg,#1A1A1A,#2C2C2C)', icon:'🤍', size:'4rem',  label:'Kontrast' },
+      { bg:'linear-gradient(135deg,#F5F0E8,#EBEBEB)', icon:'🌿', size:'2.5rem',label:'Statement-Grün' },
+      { bg:'linear-gradient(135deg,#64748B,#475569)', icon:'📐', size:'2.5rem',label:'Geometrie' },
+      { bg:'linear-gradient(135deg,#4D5645,#3A4234)', icon:'🌱', size:'2.5rem',label:'Struktur' },
+      { bg:'linear-gradient(135deg,#FAFAFA,#F0F0F0)', icon:'◻️', size:'2.5rem',label:'Weißraum' },
+    ],
+    pinterest: 'modern+minimal+wedding+black+white+editorial',
+    links: [
+      { icon:'📌', label:'Pinterest: Modern Minimal', sub:'Editorial & strukturierte Deko', q:'modern+minimal+wedding+editorial+black+white' },
+      { icon:'🔍', label:'Google: Minimalistische Hochzeit', sub:'Strukturierte Floristik & Geometrie', q:'minimalistische Hochzeit Deko strukturiert' },
+      { icon:'📷', label:'Instagram: #MinimalWedding', sub:'Clean & sophisticated', q:'%23minimalwedding', platform:'instagram' },
+    ],
+  },
+];
+
+let activeStyleId = 'romantic';  // Default = passt zur Hochzeit
+
+function renderStyleGrid() {
+  const grid = document.getElementById('styleGrid');
+  if (!grid) return;
+  grid.innerHTML = STYLES.map(s => `
+    <div class="style-tile ${s.id === activeStyleId ? 'selected' : ''}"
+         style="background:${s.tileGrad};border-color:${s.id === activeStyleId ? s.tileBorder : 'var(--border)'};"
+         onclick="selectStyle('${s.id}')">
+      <div class="style-check" style="color:${s.checkColor};">✓</div>
+      <span class="style-tile-icon">${s.icon}</span>
+      <div class="style-tile-name">${s.name}</div>
+      <div class="style-tile-desc">${s.desc.split('.')[0]}.</div>
+      <div class="style-tile-keywords">
+        ${s.keywords.map(k => `<span class="style-kw" style="color:${s.checkColor};">${k}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectStyle(id) {
+  activeStyleId = id;
+  // localStorage merken
+  try { localStorage.setItem('forever_style', id); } catch(e) {}
+  renderStyleGrid();
+  renderMoodboard();
+  renderPalette();
+  renderInspLinks();
+  updateInspSidebar();
+  showToast('✨ Stil gewählt: ' + STYLES.find(s => s.id === id).name);
+}
+
+function renderMoodboard() {
+  const s = STYLES.find(s => s.id === activeStyleId);
+  if (!s) return;
+  document.getElementById('moodTitle').textContent = s.icon + ' ' + s.name;
+
+  const board = document.getElementById('moodboard');
+  board.innerHTML = s.moodCells.map((c, i) => `
+    <div class="mood-cell" style="${i === 0 ? 'grid-row:1/3;' : ''}"
+         onclick="openPinterestCell('${encodeURIComponent(c.label + ' ' + s.name + ' Hochzeit')}')">
+      <div class="mood-bg" style="background:${c.bg};font-size:${c.size};">${c.icon}</div>
+      <div class="mood-overlay">
+        <div class="mood-overlay-text">📌 Pinterest</div>
+      </div>
+      <div class="mood-label">${c.label}</div>
+    </div>
+  `).join('');
+}
+
+function renderPalette() {
+  const s = STYLES.find(s => s.id === activeStyleId);
+  if (!s) return;
+  const strip = document.getElementById('paletteStrip');
+  strip.innerHTML = s.palette.map(p => `
+    <div class="palette-swatch"
+         style="background:${p.bg};"
+         data-hex="${p.hex}"
+         data-name="${p.name}"
+         onclick="copyHex('${p.hex}', '${p.name}', this)"
+         title="${p.name} · ${p.hex}">
+    </div>
+  `).join('');
+}
+
+function copyHex(hex, name, el) {
+  navigator.clipboard?.writeText(hex).then(() => {
+    document.getElementById('copyHint').textContent = `✓ ${hex} kopiert!`;
+    el.classList.add('copied');
+    setTimeout(() => {
+      el.classList.remove('copied');
+      document.getElementById('copyHint').textContent = '';
+    }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = hex; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('copyHint').textContent = `✓ ${hex} kopiert!`;
+    setTimeout(() => document.getElementById('copyHint').textContent = '', 2000);
+  });
+  showToast(`🎨 ${name} · ${hex} in Zwischenablage`);
+}
+
+function renderInspLinks() {
+  const s = STYLES.find(s => s.id === activeStyleId);
+  if (!s) return;
+  const wrap = document.getElementById('inspLinks');
+  wrap.innerHTML = s.links.map(l => {
+    let href = l.platform === 'instagram'
+      ? `https://www.instagram.com/explore/tags/${l.q}/`
+      : l.icon === '📌'
+        ? `https://www.pinterest.de/search/pins/?q=${l.q}`
+        : `https://www.google.com/search?q=${encodeURIComponent(l.q)}&tbm=isch`;
+    return `
+      <a href="${href}" target="_blank" rel="noopener" class="insp-link-btn">
+        <span class="insp-link-icon">${l.icon}</span>
+        <div>
+          <div class="insp-link-text">${l.label}</div>
+          <div class="insp-link-sub">${l.sub}</div>
+        </div>
+        <span style="margin-left:auto;color:var(--warm-gray);font-size:.8rem;">↗</span>
+      </a>`;
+  }).join('');
+}
+
+function updateInspSidebar() {
+  const s = STYLES.find(s => s.id === activeStyleId);
+  if (!s) return;
+  document.getElementById('inspStyle').textContent  = s.icon;
+  document.getElementById('inspSeason').textContent = s.season.split(' / ')[0];
+  document.getElementById('inspMood').textContent   = s.mood;
+  // Style-Description
+  document.getElementById('styleDescription').textContent = s.desc;
+}
+
+function openPinterest() {
+  const s = STYLES.find(s => s.id === activeStyleId);
+  window.open(`https://www.pinterest.de/search/pins/?q=${s.pinterest}`, '_blank', 'noopener');
+  return false;
+}
+
+function openPinterestCell(q) {
+  window.open(`https://www.pinterest.de/search/pins/?q=${q}`, '_blank', 'noopener');
+}
+
+function saveStyleNotes() {
+  try {
+    localStorage.setItem('forever_style_notes', document.getElementById('styleNotes')?.value || '');
+  } catch(e) {}
+}
+
+function initInspiration() {
+  // Gespeicherten Stil laden
+  try {
+    const saved = localStorage.getItem('forever_style');
+    if (saved && STYLES.find(s => s.id === saved)) activeStyleId = saved;
+    const notes = localStorage.getItem('forever_style_notes');
+    if (notes && document.getElementById('styleNotes')) {
+      document.getElementById('styleNotes').value = notes;
+    }
+  } catch(e) {}
+  renderStyleGrid();
+  renderMoodboard();
+  renderPalette();
+  renderInspLinks();
+  updateInspSidebar();
+}
+
+// ── Init ──────────────────────────────────────────────────
 setTimeout(() => {
   document.querySelectorAll('.budget-fill, .score-fill').forEach(el => {
     const w = el.style.width;
@@ -2151,6 +4164,11 @@ setTimeout(() => {
   geocodeAddress();
   initGuests();
   renderGuestTable();
+  initInspiration();
+  initBudgetPanel();
+  initLocChecks();
+  initBandOption();
+  initSeating();
 }, 300);
 </script>
 </body>
