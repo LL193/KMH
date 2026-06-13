@@ -2209,18 +2209,30 @@ function closeLegalModal() {
   </div>
 
   <!-- RSVP-Link Banner -->
-  <div style="background:linear-gradient(135deg,#2C2C2C,#3D3530);border-radius:14px;padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-    <span style="font-size:1.4rem;">💌</span>
-    <div style="flex:1;min-width:200px;">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:white;margin-bottom:3px;">RSVP-Seite für Gäste</div>
-      <div style="font-size:.72rem;color:rgba(255,255,255,.55);">Öffnet im gleichen Browser → Daten werden automatisch synchronisiert</div>
+  <div style="background:linear-gradient(135deg,#2C2C2C,#3D3530);border-radius:14px;padding:18px 24px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <span style="font-size:1.4rem;">💌</span>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:white;margin-bottom:6px;">RSVP-Link für Gäste</div>
+        <a id="rsvpLinkDisplay" href="#" target="_blank" rel="noopener"
+           style="font-size:.7rem;color:var(--gold-light);word-break:break-all;text-decoration:none;opacity:.8;">
+          Link wird geladen …
+        </a>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;">
+        <button id="rsvpCopyBtn" class="btn btn-primary" style="padding:8px 16px;font-size:.78rem;white-space:nowrap;">
+          📋 Link kopieren
+        </button>
+        <button class="btn" onclick="openRsvpPreview()"
+          style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);padding:8px 16px;font-size:.78rem;white-space:nowrap;">
+          👁 Vorschau
+        </button>
+      </div>
     </div>
-    <button class="btn" onclick="openRSVP()" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:white;white-space:nowrap;flex-shrink:0;">
-      💌 RSVP-Seite öffnen
-    </button>
-    <button class="btn btn-outline" onclick="refreshGuests()" style="white-space:nowrap;flex-shrink:0;border-color:rgba(201,169,110,.4);color:var(--gold-light);">
-      🔄 Aktualisieren
-    </button>
+    <div style="margin-top:12px;font-size:.7rem;color:rgba(255,255,255,.4);line-height:1.6;">
+      Diesen Link per WhatsApp, E-Mail oder auf der Einladungskarte verschicken.<br>
+      Gäste können direkt zu- oder absagen — Daten fließen automatisch in die Gästeliste.
+    </div>
   </div>
 
   <!-- Neue Anmeldungen Badge -->
@@ -3291,7 +3303,7 @@ Name: ${v.name} | Kategorie: ${v.category} | Stadt: ${v.city} | Notizen: ${v.des
 Auf Deutsch, max. 120 Wörter, freundlich und professionell, direkt beginnend mit der Anrede, kein Betreff.`;
   try {
     const res  = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': 'DEIN_ANTHROPIC_API_KEY', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 400, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
@@ -3408,7 +3420,7 @@ async function callMentor(userMsg) {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': 'DEIN_ANTHROPIC_API_KEY', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
@@ -3516,7 +3528,7 @@ async function callClaude(userMsg) {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': 'DEIN_ANTHROPIC_API_KEY', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
@@ -4235,13 +4247,29 @@ document.getElementById('addGuestModal')?.addEventListener('click', e => {
   if (e.target === e.currentTarget) closeAddGuestModal();
 });
 
-// ── RSVP-Seite öffnen ────────────────────────────────────
-function openRSVP() {
-  window.open('forever-rsvp.html', '_blank');
-  showToast('💌 RSVP-Seite geöffnet – Daten fließen automatisch zurück');
+// ── RSVP-Link generieren ─────────────────────────────────
+function updateRsvpLink() {
+  if (!currentUser) return;
+  const link = `https://ll193.github.io/KMH/forever-rsvp.html?uid=${currentUser.id}`;
+  const el   = document.getElementById('rsvpLinkDisplay');
+  if (el) {
+    el.textContent = link;
+    el.href = link;
+  }
+  const copyBtn = document.getElementById('rsvpCopyBtn');
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(link).then(() => showToast('📋 RSVP-Link kopiert!'));
+    };
+  }
 }
 
-// ── Aktualisieren + neue Anmeldungen Badge ───────────────
+function openRsvpPreview() {
+  if (!currentUser) return;
+  window.open(`https://ll193.github.io/KMH/forever-rsvp.html?uid=${currentUser.id}`, '_blank', 'noopener');
+}
+
+function openRSVP() { openRsvpPreview(); }
 let lastKnownCount = 0;
 function refreshGuests() {
   const guests  = getGuests();
@@ -5447,6 +5475,84 @@ function initPremiumListener() {
     .subscribe();
 }
 
+// ── Echtzeit RSVP-Listener ───────────────────────────────
+function initRsvpListener() {
+  if (!currentUser) return;
+
+  sb.channel('rsvp-new-' + currentUser.id)
+    .on('postgres_changes', {
+      event:  'INSERT',
+      schema: 'public',
+      table:  'guests',
+      filter: `user_id=eq.${currentUser.id}`,
+    }, payload => {
+      const g = payload.new;
+      if (!g) return;
+
+      // In localStorage synchronisieren
+      try {
+        const local = JSON.parse(localStorage.getItem('forever_guests_v1') || '[]');
+        const exists = local.find(x => x.id === g.id || x.name === g.name);
+        if (!exists) {
+          local.push({
+            id:       g.id,
+            name:     g.name,
+            category: g.group_name || 'RSVP-Formular',
+            rsvp:     g.rsvp === 'zugesagt' ? 'yes' : g.rsvp === 'abgesagt' ? 'no' : 'pending',
+            menu:     g.menu || null,
+            dietary:  null,
+            plusOne:  null,
+            table:    null,
+            source:   'rsvp-form',
+            submittedAt: new Date().toISOString(),
+          });
+          localStorage.setItem('forever_guests_v1', JSON.stringify(local));
+        }
+      } catch(e) {}
+
+      // Benachrichtigung anzeigen
+      const rsvpText = g.rsvp === 'zugesagt' ? '✅ zugesagt' : '❌ abgesagt';
+      showRsvpNotification(g.name, rsvpText, g.menu);
+
+      // Gästeliste live aktualisieren falls Tab offen
+      const panel = document.getElementById('panel-guests');
+      if (panel?.classList.contains('active')) {
+        renderGuestTable();
+      }
+
+      // Dashboard aktualisieren
+      updateDashboard();
+    })
+    .subscribe();
+}
+
+// ── RSVP-Benachrichtigungs-Toast ─────────────────────────
+function showRsvpNotification(name, status, menu) {
+  // Notification-Banner im Gäste-Tab
+  const banner  = document.getElementById('newRsvpBanner');
+  const textEl  = document.getElementById('newRsvpText');
+  if (banner && textEl) {
+    textEl.textContent = `🆕 ${name} hat ${status}${menu ? ' · ' + menu : ''}`;
+    banner.style.display = 'flex';
+  }
+
+  // Floating Toast
+  showToast(`💌 ${name} hat gerade ${status}!`);
+
+  // Nav-Badge Gäste aktualisieren
+  const guests = JSON.parse(localStorage.getItem('forever_guests_v1') || '[]');
+  const badge  = document.querySelector('.ntab:nth-child(4) .badge');
+  if (badge) badge.textContent = guests.length;
+
+  // Browser-Notification wenn Tab im Hintergrund
+  if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+    new Notification('💌 Neue RSVP-Rückmeldung!', {
+      body: `${name} hat ${status}`,
+      icon: '💍',
+    });
+  }
+}
+
 // ═══════════════════════════════════════════════════════
 // SUPABASE CONFIG
 // ══════════════════════════════════════════════
@@ -5525,9 +5631,15 @@ function onLogin(user) {
   loadFromSupabase();
   loadSubscriptionStatus();
   initPremiumListener();
+  initRsvpListener();
+  // Browser-Notifications anfragen
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
   setTimeout(() => {
     startOnboarding();
     updateDashboard();
+    updateRsvpLink();
   }, 500);
 }
 
