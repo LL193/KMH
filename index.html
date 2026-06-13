@@ -2894,18 +2894,19 @@ function setGeoStatus(cls, text) {
 }
 
 // ── Google Maps URL bauen ────────────────────────────────
-// Strategie: Mit Koordinaten → "Near" Search, Google zeigt Umkreis
-// Ohne Koordinaten → Textsuche mit Adresse
 function buildMapsUrl(query) {
+  const addr = document.getElementById('proxAddress').value.trim() || 'München';
+
   if (proxLat && proxLon) {
-    // Google Maps Nearby Search mit Koordinaten + Radius als Zoom-Hint
-    // &near= funktioniert nicht zuverlässig; stattdessen Koordinaten in den Query einbauen
-    // und @lat,lon,zoom einstellen (zoom ≈ 11 für 15km, 10 für 30km, 9 für 50km)
+    // Zoom je nach Radius
     const zoom = proxRadius <= 5 ? 13 : proxRadius <= 15 ? 12 : proxRadius <= 30 ? 11 : proxRadius <= 60 ? 10 : 9;
-    const fullQuery = `${query} near ${proxLat},${proxLon}`;
-    return `https://www.google.com/maps/search/${encodeURIComponent(fullQuery)}/@${proxLat},${proxLon},${zoom}z`;
+    // Ortsname aus Geocoding-Status extrahieren (z.B. "Hurlach, Igling")
+    const geoText = document.getElementById('geoStatus')?.textContent?.replace('✓ ', '').split(',')[0].trim() || addr;
+    // Korrekte Strategie: Query + Ortsname → Google findet lokale Ergebnisse
+    // Koordinaten nur für Karten-Zentrierung verwenden
+    const localQuery = `${query} ${geoText}`;
+    return `https://www.google.com/maps/search/${encodeURIComponent(localQuery)}/@${proxLat},${proxLon},${zoom}z`;
   } else {
-    const addr = document.getElementById('proxAddress').value.trim() || 'München';
     return `https://www.google.com/maps/search/${encodeURIComponent(query + ' ' + addr)}`;
   }
 }
