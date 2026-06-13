@@ -3285,13 +3285,13 @@ async function generateVendorBriefing() {
   textEl.textContent = '⏳ Briefing wird generiert …';
   const names  = getNames();
   const dateStr = formatDateDE(getWeddingDate());
-  const guests = getGuests().filter(g => g.rsvp === 'yes').length;
+  const guests = getGuests().length;
   const prompt = `Schreibe eine kurze, persönliche Kontaktanfrage für die Hochzeit von ${names.p1} & ${names.p2} am ${dateStr} mit ca. ${guests} Gästen an diesen Dienstleister:
 Name: ${v.name} | Kategorie: ${v.category} | Stadt: ${v.city} | Notizen: ${v.description}
 Auf Deutsch, max. 120 Wörter, freundlich und professionell, direkt beginnend mit der Anrede, kein Betreff.`;
   try {
     const res  = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 400, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
