@@ -1303,6 +1303,21 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 }
 .pw-reset-msg.error   { background: #FDDDE6; color: #C0607A; display: block; }
 .pw-reset-msg.success { background: #D4EDD9; color: #3D7A4A; display: block; }
+/* ── QUICK-ADD PANEL ── */
+.quick-add-panel { background: linear-gradient(135deg,#FDF8EE,#FAF5E8); border: 1.5px solid var(--gold-light); border-radius: 14px; padding: 18px 20px; margin-top: 16px; display: none; animation: fadeSlide .25s ease; }
+.quick-add-panel.visible { display: block; }
+.quick-add-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.quick-add-icon { font-size: 1.4rem; }
+.quick-add-title { font-size: .9rem; font-weight: 600; color: var(--charcoal); flex: 1; }
+.quick-add-close { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--warm-gray); padding: 0; }
+.quick-add-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.qa-field label { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 4px; }
+.qa-field input, .qa-field select { width: 100%; padding: 9px 12px; border: 1.5px solid var(--cream); border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .82rem; color: var(--charcoal); background: white; outline: none; transition: border-color .2s; }
+.qa-field input:focus, .qa-field select:focus { border-color: var(--gold); }
+.quick-add-hint { font-size: .72rem; color: var(--warm-gray); background: white; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; border: 1px solid var(--border); line-height: 1.5; }
+.quick-add-actions { display: flex; gap: 8px; }
+.prox-cat-tile.selected { background: var(--gold) !important; border-color: var(--gold-dark) !important; color: white !important; }
+.prox-cat-tile.selected .pct-km { color: rgba(255,255,255,.8) !important; }
 .trial-banner {
   background: linear-gradient(135deg, #7C3AED, #5B21B6);
   color: white; padding: 10px 24px;
@@ -2430,6 +2445,61 @@ function closeLegalModal() {
     <div class="prox-cat-grid" id="proxCatGrid">
       <!-- Wird per JS gerendert -->
     </div>
+
+    <!-- Quick-Add Panel: erscheint nach Kategorie-Klick -->
+    <div class="quick-add-panel" id="quickAddPanel">
+      <div class="quick-add-header">
+        <span class="quick-add-icon" id="qaIcon">📸</span>
+        <span class="quick-add-title" id="qaTitle">Gefunden? Direkt hinzufügen →</span>
+        <button class="quick-add-close" onclick="closeQuickAdd()">✕</button>
+      </div>
+      <div class="quick-add-hint" id="qaHint">
+        Google Maps wurde geöffnet. Dienstleister gefunden? Namen kopieren, hier einfügen und direkt speichern.
+      </div>
+      <div class="quick-add-grid">
+        <div class="qa-field" style="grid-column:1/-1;">
+          <label>Name des Dienstleisters *</label>
+          <input type="text" id="qaName" placeholder="z.B. Fotostudio Müller" onkeypress="if(event.key==='Enter')saveQuickAdd()">
+        </div>
+        <div class="qa-field">
+          <label>Kategorie</label>
+          <select id="qaCategory">
+            <option>Location</option><option>Catering</option><option>Fotografie</option>
+            <option>Floristik</option><option>Musik & DJ</option><option>Hochzeitstorte</option>
+            <option>Transport</option><option>Trauringe</option><option>Make-up</option>
+            <option>Einladungen</option><option>Hotel</option><option>Dekoration</option>
+          </select>
+        </div>
+        <div class="qa-field">
+          <label>Status</label>
+          <select id="qaStatus">
+            <option value="searching">⚡ Gesucht</option>
+            <option value="contacted">○ Kontaktiert</option>
+            <option value="booked">✓ Gebucht</option>
+          </select>
+        </div>
+        <div class="qa-field">
+          <label>Stadt / Ort</label>
+          <input type="text" id="qaCity" placeholder="z.B. München">
+        </div>
+        <div class="qa-field">
+          <label>Preis / Budget</label>
+          <input type="text" id="qaPrice" placeholder="z.B. 1.500 €">
+        </div>
+        <div class="qa-field" style="grid-column:1/-1;">
+          <label>Telefon oder Website (optional)</label>
+          <input type="text" id="qaContact" placeholder="z.B. +49 89 … oder www.beispiel.de">
+        </div>
+        <div class="qa-field" style="grid-column:1/-1;">
+          <label>Notiz (optional)</label>
+          <input type="text" id="qaNote" placeholder="z.B. Termin vereinbart, guter Eindruck …">
+        </div>
+      </div>
+      <div class="quick-add-actions">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveQuickAdd()">✓ Zu meinen Dienstleistern</button>
+        <button class="btn btn-outline" onclick="closeQuickAdd()">Abbrechen</button>
+      </div>
+    </div>
   </div>
 
   <!-- Meine Dienstleister -->
@@ -2913,7 +2983,108 @@ function buildMapsUrl(query) {
 
 function openCategorySearch(encodedQuery) {
   const query = decodeURIComponent(encodedQuery);
+  // Google Maps in neuem Tab öffnen
   window.open(buildMapsUrl(query), '_blank', 'noopener');
+  // Passende Kategorie aus CATEGORIES herausfinden
+  const cat = CATEGORIES.find(c => encodeURIComponent(c.query) === encodedQuery);
+  // Quick-Add Panel zeigen
+  openQuickAdd(cat);
+}
+
+// ── Quick-Add Panel ──────────────────────────────────────
+function openQuickAdd(cat) {
+  const panel  = document.getElementById('quickAddPanel');
+  const icon   = document.getElementById('qaIcon');
+  const title  = document.getElementById('qaTitle');
+  const hint   = document.getElementById('qaHint');
+  const catSel = document.getElementById('qaCategory');
+
+  // Kategorie vorausfüllen
+  if (cat) {
+    if (icon)  icon.textContent  = cat.icon;
+    if (title) title.textContent = `${cat.name} gefunden? Direkt hinzufügen →`;
+    if (hint)  hint.innerHTML    = `📍 Google Maps wurde geöffnet für <strong>${cat.name}</strong>. Namen des Anbieters kopieren, hier einfügen und speichern.`;
+    // Dropdown auf passende Kategorie setzen
+    if (catSel) {
+      const optMatch = Array.from(catSel.options).find(o =>
+        o.text.toLowerCase().includes(cat.name.toLowerCase().split(' ')[0])
+      );
+      if (optMatch) catSel.value = optMatch.value;
+    }
+  }
+
+  // Ort aus Geocoding vorausfüllen
+  const geoText = document.getElementById('geoStatus')?.textContent?.replace('✓ ', '').split(',')[0].trim();
+  const cityEl  = document.getElementById('qaCity');
+  if (cityEl && geoText) cityEl.value = geoText;
+
+  // Felder leeren
+  document.getElementById('qaName').value    = '';
+  document.getElementById('qaPrice').value   = '';
+  document.getElementById('qaContact').value = '';
+  document.getElementById('qaNote').value    = '';
+  document.getElementById('qaStatus').value  = 'searching';
+
+  // Panel einblenden + scrollen
+  panel.classList.add('visible');
+  setTimeout(() => {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('qaName').focus();
+  }, 100);
+
+  // Gewählte Kachel markieren
+  document.querySelectorAll('.prox-cat-tile').forEach(t => t.classList.remove('selected'));
+}
+
+function closeQuickAdd() {
+  document.getElementById('quickAddPanel')?.classList.remove('visible');
+  document.querySelectorAll('.prox-cat-tile').forEach(t => t.classList.remove('selected'));
+}
+
+function saveQuickAdd() {
+  const name = document.getElementById('qaName').value.trim();
+  if (!name) { showToast('⚠ Bitte einen Namen eingeben'); document.getElementById('qaName').focus(); return; }
+
+  const cat     = document.getElementById('qaCategory').value;
+  const status  = document.getElementById('qaStatus').value;
+  const city    = document.getElementById('qaCity').value.trim();
+  const price   = document.getElementById('qaPrice').value.trim();
+  const contact = document.getElementById('qaContact').value.trim();
+  const note    = document.getElementById('qaNote').value.trim();
+
+  // Icon aus CATEGORIES
+  const catObj = CATEGORIES.find(c => c.name === cat);
+  const icon   = catObj ? catObj.icon : '🤝';
+
+  // Website oder Telefon trennen
+  const isUrl   = contact.startsWith('http') || contact.startsWith('www');
+  const phone   = !isUrl ? contact : null;
+  const website = isUrl ? (contact.startsWith('http') ? contact : 'https://' + contact) : null;
+
+  const newVendor = {
+    id:          'v' + Date.now(),
+    icon,
+    name,
+    category:    cat,
+    city:        city || 'Unbekannt',
+    status,
+    price:       price || '–',
+    description: note || `${cat} · Über Umkreissuche gefunden.`,
+    phone,
+    email:       null,
+    website,
+    tags:        [cat, city].filter(Boolean),
+  };
+
+  VENDORS.push(newVendor);
+  renderVendors(VENDORS);
+  closeQuickAdd();
+  showToast(`✓ ${name} zu Meine Dienstleister hinzugefügt`);
+
+  // Zur Dienstleister-Liste scrollen
+  setTimeout(() => {
+    document.querySelector('.vendor-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
 }
 
 function openAllCategories() {
