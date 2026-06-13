@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOREVER · Rückmeldung zur Hochzeit</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --ivory: #FAF7F2; --cream: #F5EFE6;
+  --gold: #C9A96E; --gold-dark: #9E7C45; --gold-light: #E8D5B0;
+  --rose: #D4849A; --sage: #7E9E8A; --sage-light: #C8DDD0;
+  --charcoal: #2C2C2C; --warm-gray: #8A8078;
+  --border: rgba(201,169,110,0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--ivory); color: var(--charcoal);
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1a1410, #2C2C2C, #3D3028);
+  padding: clamp(48px,8vw,80px) clamp(20px,5vw,40px) clamp(40px,6vw,60px);
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(201,169,110,.18) 0%, transparent 65%);
+  border-radius: 50%; pointer-events: none;
+}
+.hero-logo {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin: 0 auto 20px;
+  box-shadow: 0 4px 20px rgba(201,169,110,.4);
+  position: relative; z-index: 1;
+}
+.hero-eyebrow {
+  font-size: .62rem; font-weight: 700; letter-spacing: .25em;
+  text-transform: uppercase; color: var(--gold-light);
+  opacity: .8; margin-bottom: 10px; position: relative; z-index: 1;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 3rem); font-weight: 300;
+  color: white; line-height: 1.15; margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.hero-title strong { font-weight: 600; color: var(--gold-light); }
+.hero-sub {
+  font-size: .88rem; color: rgba(255,255,255,.55);
+  max-width: 440px; margin: 0 auto; line-height: 1.7;
+  position: relative; z-index: 1;
+}
+.hero-date {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,169,110,.15); border: 1px solid rgba(201,169,110,.3);
+  border-radius: 20px; padding: 6px 16px;
+  font-size: .78rem; color: var(--gold-light);
+  margin-top: 18px; position: relative; z-index: 1;
+}
+
+/* ── CARD ── */
+.card-wrap {
+  max-width: 560px; margin: -28px auto 40px;
+  padding: 0 clamp(16px,4vw,24px);
+}
+.card {
+  background: white; border-radius: 20px;
+  box-shadow: 0 8px 48px rgba(44,44,44,.14);
+  overflow: hidden;
+}
+
+/* ── STEPS ── */
+.steps-indicator {
+  display: flex; background: var(--cream);
+  border-bottom: 1px solid var(--border);
+}
+.step-dot {
+  flex: 1; padding: 12px 6px; text-align: center;
+  font-size: .62rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--warm-gray);
+  position: relative; transition: all .25s;
+}
+.step-dot.active { color: var(--gold-dark); }
+.step-dot.done   { color: var(--sage); }
+.step-dot::after {
+  content: ''; position: absolute; bottom: 0; left: 10%; right: 10%;
+  height: 2px; background: transparent; transition: background .25s;
+}
+.step-dot.active::after { background: var(--gold); }
+.step-dot.done::after   { background: var(--sage); }
+
+/* ── FORM BODY ── */
+.form-body { padding: clamp(24px,5vw,36px); }
+.step-panel { display: none; animation: fadeIn .3s ease; }
+.step-panel.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.step-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600; margin-bottom: 4px;
+}
+.step-desc { font-size: .84rem; color: var(--warm-gray); margin-bottom: 24px; line-height: 1.6; }
+
+/* ── FIELDS ── */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: .62rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--warm-gray); margin-bottom: 5px;
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--cream); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: .9rem;
+  color: var(--charcoal); background: var(--ivory); outline: none;
+  transition: border-color .2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--gold); background: white;
+  box-shadow: 0 0 0 3px rgba(201,169,110,.1);
+}
+.field textarea { resize: vertical; min-height: 80px; }
+
+/* ── RSVP BUTTONS (Ja/Nein) ── */
+.rsvp-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.rsvp-btn {
+  padding: 18px 12px; border-radius: 14px;
+  border: 2px solid var(--border);
+  background: white; cursor: pointer; text-align: center;
+  transition: all .2s; font-family: 'Jost', sans-serif;
+}
+.rsvp-btn:hover { border-color: var(--gold-light); transform: translateY(-2px); }
+.rsvp-btn.selected-yes { border-color: var(--sage); background: #F0FBF4; }
+.rsvp-btn.selected-no  { border-color: var(--rose);  background: #FFF5F7; }
+.rsvp-btn-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+.rsvp-btn-label { font-size: .9rem; font-weight: 600; }
+.rsvp-btn-sub   { font-size: .72rem; color: var(--warm-gray); margin-top: 3px; }
+
+/* ── MENU CHOICE ── */
+.menu-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.menu-opt {
+  padding: 12px 8px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: white;
+  cursor: pointer; text-align: center; transition: all .2s;
+  font-family: 'Jost', sans-serif;
+}
+.menu-opt:hover { border-color: var(--gold-light); }
+.menu-opt.selected { border-color: var(--gold); background: #FDF9F0; }
+.menu-opt-icon  { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+.menu-opt-label { font-size: .75rem; font-weight: 600; }
+
+/* ── PLUS ONE ── */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: var(--cream); border-radius: 10px;
+  margin-bottom: 14px; cursor: pointer;
+}
+.toggle-label { font-size: .84rem; font-weight: 500; }
+.toggle-switch {
+  width: 42px; height: 24px; background: var(--border);
+  border-radius: 12px; position: relative; transition: background .2s;
+  flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--gold); }
+.toggle-switch::after {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: white; top: 3px; left: 3px;
+  transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.toggle-switch.on::after { transform: translateX(18px); }
+.plusone-fields { display: none; }
+.plusone-fields.visible { display: block; }
+
+/* ── SUBMIT BTN ── */
+.submit-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white; border: none; border-radius: 12px;
+  font-family: 'Jost', sans-serif; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all .25s; letter-spacing: .04em;
+  box-shadow: 0 4px 16px rgba(201,169,110,.4); margin-top: 8px;
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,169,110,.5); }
+.submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.btn-outline-nav {
+  background: transparent; border: 1.5px solid var(--border);
+  color: var(--warm-gray); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: .84rem;
+  padding: 10px 20px; cursor: pointer; transition: all .2s;
+  margin-bottom: 12px;
+}
+.btn-outline-nav:hover { border-color: var(--gold); color: var(--gold-dark); }
+
+/* ── SUCCESS ── */
+.success-screen {
+  display: none; text-align: center;
+  padding: clamp(40px,8vw,64px) clamp(24px,5vw,40px);
+}
+.success-screen.visible { display: block; animation: fadeIn .4s ease; }
+.success-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sage), #5A8070);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; margin: 0 auto 20px;
+  box-shadow: 0 4px 20px rgba(126,158,138,.4);
+}
+.success-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 600; margin-bottom: 8px;
+}
+.success-sub { font-size: .88rem; color: var(--warm-gray); line-height: 1.7; }
+
+/* ── ABSAGE ── */
+.decline-screen { display: none; text-align: center; padding: clamp(40px,8vw,64px) clamp(24px,5vw,40px); }
+.decline-screen.visible { display: block; animation: fadeIn .4s ease; }
+
+/* ── ERROR ── */
+.error-msg { background: #FDDDE6; color: #C0607A; border-radius: 8px; padding: 10px 14px; font-size: .8rem; margin-top: 10px; display: none; }
+.error-msg.visible { display: block; }
+
+@media (max-width: 480px) {
+  .menu-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">💍</div>
+  <div class="hero-eyebrow">♦ Einladung zur Hochzeit</div>
+  <h1 class="hero-title" id="heroTitle">Wir heiraten!</h1>
+  <p class="hero-sub" id="heroSub">Wir würden uns sehr freuen, euren besonderen Tag mit euch zu teilen.</p>
+  <div class="hero-date" id="heroDate">📅 Datum wird geladen …</div>
+</div>
+
+<!-- CARD -->
+<div class="card-wrap">
+  <div class="card">
+
+    <!-- Steps Indicator -->
+    <div class="steps-indicator" id="stepsIndicator">
+      <div class="step-dot active" id="dot0">1 · Zusage</div>
+      <div class="step-dot" id="dot1">2 · Details</div>
+      <div class="step-dot" id="dot2">3 · Fertig</div>
+    </div>
+
+    <div class="form-body">
+
+      <!-- ── SCHRITT 1: Ja/Nein ── -->
+      <div class="step-panel active" id="step0">
+        <div class="step-title">Kannst du kommen? 🎉</div>
+        <div class="step-desc">Bitte gib uns kurz Bescheid — das hilft uns bei der Planung.</div>
+
+        <div class="field">
+          <label>Dein Name *</label>
+          <input type="text" id="guestName" placeholder="Vor- und Nachname" autocomplete="name">
+        </div>
+
+        <div class="rsvp-choice">
+          <div class="rsvp-btn" id="btnYes" onclick="selectRsvp('yes')">
+            <span class="rsvp-btn-icon">🎊</span>
+            <div class="rsvp-btn-label">Ich bin dabei!</div>
+            <div class="rsvp-btn-sub">Freue mich sehr</div>
+          </div>
+          <div class="rsvp-btn" id="btnNo" onclick="selectRsvp('no')">
+            <span class="rsvp-btn-icon">😢</span>
+            <div class="rsvp-btn-label">Leider nicht</div>
+            <div class="rsvp-btn-sub">Ich kann nicht kommen</div>
+          </div>
+        </div>
+
+        <div class="error-msg" id="err0">Bitte deinen Namen eingeben und eine Auswahl treffen.</div>
+        <button class="submit-btn" onclick="nextStep(0)">Weiter →</button>
+      </div>
+
+      <!-- ── SCHRITT 2: Details ── -->
+      <div class="step-panel" id="step1">
+        <div class="step-title" id="step1Title">Schön, dass du dabei bist! 🌸</div>
+        <div class="step-desc" id="step1Desc">Noch ein paar kurze Angaben für die Planung.</div>
+
+        <!-- Menüwahl (nur bei Zusage) -->
+        <div id="menuSection">
+          <div class="field">
+            <label>Menüwahl</label>
+          </div>
+          <div class="menu-grid">
+            <div class="menu-opt" id="menu-meat" onclick="selectMenu('Fleisch')">
+              <span class="menu-opt-icon">🥩</span>
+              <div class="menu-opt-label">Fleisch</div>
+            </div>
+            <div class="menu-opt" id="menu-vegi" onclick="selectMenu('Vegetarisch')">
+              <span class="menu-opt-icon">🥗</span>
+              <div class="menu-opt-label">Vegetarisch</div>
+            </div>
+            <div class="menu-opt" id="menu-vegan" onclick="selectMenu('Vegan')">
+              <span class="menu-opt-icon">🌱</span>
+              <div class="menu-opt-label">Vegan</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Allergien oder Unverträglichkeiten?</label>
+            <input type="text" id="dietary" placeholder="z.B. Laktoseintoleranz, Glutenfrei … (optional)">
+          </div>
+
+          <!-- Begleitung -->
+          <div class="toggle-row" onclick="togglePlusOne()">
+            <span class="toggle-label">👫 Ich komme mit Begleitung</span>
+            <div class="toggle-switch" id="plusOneToggle"></div>
+          </div>
+          <div class="plusone-fields" id="plusOneFields">
+            <div class="field">
+              <label>Name der Begleitung</label>
+              <input type="text" id="plusOneName" placeholder="Vor- und Nachname">
+            </div>
+            <div class="field">
+              <label>Menü der Begleitung</label>
+              <div class="menu-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="menu-opt" id="menu2-meat" onclick="selectMenu2('Fleisch')">
+                  <span class="menu-opt-icon">🥩</span><div class="menu-opt-label">Fleisch</div>
+                </div>
+                <div class="menu-opt" id="menu2-vegi" onclick="selectMenu2('Vegetarisch')">
+                  <span class="menu-opt-icon">🥗</span><div class="menu-opt-label">Vegetarisch</div>
+                </div>
+                <div class="menu-opt" id="menu2-vegan" onclick="selectMenu2('Vegan')">
+                  <span class="menu-opt-icon">🌱</span><div class="menu-opt-label">Vegan</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nachricht -->
+        <div class="field">
+          <label>Persönliche Nachricht (optional)</label>
+          <textarea id="message" placeholder="Eine persönliche Nachricht ans Brautpaar …"></textarea>
+        </div>
+
+        <div class="error-msg" id="err1">Bitte ein Menü auswählen.</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-outline-nav" onclick="prevStep(1)">← Zurück</button>
+          <button class="submit-btn" onclick="submitRsvp()" id="submitBtn">
+            💍 Rückmeldung absenden
+          </button>
+        </div>
+      </div>
+
+    </div><!-- end form-body -->
+
+    <!-- ── ERFOLG: ZUSAGE ── -->
+    <div class="success-screen" id="successYes">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Wir freuen uns!</div>
+      <p class="success-sub" id="successText">
+        Deine Rückmeldung wurde gespeichert.<br>
+        Wir sehen uns am großen Tag! 💍
+      </p>
+      <div style="margin-top:24px;padding:16px;background:var(--cream);border-radius:12px;font-size:.8rem;color:var(--charcoal);line-height:1.7;" id="successSummary"></div>
+    </div>
+
+    <!-- ── ERFOLG: ABSAGE ── -->
+    <div class="decline-screen" id="successNo">
+      <div style="font-size:3rem;margin-bottom:16px;">🥀</div>
+      <div class="success-title">Schade, dass du nicht kannst</div>
+      <p class="success-sub">
+        Wir haben deine Absage gespeichert und denken trotzdem an dich!<br>
+        Vielleicht sehen wir uns beim Feiern danach. 💛
+      </p>
+    </div>
+
+  </div><!-- end card -->
+</div><!-- end card-wrap -->
+
+<div style="text-align:center;font-size:.7rem;color:var(--warm-gray);padding-bottom:40px;">
+  Mit ♥ erstellt mit <strong>FOREVER Hochzeitsplaner</strong>
+</div>
+
+<script>
+// ── Supabase ──────────────────────────────────────────────
+const SUPABASE_URL = 'https://rfcdhxzamthrieaoxagx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmY2RoeHphbXRocmllYW94YWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNjU2MjksImV4cCI6MjA5MzY0MTYyOX0.BW8Aze_AMtmunKbit2ocGLfLvum14_44-lLp9zgNpno';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── URL-Parameter lesen ───────────────────────────────────
+// Link-Format: forever-rsvp.html?uid=USER_ID
+// z.B. https://ll193.github.io/KMH/forever-rsvp.html?uid=abc123
+const params  = new URLSearchParams(window.location.search);
+const hostUid = params.get('uid'); // Supabase User-ID des Brautpaars
+
+// ── State ─────────────────────────────────────────────────
+let rsvpChoice  = null; // 'yes' | 'no'
+let menuChoice  = null;
+let menu2Choice = null;
+let plusOneOn   = false;
+let currentStep = 0;
+
+// ── Hochzeitsdaten laden und Hero befüllen ────────────────
+async function loadWeddingInfo() {
+  if (!hostUid) {
+    // Kein uid-Parameter → generische Anzeige
+    document.getElementById('heroTitle').innerHTML = 'Wir heiraten!';
+    document.getElementById('heroDate').textContent = '📅 Datum folgt';
+    return;
+  }
+  try {
+    const { data } = await sb
+      .from('wedding')
+      .select('partner1, partner2, wedding_date')
+      .eq('user_id', hostUid)
+      .single();
+    if (data) {
+      const p1 = data.partner1 || 'Wir';
+      const p2 = data.partner2 || '';
+      document.getElementById('heroTitle').innerHTML =
+        `<strong>${p1} & ${p2}</strong><br>heiraten!`;
+      document.getElementById('heroSub').textContent =
+        `Wir würden uns sehr freuen, diesen besonderen Tag mit euch zu feiern.`;
+      if (data.wedding_date) {
+        const d = new Date(data.wedding_date);
+        const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+        const days   = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+        document.getElementById('heroDate').textContent =
+          `📅 ${days[d.getDay()]}, ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
+        document.title = `${p1} & ${p2} heiraten · RSVP`;
+      }
+    }
+  } catch(e) {}
+}
+
+// ── RSVP Ja/Nein wählen ──────────────────────────────────
+function selectRsvp(choice) {
+  rsvpChoice = choice;
+  document.getElementById('btnYes').className = 'rsvp-btn' + (choice==='yes'?' selected-yes':'');
+  document.getElementById('btnNo').className  = 'rsvp-btn' + (choice==='no'?' selected-no':'');
+}
+
+// ── Menü wählen ───────────────────────────────────────────
+function selectMenu(m) {
+  menuChoice = m;
+  ['meat','vegi','vegan'].forEach(k => {
+    document.getElementById('menu-'+k).classList.toggle('selected',
+      (k==='meat'&&m==='Fleisch')||(k==='vegi'&&m==='Vegetarisch')||(k==='vegan'&&m==='Vegan'));
+  });
+}
+function selectMenu2(m) {
+  menu2Choice = m;
+  ['meat','vegi','vegan'].forEach(k => {
+    document.getElementById('menu2-'+k).classList.toggle('selected',
+      (k==='meat'&&m==='Fleisch')||(k==='vegi'&&m==='Vegetarisch')||(k==='vegan'&&m==='Vegan'));
+  });
+}
+
+// ── Begleitung Toggle ─────────────────────────────────────
+function togglePlusOne() {
+  plusOneOn = !plusOneOn;
+  document.getElementById('plusOneToggle').classList.toggle('on', plusOneOn);
+  document.getElementById('plusOneFields').classList.toggle('visible', plusOneOn);
+}
+
+// ── Schritt-Navigation ────────────────────────────────────
+function updateDots(step) {
+  [0,1,2].forEach(i => {
+    const dot = document.getElementById('dot'+i);
+    dot.className = 'step-dot' + (i===step ? ' active' : i<step ? ' done' : '');
+  });
+}
+
+function nextStep(from) {
+  document.getElementById('err'+from).classList.remove('visible');
+
+  if (from === 0) {
+    const name = document.getElementById('guestName').value.trim();
+    if (!name || !rsvpChoice) {
+      document.getElementById('err0').classList.add('visible'); return;
+    }
+    // Bei Absage: direkt zu Schritt 2 mit vereinfachter Ansicht
+    document.getElementById('step1Title').textContent =
+      rsvpChoice === 'yes' ? 'Schön, dass du dabei bist! 🌸' : 'Schade, dass du nicht kannst 💛';
+    document.getElementById('step1Desc').textContent =
+      rsvpChoice === 'yes'
+        ? 'Noch ein paar kurze Angaben für die Planung.'
+        : 'Optional: Hinterlasse uns eine Nachricht.';
+    document.getElementById('menuSection').style.display = rsvpChoice === 'yes' ? '' : 'none';
+  }
+
+  document.getElementById('step'+from).classList.remove('active');
+  document.getElementById('step'+(from+1)).classList.add('active');
+  currentStep = from+1;
+  updateDots(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep(from) {
+  document.getElementById('step'+from).classList.remove('active');
+  document.getElementById('step'+(from-1)).classList.add('active');
+  currentStep = from-1;
+  updateDots(currentStep);
+}
+
+// ── Absenden ─────────────────────────────────────────────
+async function submitRsvp() {
+  document.getElementById('err1').classList.remove('visible');
+
+  // Menü-Validierung nur bei Zusage
+  if (rsvpChoice === 'yes' && !menuChoice) {
+    document.getElementById('err1').classList.add('visible'); return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = '⏳ Wird gespeichert …';
+
+  const name      = document.getElementById('guestName').value.trim();
+  const dietary   = document.getElementById('dietary').value.trim();
+  const message   = document.getElementById('message').value.trim();
+  const plusOne   = plusOneOn ? document.getElementById('plusOneName').value.trim() : null;
+
+  const rsvpMap = { yes: 'zugesagt', no: 'abgesagt' };
+
+  try {
+    // Gast in Supabase speichern
+    const { error } = await sb.from('guests').insert({
+      user_id:    hostUid || null,
+      name:       name,
+      group_name: 'RSVP-Formular',
+      rsvp:       rsvpMap[rsvpChoice],
+      menu:       menuChoice || null,
+      notes:      [
+        dietary   ? `Allergie: ${dietary}`   : null,
+        message   ? `Nachricht: ${message}`  : null,
+        plusOne   ? `+1: ${plusOne} (${menu2Choice||'–'})` : null,
+      ].filter(Boolean).join(' | ') || null,
+    });
+
+    if (error) throw error;
+
+    // Auch in localStorage für lokalen Sync (falls Planer im selben Browser)
+    try {
+      const local = JSON.parse(localStorage.getItem('forever_guests_v1') || '[]');
+      local.push({
+        id: 'rsvp_' + Date.now(), name,
+        category: 'RSVP-Formular',
+        rsvp: rsvpChoice === 'yes' ? 'yes' : 'no',
+        menu: menuChoice, dietary, plusOne,
+        plusOneMenu: menu2Choice,
+        source: 'rsvp-form', submittedAt: new Date().toISOString(),
+      });
+      localStorage.setItem('forever_guests_v1', JSON.stringify(local));
+    } catch(e) {}
+
+    // Erfolgsscreen zeigen
+    document.getElementById('stepsIndicator').style.display = 'none';
+    document.getElementById('step1').classList.remove('active');
+    updateDots(2);
+
+    if (rsvpChoice === 'yes') {
+      document.getElementById('successSummary').innerHTML = `
+        <strong>${name}</strong><br>
+        Menü: ${menuChoice}${dietary ? ` · ${dietary}` : ''}<br>
+        ${plusOne ? `Begleitung: ${plusOne} (${menu2Choice||'–'})` : 'Ohne Begleitung'}<br>
+        ${message ? `💬 „${message}"` : ''}
+      `;
+      document.getElementById('successYes').classList.add('visible');
+    } else {
+      document.getElementById('successNo').classList.add('visible');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '💍 Rückmeldung absenden';
+    document.getElementById('err1').textContent = 'Fehler beim Speichern: ' + (e.message || 'Bitte erneut versuchen.');
+    document.getElementById('err1').classList.add('visible');
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────
+loadWeddingInfo();
+</script>
+</body>
+</html>
