@@ -435,47 +435,23 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
 .vendor-btn.primary:hover { background: var(--gold-dark); }
 
 /* ── VENDOR DETAIL MODAL ── */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(44,44,44,0.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-backdrop.open { display: flex; }
+.modal { background: white; border-radius: 20px; padding: 36px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 24px 80px rgba(44,44,44,0.2); animation: modalIn 0.3s ease; }
 /* ── VENDOR MODAL EDIT ── */
 .modal-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
 .modal-edit-field label { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 4px; }
-.modal-edit-field input,
-.modal-edit-field select,
-.modal-edit-field textarea {
-  width: 100%; padding: 9px 12px;
-  border: 1.5px solid var(--cream); border-radius: 8px;
-  font-family: 'Jost', sans-serif; font-size: .82rem;
-  color: var(--charcoal); background: var(--ivory); outline: none;
-  transition: border-color .2s; resize: vertical;
-}
-.modal-edit-field input:focus,
-.modal-edit-field select:focus,
-.modal-edit-field textarea:focus { border-color: var(--gold); background: white; }
+.modal-edit-field input, .modal-edit-field select, .modal-edit-field textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--cream); border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .82rem; color: var(--charcoal); background: var(--ivory); outline: none; transition: border-color .2s; resize: vertical; }
+.modal-edit-field input:focus, .modal-edit-field select:focus, .modal-edit-field textarea:focus { border-color: var(--gold); background: white; }
 .modal-edit-field.full { grid-column: 1 / -1; }
-
-/* KI-Briefing Box */
-.vendor-briefing {
-  background: linear-gradient(135deg, #1a1410, #2C2C2C);
-  border-radius: 12px; padding: 16px 18px; margin-top: 14px;
-}
-.vendor-briefing-title {
-  font-size: .72rem; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--gold-light); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
-}
-.vendor-briefing-text {
-  font-size: .78rem; color: rgba(255,255,255,.75); line-height: 1.7;
-  white-space: pre-wrap; min-height: 80px;
-}
+/* KI-Briefing */
+.vendor-briefing { background: linear-gradient(135deg, #1a1410, #2C2C2C); border-radius: 12px; padding: 16px 18px; margin-top: 14px; }
+.vendor-briefing-title { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 10px; }
+.vendor-briefing-text { font-size: .78rem; color: rgba(255,255,255,.75); line-height: 1.7; white-space: pre-wrap; min-height: 60px; }
 .vendor-briefing-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-.briefing-btn {
-  padding: 6px 14px; border-radius: 20px; font-size: .72rem; font-weight: 600;
-  border: 1px solid rgba(201,169,110,.4); color: var(--gold-light);
-  background: rgba(201,169,110,.1); cursor: pointer; transition: all .2s;
-  font-family: 'Jost', sans-serif;
-}
+.briefing-btn { padding: 6px 14px; border-radius: 20px; font-size: .72rem; font-weight: 600; border: 1px solid rgba(201,169,110,.4); color: var(--gold-light); background: rgba(201,169,110,.1); cursor: pointer; transition: all .2s; font-family: 'Jost', sans-serif; }
 .briefing-btn:hover { background: rgba(201,169,110,.2); }
 .briefing-btn.copy { border-color: var(--sage-light); color: #A8D8B5; background: rgba(126,158,138,.1); }
-.modal { background: white; border-radius: 20px; padding: 36px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 24px 80px rgba(44,44,44,0.2); animation: modalIn 0.3s ease; }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--cream); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .modal-close:hover { background: var(--rose-light); }
@@ -1667,45 +1643,34 @@ function closeLegalModal() {
 
 <!-- ══ VENDOR DETAIL MODAL ══ -->
 <div class="modal-backdrop" id="vendorModal">
-  <div class="modal" style="max-height:90vh;overflow-y:auto;max-width:560px;">
+  <div class="modal" style="max-width:560px;">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
-      <div class="modal-icon" id="mIcon" style="font-size:2rem;"></div>
+      <div class="modal-icon" id="mIcon" style="font-size:2rem;margin-bottom:0;"></div>
       <div>
         <div class="modal-title" id="mName" style="margin-bottom:2px;"></div>
         <div class="modal-cat" id="mCat"></div>
       </div>
     </div>
-
-    <!-- Edit-Felder -->
-    <div class="modal-edit-grid" id="mEditGrid">
-      <!-- Wird per JS befüllt -->
-    </div>
-
+    <!-- Editierbare Felder -->
+    <div class="modal-edit-grid" id="mEditGrid"></div>
     <!-- Tags -->
     <div class="modal-tags" id="mTags" style="margin-bottom:12px;"></div>
-
     <!-- KI-Briefing -->
-    <div class="vendor-briefing" id="mBriefing">
-      <div class="vendor-briefing-title">
-        🤖 KI-Briefing für diesen Dienstleister
-      </div>
-      <div class="vendor-briefing-text" id="mBriefingText">
-        Klick auf „Briefing generieren" um eine persönliche Kontaktvorlage zu erstellen.
-      </div>
+    <div class="vendor-briefing">
+      <div class="vendor-briefing-title">🤖 KI-Briefing für diesen Dienstleister</div>
+      <div class="vendor-briefing-text" id="mBriefingText">Klick auf „Briefing generieren" um eine persönliche Kontaktvorlage zu erstellen.</div>
       <div class="vendor-briefing-actions">
         <button class="briefing-btn" onclick="generateVendorBriefing()">✦ Briefing generieren</button>
         <button class="briefing-btn copy" onclick="copyBriefing()">📋 Kopieren</button>
       </div>
     </div>
-
-    <!-- Aktionen -->
+    <!-- Google/Web/Tel Actions -->
     <div class="modal-actions" id="mActions" style="margin-top:14px;"></div>
-
-    <!-- Speichern -->
+    <!-- Speichern / Löschen -->
     <div style="display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
       <button class="btn btn-primary" style="flex:1;" onclick="saveVendorEdit()">✓ Änderungen speichern</button>
-      <button class="btn btn-outline" onclick="deleteVendorFromModal()" style="color:#C0607A;border-color:#C0607A;">🗑</button>
+      <button class="btn btn-outline" onclick="deleteVendorFromModal()" style="color:#C0607A;border-color:#C0607A;" title="Löschen">🗑</button>
     </div>
   </div>
 </div>
@@ -3234,67 +3199,50 @@ function openVendorModal(id) {
   document.getElementById('mName').textContent = v.name;
   document.getElementById('mCat').textContent  = `${v.category} · ${v.city}`;
   document.getElementById('mTags').innerHTML   = v.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
-
-  // Briefing zurücksetzen
   document.getElementById('mBriefingText').textContent = 'Klick auf „Briefing generieren" um eine persönliche Kontaktvorlage zu erstellen.';
 
-  // Edit-Felder befüllen
+  // Editierbare Felder
+  const cats = ['Location','Catering','Fotografie','Floristik','Musik & DJ','Hochzeitstorte','Transport','Trauringe','Make-up','Einladungen','Hotel','Dekoration'];
   document.getElementById('mEditGrid').innerHTML = `
-    <div class="modal-edit-field full">
-      <label>Name</label>
-      <input type="text" id="veditName" value="${v.name}">
+    <div class="modal-edit-field full"><label>Name</label>
+      <input type="text" id="veditName" value="${v.name.replace(/"/g,'&quot;')}">
     </div>
-    <div class="modal-edit-field">
-      <label>Kategorie</label>
-      <select id="veditCategory">
-        ${['Location','Catering','Fotografie','Floristik','Musik & DJ','Hochzeitstorte','Transport','Trauringe','Make-up','Einladungen','Hotel','Dekoration']
-          .map(c => `<option${c===v.category?' selected':''}>${c}</option>`).join('')}
-      </select>
+    <div class="modal-edit-field"><label>Kategorie</label>
+      <select id="veditCategory">${cats.map(c=>`<option${c===v.category?' selected':''}>${c}</option>`).join('')}</select>
     </div>
-    <div class="modal-edit-field">
-      <label>Status</label>
+    <div class="modal-edit-field"><label>Status</label>
       <select id="veditStatus">
         <option value="searching"${v.status==='searching'?' selected':''}>⚡ Gesucht</option>
         <option value="contacted"${v.status==='contacted'?' selected':''}>○ Kontaktiert</option>
         <option value="booked"${v.status==='booked'?' selected':''}>✓ Gebucht</option>
       </select>
     </div>
-    <div class="modal-edit-field">
-      <label>Stadt</label>
-      <input type="text" id="veditCity" value="${v.city || ''}">
+    <div class="modal-edit-field"><label>Stadt</label>
+      <input type="text" id="veditCity" value="${(v.city||'').replace(/"/g,'&quot;')}">
     </div>
-    <div class="modal-edit-field">
-      <label>Preis / Budget</label>
-      <input type="text" id="veditPrice" value="${v.price || ''}" placeholder="z.B. 1.500 €">
+    <div class="modal-edit-field"><label>Preis / Budget</label>
+      <input type="text" id="veditPrice" value="${(v.price||'').replace(/"/g,'&quot;')}" placeholder="z.B. 1.500 €">
     </div>
-    <div class="modal-edit-field">
-      <label>Telefon</label>
-      <input type="text" id="veditPhone" value="${v.phone || ''}" placeholder="+49 …">
+    <div class="modal-edit-field"><label>Telefon</label>
+      <input type="text" id="veditPhone" value="${(v.phone||'').replace(/"/g,'&quot;')}" placeholder="+49 …">
     </div>
-    <div class="modal-edit-field">
-      <label>E-Mail</label>
-      <input type="email" id="veditEmail" value="${v.email || ''}" placeholder="info@beispiel.de">
+    <div class="modal-edit-field"><label>E-Mail</label>
+      <input type="email" id="veditEmail" value="${(v.email||'').replace(/"/g,'&quot;')}" placeholder="info@…">
     </div>
-    <div class="modal-edit-field full">
-      <label>Website</label>
-      <input type="text" id="veditWebsite" value="${v.website || ''}" placeholder="https://…">
+    <div class="modal-edit-field full"><label>Website</label>
+      <input type="text" id="veditWebsite" value="${(v.website||'').replace(/"/g,'&quot;')}" placeholder="https://…">
     </div>
-    <div class="modal-edit-field full">
-      <label>Notizen / Beschreibung</label>
-      <textarea id="veditDesc" rows="3">${v.description || ''}</textarea>
-    </div>
-  `;
+    <div class="modal-edit-field full"><label>Notizen</label>
+      <textarea id="veditDesc" rows="3">${v.description||''}</textarea>
+    </div>`;
 
-  // Aktions-Buttons
   document.getElementById('mActions').innerHTML = `
     <a href="${buildGoogleUrl(v.category)}" target="_blank" rel="noopener" class="btn btn-google" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-      Google Maps: ${v.category}
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>Google Maps
     </a>
-    ${v.website ? `<a href="${v.website}" target="_blank" rel="noopener" class="btn btn-outline" style="text-decoration:none;">🌐 Website</a>` : ''}
-    ${v.phone   ? `<a href="tel:${v.phone}" class="btn btn-outline" style="text-decoration:none;">📞 ${v.phone}</a>` : ''}
-    ${v.email   ? `<a href="mailto:${v.email}" class="btn btn-outline" style="text-decoration:none;">✉️ E-Mail</a>` : ''}
-  `;
+    ${v.website?`<a href="${v.website}" target="_blank" rel="noopener" class="btn btn-outline" style="text-decoration:none;">🌐 Web</a>`:''}
+    ${v.phone?`<a href="tel:${v.phone}" class="btn btn-outline" style="text-decoration:none;">📞 Anrufen</a>`:''}
+    ${v.email?`<a href="mailto:${v.email}" class="btn btn-outline" style="text-decoration:none;">✉️ E-Mail</a>`:''}`;
 
   document.getElementById('vendorModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -3303,7 +3251,6 @@ function openVendorModal(id) {
 function saveVendorEdit() {
   const v = VENDORS.find(x => x.id === currentVendorId);
   if (!v) return;
-
   v.name        = document.getElementById('veditName').value.trim()    || v.name;
   v.category    = document.getElementById('veditCategory').value;
   v.status      = document.getElementById('veditStatus').value;
@@ -3313,14 +3260,9 @@ function saveVendorEdit() {
   v.email       = document.getElementById('veditEmail').value.trim()   || null;
   v.website     = document.getElementById('veditWebsite').value.trim() || null;
   v.description = document.getElementById('veditDesc').value.trim();
-
-  // Icon aktualisieren
-  const catObj = CATEGORIES.find(c => c.name === v.category);
+  const catObj  = CATEGORIES.find(c => c.name === v.category);
   if (catObj) v.icon = catObj.icon;
-
-  // Tags aktualisieren
   v.tags = [v.category, v.city].filter(Boolean);
-
   renderVendors(VENDORS);
   closeModal();
   showToast(`✓ ${v.name} gespeichert`);
@@ -3336,56 +3278,30 @@ function deleteVendorFromModal() {
   showToast('🗑 Dienstleister entfernt');
 }
 
-// ── KI-Briefing für Dienstleister ────────────────────────
 async function generateVendorBriefing() {
   const v = VENDORS.find(x => x.id === currentVendorId);
   if (!v) return;
-
   const textEl = document.getElementById('mBriefingText');
   textEl.textContent = '⏳ Briefing wird generiert …';
-
-  const names   = getNames();
+  const names  = getNames();
   const dateStr = formatDateDE(getWeddingDate());
-  const guests  = getGuests().filter(g => g.rsvp === 'yes').length;
-  const bd      = getBudget();
-  const budget  = bd ? bd.categories.find(c => c.name.toLowerCase().includes(v.category.toLowerCase()))?.soll || '–' : '–';
-
-  const prompt = `Du bist ein professioneller Hochzeitsberater. Schreibe eine kurze, persönliche Kontaktanfrage (E-Mail oder Nachricht) an einen Dienstleister für die Hochzeit von ${names.p1} & ${names.p2}.
-
-Dienstleister:
-- Name: ${v.name}
-- Kategorie: ${v.category}
-- Stadt: ${v.city}
-
-Hochzeitsdetails:
-- Datum: ${dateStr}
-- Gästeanzahl: ca. ${guests} Personen
-- Budget für ${v.category}: ca. ${typeof budget === 'number' ? budget.toLocaleString('de-DE') + ' €' : budget}
-- Notizen: ${v.description}
-
-Schreibe eine freundliche, professionelle Anfrage auf Deutsch. Maximal 150 Wörter. Direkt beginnend mit der Anrede, ohne Betreff. Konkret und persönlich.`;
-
+  const guests = getGuests().filter(g => g.rsvp === 'yes').length;
+  const prompt = `Schreibe eine kurze, persönliche Kontaktanfrage für die Hochzeit von ${names.p1} & ${names.p2} am ${dateStr} mit ca. ${guests} Gästen an diesen Dienstleister:
+Name: ${v.name} | Kategorie: ${v.category} | Stadt: ${v.city} | Notizen: ${v.description}
+Auf Deutsch, max. 120 Wörter, freundlich und professionell, direkt beginnend mit der Anrede, kein Betreff.`;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 400,
-        messages: [{ role: 'user', content: prompt }]
-      })
+    const res  = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 400, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
-    const text = data.content?.[0]?.text || 'Fehler beim Generieren.';
-    textEl.textContent = text;
-  } catch {
-    textEl.textContent = 'Verbindungsfehler — bitte erneut versuchen.';
-  }
+    textEl.textContent = data.content?.[0]?.text || 'Fehler beim Generieren.';
+  } catch { textEl.textContent = 'Verbindungsfehler — bitte erneut versuchen.'; }
 }
 
 function copyBriefing() {
   const text = document.getElementById('mBriefingText').textContent;
-  if (!text || text.includes('Klick auf')) { showToast('⚠ Zuerst Briefing generieren'); return; }
+  if (text.includes('Klick auf') || text.includes('generiert')) { showToast('⚠ Zuerst Briefing generieren'); return; }
   navigator.clipboard.writeText(text).then(() => showToast('📋 Briefing kopiert!'));
 }
 
@@ -3396,10 +3312,13 @@ function closeModal() {
 document.getElementById('vendorModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
 function showAddVendorHint() {
-  // Scrollt zum Quick-Add Panel in der Dienstleister-Suche
   showPanel('vendors', document.querySelector('.ntab:nth-child(6)'));
   setTimeout(() => document.getElementById('quickAddPanel')?.scrollIntoView({ behavior: 'smooth' }), 300);
 }
+
+// ═══════════════════════════════════════════════════════
+//  KI-SYSTEME – Zwei Modi: Mentor + Chat-Assistent
+// ═══════════════════════════════════════════════════════
 
 // ── Basis-Planungskontext (für beide Systeme) ───────────
 function getPlanningContext() {
