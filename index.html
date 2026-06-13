@@ -3,8 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOREVER – Dein Hochzeitsplaner</title>
+<title>FOREVER – Kostenloser Hochzeitsplaner App | Sitzplan, Budget & Gästeliste</title>
+
+<!-- ── SEO ── -->
+<meta name="description" content="Plane deine Hochzeit digital: Sitzplan erstellen, Budget verwalten, Gästeliste mit RSVP & KI-Mentor. Kostenlos, DSGVO-konform, kein Download nötig.">
+<meta name="keywords" content="Hochzeitsplaner App, Sitzplan Hochzeit erstellen, Hochzeitsbudget, RSVP Hochzeit, digitaler Hochzeitsplaner, kostenlos">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://ll193.github.io/KMH/">
+
+<!-- ── Open Graph ── -->
+<meta property="og:type"        content="website">
+<meta property="og:title"       content="FOREVER – Kostenloser Hochzeitsplaner App">
+<meta property="og:description" content="Sitzplan, Budget, Gästeliste & KI-Mentor. Kostenlos starten, DSGVO-konform.">
+<meta property="og:url"         content="https://ll193.github.io/KMH/">
+<meta property="og:locale"      content="de_DE">
+
+<!-- ── Twitter Card ── -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="FOREVER – Kostenloser Hochzeitsplaner App">
+<meta name="twitter:description" content="Sitzplan, Budget, Gästeliste & KI-Mentor für eure Traumhochzeit.">
+
+<!-- ── Schema.org ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "FOREVER Hochzeitsplaner",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+  "description": "Digitaler Hochzeitsplaner mit KI-Assistent, Sitzplan, Gästeliste, Budget-Tracker und RSVP-Management.",
+  "url": "https://ll193.github.io/KMH/",
+  "inLanguage": "de-DE",
+  "featureList": ["Sitzplan erstellen", "Budget verwalten", "Gästeliste & RSVP", "KI-Hochzeits-Mentor", "Dienstleister-Suche", "Inspiration & Moodboard"]
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --ivory: #FAF7F2;
@@ -23,7 +58,100 @@
   --shadow-hover: 0 8px 48px rgba(44,44,44,0.14);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── AUTH SCREEN ── */
+#authScreen {
+  position: fixed; inset: 0; z-index: 99999;
+  background: var(--ivory);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Jost', sans-serif;
+  pointer-events: all;
+}
+#authScreen.hidden { display: none !important; }
+#authScreen * { pointer-events: all !important; }
+.auth-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 8px 64px rgba(44,44,44,0.1);
+  text-align: center;
+  position: relative; z-index: 99999;
+}
+.auth-tabs {
+  display: flex; border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 24px; overflow: hidden;
+  position: relative; z-index: 99999;
+}
+.auth-tab {
+  flex: 1; padding: 10px; font-size: 0.82rem; font-weight: 500;
+  cursor: pointer !important; transition: all .2s; background: white; border: none;
+  color: var(--warm-gray); position: relative; z-index: 99999;
+}
+.auth-logo-mark {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: white; margin: 0 auto 16px;
+  box-shadow: 0 4px 20px rgba(201,169,110,0.4);
+}
+.auth-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--charcoal);
+  margin-bottom: 4px;
+}
+.auth-sub {
+  font-size: 0.75rem; color: var(--warm-gray);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.auth-tab.active { background: var(--gold); color: white; }
+.auth-field { margin-bottom: 14px; text-align: left; }
+.auth-field label {
+  display: block; font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--warm-gray); margin-bottom: 5px;
+}
+.auth-field input {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--cream); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem;
+  color: var(--charcoal); background: var(--ivory); outline: none;
+  transition: border-color .2s;
+}
+.auth-field input:focus { border-color: var(--gold); }
+.auth-btn {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white; border: none; border-radius: 12px;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; margin-top: 8px;
+  transition: all .2s; letter-spacing: 0.05em;
+}
+.auth-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(201,169,110,0.4); }
+.auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.auth-msg {
+  margin-top: 14px; font-size: 0.8rem; min-height: 20px;
+  color: var(--rose);
+}
+.auth-msg.success { color: var(--sage); }
+
+/* ── APP HIDDEN UNTIL LOGGED IN ── */
+#appWrapper { display: none; }
+#appWrapper.visible { display: block; }
+
+/* ── USER BADGE IN HEADER ── */
+.user-badge {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.75rem; color: var(--warm-gray);
+  cursor: pointer; padding: 6px 12px;
+  border: 1px solid var(--border); border-radius: 20px;
+  background: white; transition: all .2s;
+}
+.user-badge:hover { border-color: var(--gold); color: var(--gold); }
+
+
 body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--charcoal); min-height: 100vh; overflow-x: hidden; }
 
 /* ── PETALS ── */
@@ -1146,14 +1274,302 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   .mood-cell:first-child { grid-row: auto; border-radius: 12px 0 0 0; }
   .modal-info { grid-template-columns: 1fr; }
 }
-@media (max-width: 480px) {
-  .dash-grid { grid-template-columns: 1fr 1fr; }
-  .hero-stats { flex-wrap: wrap; gap: 20px; }
-  .vendor-grid { grid-template-columns: 1fr; }
+/* ── TRIAL BANNER ── */
+.trial-banner {
+  background: linear-gradient(135deg, #7C3AED, #5B21B6);
+  color: white; padding: 10px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; font-size: .8rem;
+  position: sticky; top: 68px; z-index: 95;
 }
+.trial-banner.urgent { background: linear-gradient(135deg, #DC2626, #B91C1C); }
+.trial-banner.hidden { display: none; }
+.trial-banner-text { display: flex; align-items: center; gap: 8px; }
+.trial-days-badge {
+  background: rgba(255,255,255,.2); border-radius: 20px;
+  padding: 3px 10px; font-weight: 700; font-size: .82rem;
+  white-space: nowrap;
+}
+.trial-upgrade-btn {
+  background: white; color: #5B21B6;
+  border: none; border-radius: 20px;
+  padding: 6px 16px; font-size: .78rem; font-weight: 700;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+  font-family: 'Jost', sans-serif;
+}
+.trial-banner.urgent .trial-upgrade-btn { color: #B91C1C; }
+.trial-upgrade-btn:hover { transform: scale(1.04); }
+
+/* ── PAYWALL OVERLAY ── */
+.paywall-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(20,16,12,.85); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.paywall-overlay.hidden { display: none; }
+.paywall-card {
+  background: white; border-radius: 24px;
+  max-width: 480px; width: 100%;
+  box-shadow: 0 24px 80px rgba(0,0,0,.3);
+  overflow: hidden;
+}
+.paywall-hero {
+  background: linear-gradient(135deg, #1a1410, #2C2C2C);
+  padding: 32px 28px 24px; text-align: center;
+}
+.paywall-icon { font-size: 2.8rem; margin-bottom: 12px; }
+.paywall-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 600; color: white; margin-bottom: 6px;
+}
+.paywall-sub { font-size: .82rem; color: rgba(255,255,255,.55); }
+.paywall-body { padding: 24px 28px; }
+.paywall-price-row {
+  display: flex; align-items: baseline; gap: 6px;
+  justify-content: center; margin-bottom: 20px;
+}
+.paywall-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem; font-weight: 600; color: var(--charcoal);
+}
+.paywall-price-period { font-size: .88rem; color: var(--warm-gray); }
+.paywall-features {
+  display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;
+}
+.paywall-feature {
+  display: flex; align-items: center; gap: 10px;
+  font-size: .84rem; color: var(--charcoal);
+}
+.paywall-feature::before {
+  content: '✓'; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--sage-light); color: var(--sage);
+  font-size: .7rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.paywall-cta {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white; border: none; border-radius: 12px;
+  font-family: 'Jost', sans-serif; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all .25s; letter-spacing: .04em;
+  box-shadow: 0 4px 16px rgba(201,169,110,.4);
+}
+.paywall-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,169,110,.5); }
+.paywall-footer {
+  text-align: center; font-size: .72rem;
+  color: var(--warm-gray); margin-top: 12px; line-height: 1.6;
+}
+.paywall-footer a { color: var(--gold-dark); }
+.onboarding-overlay {
+  position: fixed; inset: 0; z-index: 50000;
+  background: rgba(20,16,12,0.75); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.onboarding-overlay.hidden { display: none; }
+.onboarding-card {
+  background: white; border-radius: 24px;
+  max-width: 520px; width: 100%;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.25);
+  overflow: hidden; animation: modalIn .35s ease;
+}
+.onboarding-hero {
+  background: linear-gradient(135deg, #1a1410, #2C2C2C, #3D3028);
+  padding: 36px 32px 28px; text-align: center; position: relative;
+}
+.onboarding-hero::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(201,169,110,.2) 0%, transparent 65%);
+  border-radius: 50%;
+}
+.onboarding-logo {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin: 0 auto 16px;
+  box-shadow: 0 4px 20px rgba(201,169,110,.4);
+}
+.onboarding-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 600; color: white; margin-bottom: 6px;
+}
+.onboarding-sub { font-size: .82rem; color: rgba(255,255,255,.55); }
+.onboarding-steps {
+  display: flex; justify-content: center; gap: 8px; margin-top: 20px;
+}
+.onboarding-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.25); transition: all .25s;
+}
+.onboarding-dot.active { background: var(--gold); transform: scale(1.3); }
+.onboarding-dot.done { background: var(--sage); }
+.onboarding-body { padding: 28px 32px; }
+.onboarding-step { display: none; }
+.onboarding-step.active { display: block; animation: fadeSlide .3s ease; }
+.onboarding-step-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 600; margin-bottom: 6px;
+}
+.onboarding-step-desc { font-size: .84rem; color: var(--warm-gray); margin-bottom: 20px; line-height: 1.6; }
+.onboarding-actions { display: flex; gap: 10px; margin-top: 20px; }
+.onboarding-skip { font-size: .75rem; color: var(--warm-gray); background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; }
+
+/* ── MOBILE NAV ── */
+.mobile-menu-btn {
+  display: none; background: none; border: none;
+  font-size: 1.3rem; cursor: pointer; padding: 6px;
+  color: var(--charcoal);
+}
+@media (max-width: 640px) {
+  .mobile-menu-btn { display: flex; align-items: center; }
+  .nav-tabs { display: none; flex-direction: column; padding: 8px 16px; gap: 0; }
+  .nav-tabs.mobile-open { display: flex; }
+  .ntab { border-bottom: 1px solid var(--border); border-left: none; }
+  .weather-badge .weather-info { display: none; }
+  .days-badge .edit-hint { display: none; }
+}
+
+/* ── TOAST UPGRADE ── */
+.toast-progress {
+  position: absolute; bottom: 0; left: 0; height: 3px;
+  background: var(--gold-light); border-radius: 0 0 24px 24px;
+  animation: toastProgress 3s linear forwards;
+}
+@keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
 </style>
 </head>
 <body>
+
+<!-- ══ AUTH SCREEN ══ -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo-mark">💍</div>
+    <div class="auth-title">FOREVER</div>
+    <div class="auth-sub">Dein persönlicher Hochzeitsplaner</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Anmelden</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Registrieren</button>
+    </div>
+
+    <div id="loginForm">
+      <div class="auth-field">
+        <label>E-Mail</label>
+        <input type="email" id="loginEmail" placeholder="eure@email.de" autocomplete="email"
+          onkeypress="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="auth-field">
+        <label>Passwort</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"
+          onkeypress="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">Anmelden →</button>
+      <div style="margin-top:12px;">
+        <a href="#" onclick="event.preventDefault();doPasswordReset()" style="font-size:.72rem;color:var(--warm-gray);text-decoration:underline;">Passwort vergessen?</a>
+      </div>
+    </div>
+
+    <div id="registerForm" style="display:none;">
+      <div class="auth-field">
+        <label>E-Mail</label>
+        <input type="email" id="regEmail" placeholder="eure@email.de" autocomplete="email"
+          onkeypress="if(event.key==='Enter')doRegister()">
+      </div>
+      <div class="auth-field">
+        <label>Passwort (mind. 6 Zeichen)</label>
+        <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password"
+          onkeypress="if(event.key==='Enter')doRegister()">
+      </div>
+      <div class="auth-field">
+        <label>Passwort wiederholen</label>
+        <input type="password" id="regPassword2" placeholder="••••••••" autocomplete="new-password"
+          onkeypress="if(event.key==='Enter')doRegister()">
+      </div>
+      <button class="auth-btn" onclick="doRegister()">Konto erstellen →</button>
+    </div>
+
+    <div class="auth-msg" id="authMsg"></div>
+    <div style="margin-top:24px;font-size:0.7rem;color:var(--warm-gray);">
+      <a href="#" onclick="event.preventDefault();showLegalModal('impressum')" style="color:var(--warm-gray);text-decoration:underline;">Impressum</a>
+       · 
+      <a href="#" onclick="event.preventDefault();showLegalModal('datenschutz')" style="color:var(--warm-gray);text-decoration:underline;">Datenschutz</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEGAL MODALS ══ -->
+<div id="legalBackdrop" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(44,44,44,0.5);backdrop-filter:blur(4px);" onclick="closeLegalModal()"></div>
+<div id="legalModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000000;background:white;border-radius:20px;padding:36px 32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 64px rgba(44,44,44,0.2);font-family:'Jost',sans-serif;">
+  <button onclick="closeLegalModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--warm-gray);">✕</button>
+  <div id="legalContent"></div>
+</div>
+
+<script>
+function showLegalModal(type) {
+  const content = document.getElementById('legalContent');
+  if (type === 'impressum') {
+    content.innerHTML = `
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin-bottom:16px;">Impressum</h2>
+      <p style="font-size:.85rem;line-height:1.7;color:var(--charcoal);">
+        <strong>KM Hochzeitsplaner</strong><br><br>
+        <strong>Vertreten durch:</strong><br>
+        [Vorname Nachname]<br><br>
+        <strong>Anschrift:</strong><br>
+        [Straße Hausnummer]<br>
+        [PLZ Ort]<br><br>
+        <strong>Kontakt:</strong><br>
+        E-Mail: [email@beispiel.de]<br>
+        Telefon: [+49 XXX XXXXXXX]<br><br>
+        <strong>Verantwortlich für den Inhalt gem. § 55 Abs. 2 RStV:</strong><br>
+        [Vorname Nachname], Anschrift wie oben
+      </p>
+    `;
+  } else if (type === 'datenschutz') {
+    content.innerHTML = `
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin-bottom:16px;">Datenschutzerklärung</h2>
+      <div style="font-size:.82rem;line-height:1.7;color:var(--charcoal);">
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">1. Verantwortlicher</h3>
+        <p>KM Hochzeitsplaner<br>[Vorname Nachname]<br>[Straße, PLZ Ort]<br>[email@beispiel.de]</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">2. Welche Daten wir erheben</h3>
+        <p>Bei der Registrierung: E-Mail-Adresse und Passwort (verschlüsselt gespeichert).<br>
+        Bei der Nutzung: Hochzeitsdaten, Gästelisten, Budget, Sitzpläne, Stil-Präferenzen – ausschließlich Daten, die Sie selbst eingeben.</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">3. Rechtsgrundlage</h3>
+        <p>Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) und Art. 6 Abs. 1 lit. a DSGVO (Einwilligung bei Registrierung).</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">4. Speicherort & Auftragsverarbeitung</h3>
+        <p>Alle Daten werden auf Servern der Supabase Inc. in <strong>Frankfurt am Main (EU, aws eu-central-1)</strong> gespeichert. Mit Supabase besteht ein Auftragsverarbeitungsvertrag (AVV/DPA) gem. Art. 28 DSGVO.</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">5. Datensicherheit</h3>
+        <p>Passwörter werden gehasht gespeichert (bcrypt). Der Zugriff auf Daten ist durch Row Level Security (RLS) geschützt – jeder Nutzer sieht ausschließlich seine eigenen Daten. Die Übertragung erfolgt TLS-verschlüsselt (HTTPS).</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">6. Ihre Rechte</h3>
+        <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO). Kontaktieren Sie uns dafür unter [email@beispiel.de].</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">7. Konto & Datenlöschung</h3>
+        <p>Sie können Ihr Konto jederzeit über die Einstellungen in der App löschen. Dabei werden alle Ihre Daten unwiderruflich entfernt.</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">8. Cookies & lokale Speicherung</h3>
+        <p>Die App verwendet Auth-Tokens im Browser (localStorage) zur Sitzungsverwaltung. Es werden keine Tracking-Cookies oder Analyse-Tools eingesetzt.</p>
+
+        <h3 style="font-size:.95rem;margin:16px 0 8px;">9. Beschwerderecht</h3>
+        <p>Sie haben das Recht, sich bei der zuständigen Datenschutz-Aufsichtsbehörde zu beschweren.</p>
+      </div>
+    `;
+  }
+  document.getElementById('legalBackdrop').style.display = 'block';
+  document.getElementById('legalModal').style.display = 'block';
+}
+
+function closeLegalModal() {
+  document.getElementById('legalBackdrop').style.display = 'none';
+  document.getElementById('legalModal').style.display = 'none';
+}
+</script>
+<div id="appWrapper">
 
 <script>
 ['🌸','🌹','🌺','✿','❀','💮'].forEach((p, i) => {
@@ -1164,7 +1580,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   el.style.animationDuration = (12 + Math.random() * 18) + 's';
   el.style.animationDelay = (-Math.random() * 20) + 's';
   el.style.fontSize = (16 + Math.random() * 14) + 'px';
-  document.body.appendChild(el);
+  document.getElementById('appWrapper').appendChild(el);
 });
 </script>
 
@@ -1192,7 +1608,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
     </div>
   </div>
   <div class="header-right">
-    <!-- Wetter-Widget -->
+    <span id="userEmailBadge" class="user-badge" title="Ausloggen" onclick="doLogout()"></span>
     <a id="weatherBadge" href="#" target="_blank" rel="noopener" class="weather-badge" title="Wetter für Hochzeitsort öffnen">
       <span class="weather-icon" id="weatherIcon">🌨️</span>
       <div class="weather-separator"></div>
@@ -1201,8 +1617,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
         <div class="weather-sub"  id="weatherSub">Ø 2°C · wetter.de öffnen ↗</div>
       </div>
     </a>
-
-    <!-- Countdown Badge (klickbar) -->
     <div class="days-badge" onclick="toggleDatePopup()" title="Hochzeitsdatum ändern">
       <span id="daysCount">247</span>
       <div>
@@ -1210,6 +1624,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
         <div class="edit-hint">✏️ Datum anpassen</div>
       </div>
     </div>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Navigation öffnen">☰</button>
   </div>
 </header>
 
@@ -1255,6 +1670,57 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   <div class="ntab" onclick="showPanel('assistant',this)">🤖 KI-Chat</div>
 </div>
 
+<!-- ══ TRIAL BANNER ══ -->
+<div class="trial-banner hidden" id="trialBanner">
+  <div class="trial-banner-text">
+    <span>⏳</span>
+    <span id="trialBannerText">Dein kostenloser Test läuft noch</span>
+    <span class="trial-days-badge" id="trialDaysBadge">14 Tage</span>
+  </div>
+  <button class="trial-upgrade-btn" onclick="openPaypalCheckout()">
+    💳 Jetzt upgraden
+  </button>
+</div>
+
+<!-- ══ PAYWALL OVERLAY ══ -->
+<div class="paywall-overlay hidden" id="paywallOverlay">
+  <div class="paywall-card">
+    <div class="paywall-hero">
+      <div class="paywall-icon">💍</div>
+      <div class="paywall-title">Testzeitraum abgelaufen</div>
+      <div class="paywall-sub">Deine 14-tägige kostenlose Testphase ist beendet.<br>Alle deine Daten sind noch gespeichert.</div>
+    </div>
+    <div class="paywall-body">
+      <div class="paywall-price-row">
+        <div class="paywall-price">9</div>
+        <div style="display:flex;flex-direction:column;">
+          <span style="font-size:1.2rem;font-weight:600;color:var(--charcoal)">,90 €</span>
+          <span class="paywall-price-period">/ Monat</span>
+        </div>
+      </div>
+      <div class="paywall-features">
+        <div class="paywall-feature">Unbegrenzte Gäste & Cloud-Sync</div>
+        <div class="paywall-feature">Sitzplan mit allen 5 Tischformen</div>
+        <div class="paywall-feature">KI-Mentor & KI-Assistent</div>
+        <div class="paywall-feature">Budget-Tracker & Dienstleister-Suche</div>
+        <div class="paywall-feature">RSVP-Seite für Gäste</div>
+        <div class="paywall-feature">DSGVO-konform · Daten auf EU-Servern</div>
+      </div>
+      <button class="paywall-cta" onclick="openPaypalCheckout()" style="background:linear-gradient(135deg,#003087,#009cde);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="vertical-align:middle;margin-right:6px;"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg>
+        Mit PayPal bezahlen · 9,90 € / Monat
+      </button>
+      <div style="text-align:center;margin-top:10px;font-size:.72rem;color:var(--warm-gray);">
+        Du wirst zu PayPal weitergeleitet · Nach Zahlung bitte kurz warten
+      </div>
+      <div class="paywall-footer">
+        Monatlich kündbar · Keine versteckten Kosten<br>
+        Fragen? <a href="mailto:support@forever-wedding.de">support@forever-wedding.de</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <main>
 
 <!-- ══ DASHBOARD ══ -->
@@ -1274,15 +1740,15 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   <div class="dash-grid">
     <div class="stat-card gold">
       <div class="stat-label">Gesamtbudget</div>
-      <div class="stat-value">18.000 €</div>
-      <div class="budget-bar"><div class="budget-fill gold" style="width:69%"></div></div>
-      <div class="stat-sub">12.450 € ausgegeben · 5.550 € verfügbar</div>
+      <div class="stat-value" id="dashBudgetTotal">18.000 €</div>
+      <div class="budget-bar"><div class="budget-fill gold" id="dashBudgetBar" style="width:69%"></div></div>
+      <div class="stat-sub" id="dashBudgetSub">12.450 € ausgegeben · 5.550 € verfügbar</div>
     </div>
     <div class="stat-card rose">
       <div class="stat-label">Gäste</div>
-      <div class="stat-value">84 / 110</div>
-      <div class="budget-bar"><div class="budget-fill rose" style="width:76%"></div></div>
-      <div class="stat-sub">76% RSVP bestätigt · 8 ausstehend</div>
+      <div class="stat-value" id="dashGuestsVal">84 / 110</div>
+      <div class="budget-bar"><div class="budget-fill rose" id="dashGuestsBar" style="width:76%"></div></div>
+      <div class="stat-sub" id="dashGuestsSub">76% RSVP bestätigt · 8 ausstehend</div>
     </div>
     <div class="stat-card sage">
       <div class="stat-label">Aufgaben</div>
@@ -2789,6 +3255,31 @@ function sendQuickMsg(msg) {
   sendAI();
 }
 
+// ─── Todo Filter ─────────────────────────────────────────
+function filterTodos(filter) {
+  const items = document.querySelectorAll('.todo-item');
+  items.forEach(item => {
+    const isDone    = item.querySelector('.todo-check.done') !== null;
+    const isUrgent  = item.querySelector('.tag.urgent') !== null;
+    const show =
+      filter === 'all'    ? true :
+      filter === 'done'   ? isDone :
+      filter === 'urgent' ? (!isDone && isUrgent) :
+      filter === 'open'   ? !isDone : true;
+    item.style.display = show ? '' : 'none';
+  });
+  // Sektions-Header ausblenden wenn alle Items versteckt
+  document.querySelectorAll('.checklist-header').forEach(header => {
+    let next = header.nextElementSibling;
+    let anyVisible = false;
+    while (next && next.classList.contains('todo-item')) {
+      if (next.style.display !== 'none') anyVisible = true;
+      next = next.nextElementSibling;
+    }
+    header.style.display = anyVisible ? '' : 'none';
+  });
+}
+
 // ─── Navigation ─────────────────────────────────────────
 function showPanel(id, tab) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -3236,6 +3727,7 @@ function saveNames() {
   const p2 = document.getElementById('nameInput2').value.trim();
   if (!p1 || !p2) { showToast('⚠ Bitte beide Namen eintragen'); return; }
   try { localStorage.setItem(LS_NAMES, JSON.stringify({ p1, p2 })); } catch(e) {}
+  saveWeddingToSupabase();
   applyNames();
   closeNamePopup();
   showToast(`💍 Namen gespeichert: ${p1} & ${p2}`);
@@ -3403,6 +3895,7 @@ function saveNewGuest() {
   const list = getGuests();
   list.push(guest);
   saveGuests(list);
+  saveGuestToSupabase(guest);
   closeAddGuestModal();
   renderGuestTable();
   showToast('✓ Gast hinzugefügt: ' + guest.name);
@@ -4026,6 +4519,9 @@ function selectStyle(id) {
   activeStyleId = id;
   // localStorage merken
   try { localStorage.setItem('forever_style', id); } catch(e) {}
+  // Supabase sync
+  const notes = document.getElementById('styleNotes')?.value || '';
+  saveStyleToSupabase(id, notes);
   renderStyleGrid();
   renderMoodboard();
   renderPalette();
@@ -4130,9 +4626,11 @@ function openPinterestCell(q) {
 }
 
 function saveStyleNotes() {
+  const notes = document.getElementById('styleNotes')?.value || '';
   try {
-    localStorage.setItem('forever_style_notes', document.getElementById('styleNotes')?.value || '');
+    localStorage.setItem('forever_style_notes', notes);
   } catch(e) {}
+  saveStyleToSupabase(activeStyleId, notes);
 }
 
 function initInspiration() {
@@ -4169,7 +4667,637 @@ setTimeout(() => {
   initLocChecks();
   initBandOption();
   initSeating();
+  updateDashboard();
+  // Onboarding nur für neue User (kein Supabase-Login aktiv)
+  if (!currentUser) startOnboarding();
 }, 300);
+
+// ── Passwort vergessen ────────────────────────────────────
+async function doPasswordReset() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { setAuthMsg('Bitte zuerst E-Mail eingeben.'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href
+  });
+  if (error) { setAuthMsg('Fehler: ' + error.message); return; }
+  setAuthMsg('✓ Reset-Link wurde an ' + email + ' gesendet.', true);
+}
+
+// ═══════════════════════════════════════════════════════
+//  ONBOARDING
+// ═══════════════════════════════════════════════════════
+const LS_ONBOARDED = 'forever_onboarded_v1';
+let obStep = 0;
+const obTotalSteps = 5;
+let obSelectedStyle = null;
+
+function shouldShowOnboarding() {
+  return !localStorage.getItem(LS_ONBOARDED);
+}
+function startOnboarding() {
+  if (!shouldShowOnboarding()) return;
+  obStep = 0;
+  renderObDots();
+  document.getElementById('onboardingOverlay').classList.remove('hidden');
+}
+function renderObDots() {
+  const dots = document.getElementById('onboardingDots');
+  if (!dots) return;
+  dots.innerHTML = Array.from({length: obTotalSteps}, (_,i) =>
+    `<div class="onboarding-dot ${i < obStep ? 'done' : i === obStep ? 'active' : ''}"></div>`
+  ).join('');
+  const titles = ['Eure Namen','Hochzeitsdatum','Budget','Euer Stil','Fertig!'];
+  const sub = document.getElementById('onboardingSub');
+  if (sub) sub.textContent = `Schritt ${obStep+1} von ${obTotalSteps} · ${titles[obStep]}`;
+}
+function obShowStep(n) {
+  document.querySelectorAll('.onboarding-step').forEach((s,i) => s.classList.toggle('active', i===n));
+  obStep = n; renderObDots();
+}
+function obNext() {
+  if (obStep===0) {
+    const n1=document.getElementById('ob-name1').value.trim();
+    const n2=document.getElementById('ob-name2').value.trim();
+    if (n1) document.getElementById('nameInput1').value=n1;
+    if (n2) document.getElementById('nameInput2').value=n2;
+    if (n1&&n2) saveNames();
+  }
+  if (obStep===1) {
+    const d=document.getElementById('ob-date').value;
+    if (d) { document.getElementById('weddingDateInput').value=d; saveWeddingDate(); }
+  }
+  if (obStep===2) {
+    const b=parseFloat(document.getElementById('ob-budget').value);
+    if (b>0) { const bd=getBudget(); bd.total=b; saveBudget(bd); renderBudgetSummary(); renderBudgetRows(); }
+  }
+  if (obStep===3) {
+    if (obSelectedStyle) selectStyle(obSelectedStyle);
+    const names=getNames(); const date=getWeddingDate(); const bd=getBudget();
+    const rt=document.getElementById('ob-ready-text');
+    if (rt) rt.textContent=`${names.p1} & ${names.p2}, euer Planer ist bereit!`;
+    const dd=document.getElementById('ob-confirm-date');
+    if (dd) dd.textContent=date?`✓ Hochzeitsdatum: ${formatDateDE(date)}`:'– Datum noch nicht gesetzt';
+    const db=document.getElementById('ob-confirm-budget');
+    if (db) db.textContent=bd?`✓ Budget: ${fmt(bd.total)}`:'– Budget noch nicht gesetzt';
+    const ds=document.getElementById('ob-confirm-style');
+    if (ds) ds.textContent=obSelectedStyle?`✓ Stil: ${obSelectedStyle}`:'– Stil noch nicht gewählt';
+  }
+  if (obStep < obTotalSteps-1) obShowStep(obStep+1);
+}
+function obPrev() { if (obStep>0) obShowStep(obStep-1); }
+function obSelectStyle(styleId, el) {
+  obSelectedStyle=styleId;
+  document.querySelectorAll('.ob-style-opt').forEach(o => { o.style.borderColor='var(--border)'; o.style.background='white'; });
+  el.style.borderColor='var(--gold)'; el.style.background='rgba(201,169,110,0.08)';
+}
+function skipOnboarding() {
+  localStorage.setItem(LS_ONBOARDED,'1');
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+}
+function finishOnboarding() {
+  localStorage.setItem(LS_ONBOARDED,'1');
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+  updateDashboard();
+  showToast('🎉 Willkommen bei FOREVER!');
+}
+
+// ── Mobile Menu ───────────────────────────────────────────
+function toggleMobileMenu() {
+  document.querySelector('.nav-tabs').classList.toggle('mobile-open');
+}
+
+// ── Dashboard dynamisch ───────────────────────────────────
+function updateDashboard() {
+  const bd=getBudget();
+  if (bd) {
+    const ist=bd.categories.reduce((s,c)=>s+c.ist,0);
+    const pct=Math.round(ist/bd.total*100);
+    const frei=bd.total-ist;
+    const el=document.getElementById('dashBudgetTotal');
+    const bar=document.getElementById('dashBudgetBar');
+    const sub=document.getElementById('dashBudgetSub');
+    if (el)  el.textContent=fmt(bd.total);
+    if (bar) bar.style.width=Math.min(pct,100)+'%';
+    if (sub) sub.textContent=`${fmt(ist)} ausgegeben · ${fmt(Math.abs(frei))} ${frei>=0?'verfügbar':'überzogen'}`;
+  }
+  const guests=getGuests();
+  const yes=guests.filter(g=>g.rsvp==='yes').length;
+  const pending=guests.filter(g=>g.rsvp==='pending').length;
+  const gpct=guests.length>0?Math.round(yes/guests.length*100):0;
+  const gv=document.getElementById('dashGuestsVal');
+  const gb=document.getElementById('dashGuestsBar');
+  const gs=document.getElementById('dashGuestsSub');
+  if (gv) gv.textContent=`${yes} / ${guests.length}`;
+  if (gb) gb.style.width=gpct+'%';
+  if (gs) gs.textContent=`${gpct}% RSVP bestätigt · ${pending} ausstehend`;
+  const hg=document.querySelector('.hero-stats');
+  if (hg) {
+    const vals=hg.querySelectorAll('.hero-stat-val');
+    if (vals[2]) vals[2].textContent=yes;
+    if (vals[3]&&bd) vals[3].textContent=fmt(bd.categories.reduce((s,c)=>s+c.ist,0));
+  }
+  const navBadge=document.querySelector('.ntab .badge:not(.urgent)');
+  if (navBadge) navBadge.textContent=guests.length;
+}
+</script>
+
+<!-- ══ FOOTER MIT LEGAL + KONTO LÖSCHEN ══ -->
+<div style="margin-top:60px;padding:32px 24px 48px;border-top:1px solid var(--border);text-align:center;">
+  <div style="font-size:0.75rem;color:var(--warm-gray);margin-bottom:16px;">
+    <a href="#" onclick="event.preventDefault();showLegalModal('impressum')" style="color:var(--warm-gray);text-decoration:underline;">Impressum</a>
+     · 
+    <a href="#" onclick="event.preventDefault();showLegalModal('datenschutz')" style="color:var(--warm-gray);text-decoration:underline;">Datenschutz</a>
+  </div>
+  <button onclick="deleteAccount()" style="background:none;border:1px solid var(--rose);color:var(--rose);padding:8px 20px;border-radius:10px;font-family:'Jost',sans-serif;font-size:0.75rem;cursor:pointer;transition:all .2s;"
+    onmouseover="this.style.background='var(--rose)';this.style.color='white'"
+    onmouseout="this.style.background='none';this.style.color='var(--rose)'">
+    Konto & alle Daten löschen
+  </button>
+</div>
+
+<!-- ══ ONBOARDING ══ -->
+<div class="onboarding-overlay hidden" id="onboardingOverlay">
+  <div class="onboarding-card">
+    <div class="onboarding-hero">
+      <div class="onboarding-logo">💍</div>
+      <div class="onboarding-title">Willkommen bei FOREVER</div>
+      <div class="onboarding-sub" id="onboardingSub">Euer persönlicher Hochzeitsplaner</div>
+      <div class="onboarding-steps" id="onboardingDots"></div>
+    </div>
+    <div class="onboarding-body">
+      <!-- Schritt 1: Namen -->
+      <div class="onboarding-step active" id="ob-step-0">
+        <div class="onboarding-step-title">Wie heißt ihr? 💑</div>
+        <div class="onboarding-step-desc">Damit FOREVER euch persönlich ansprechen kann.</div>
+        <div style="display:grid;gap:10px;">
+          <div class="field"><label>Name Braut / Partner 1</label>
+            <input type="text" id="ob-name1" placeholder="Julia" onkeypress="if(event.key==='Enter')obNext()">
+          </div>
+          <div class="field"><label>Name Bräutigam / Partner 2</label>
+            <input type="text" id="ob-name2" placeholder="Maximilian" onkeypress="if(event.key==='Enter')obNext()">
+          </div>
+        </div>
+        <div class="onboarding-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="obNext()">Weiter →</button>
+          <button class="onboarding-skip" onclick="skipOnboarding()">Überspringen</button>
+        </div>
+      </div>
+
+      <!-- Schritt 2: Hochzeitsdatum -->
+      <div class="onboarding-step" id="ob-step-1">
+        <div class="onboarding-step-title">Wann ist der große Tag? 📅</div>
+        <div class="onboarding-step-desc">Der Countdown startet sofort — und das Wetter-Widget passt sich automatisch an.</div>
+        <div class="field">
+          <label>Hochzeitsdatum</label>
+          <input type="date" id="ob-date" style="width:100%;padding:11px 14px;border:1.5px solid var(--cream);border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;background:var(--ivory);outline:none;">
+        </div>
+        <div class="onboarding-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="obNext()">Weiter →</button>
+          <button class="btn btn-outline" onclick="obPrev()">← Zurück</button>
+        </div>
+      </div>
+
+      <!-- Schritt 3: Budget -->
+      <div class="onboarding-step" id="ob-step-2">
+        <div class="onboarding-step-title">Wie hoch ist euer Budget? 💰</div>
+        <div class="onboarding-step-desc">Nur eine grobe Schätzung reicht — ihr könnt es jederzeit anpassen.</div>
+        <div class="field">
+          <label>Gesamtbudget in €</label>
+          <input type="number" id="ob-budget" placeholder="z.B. 15000" min="0" step="1000"
+            style="width:100%;padding:11px 14px;border:1.5px solid var(--cream);border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;background:var(--ivory);outline:none;"
+            onkeypress="if(event.key==='Enter')obNext()">
+        </div>
+        <div class="onboarding-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="obNext()">Weiter →</button>
+          <button class="btn btn-outline" onclick="obPrev()">← Zurück</button>
+        </div>
+      </div>
+
+      <!-- Schritt 4: Stil -->
+      <div class="onboarding-step" id="ob-step-3">
+        <div class="onboarding-step-title">Welchen Stil stellt ihr euch vor? ✨</div>
+        <div class="onboarding-step-desc">Das Moodboard und die Inspiration werden darauf abgestimmt.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="ob-style-opt" onclick="obSelectStyle('romantic',this)" style="padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;">
+            <div style="font-size:1.4rem;margin-bottom:4px;">🌸</div><div style="font-size:.78rem;font-weight:600;">Romantic Garden</div>
+          </div>
+          <div class="ob-style-opt" onclick="obSelectStyle('classic',this)" style="padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;">
+            <div style="font-size:1.4rem;margin-bottom:4px;">🏛️</div><div style="font-size:.78rem;font-weight:600;">Klassisch-Elegant</div>
+          </div>
+          <div class="ob-style-opt" onclick="obSelectStyle('boho',this)" style="padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;">
+            <div style="font-size:1.4rem;margin-bottom:4px;">🌾</div><div style="font-size:.78rem;font-weight:600;">Boho Rustic</div>
+          </div>
+          <div class="ob-style-opt" onclick="obSelectStyle('winter',this)" style="padding:12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;">
+            <div style="font-size:1.4rem;margin-bottom:4px;">❄️</div><div style="font-size:.78rem;font-weight:600;">Winter Wonderland</div>
+          </div>
+        </div>
+        <div class="onboarding-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="obNext()">Weiter →</button>
+          <button class="btn btn-outline" onclick="obPrev()">← Zurück</button>
+        </div>
+      </div>
+
+      <!-- Schritt 5: Fertig -->
+      <div class="onboarding-step" id="ob-step-4">
+        <div style="text-align:center;padding:8px 0;">
+          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <div class="onboarding-step-title">Alles bereit!</div>
+          <div class="onboarding-step-desc" id="ob-ready-text">Euer persönlicher Hochzeitsplaner ist eingerichtet.</div>
+          <div style="background:var(--cream);border-radius:12px;padding:14px 16px;margin:16px 0;font-size:.8rem;color:var(--charcoal);text-align:left;display:flex;flex-direction:column;gap:6px;">
+            <div>✓ Namen gespeichert</div>
+            <div id="ob-confirm-date">✓ Hochzeitsdatum gesetzt</div>
+            <div id="ob-confirm-budget">✓ Budget hinterlegt</div>
+            <div id="ob-confirm-style">✓ Stil ausgewählt</div>
+          </div>
+        </div>
+        <div class="onboarding-actions">
+          <button class="btn btn-primary" style="flex:1;" onclick="finishOnboarding()">💍 Planung starten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end appWrapper -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  TRIAL & PAYWALL SYSTEM
+// ═══════════════════════════════════════════════════════
+
+// ⬇️  HIER deinen PayPal.me-Link eintragen
+// Erstellen unter: paypal.com/paypalme → kostenlosen Link anlegen
+// Beispiel: 'https://paypal.me/DEINNAME/9.90EUR'
+const PAYPAL_LINK = 'https://paypal.me/KMHochzeitsplaner/9.90';
+
+// Zustandsvariablen
+let userIsPremium  = false;
+let trialEndsAt    = null;
+
+// ── Zustand aus Supabase laden ───────────────────────────
+async function loadSubscriptionStatus() {
+  if (!currentUser) return;
+  const { data } = await sb
+    .from('wedding')
+    .select('is_premium, trial_ends_at, stripe_customer_id')
+    .eq('user_id', currentUser.id)
+    .single();
+
+  if (!data) {
+    // Neuer User: wedding-Zeile anlegen mit Trial
+    await sb.from('wedding').upsert({
+      user_id:       currentUser.id,
+      is_premium:    false,
+      trial_ends_at: new Date(Date.now() + 14 * 86400000).toISOString(),
+    }, { onConflict: 'user_id' });
+    trialEndsAt   = new Date(Date.now() + 14 * 86400000);
+    userIsPremium = false;
+  } else {
+    userIsPremium = data.is_premium === true;
+    trialEndsAt   = data.trial_ends_at ? new Date(data.trial_ends_at) : null;
+  }
+  applyAccessControl();
+}
+
+// ── Zugriff steuern ──────────────────────────────────────
+function applyAccessControl() {
+  const now       = new Date();
+  const trialDays = trialEndsAt
+    ? Math.ceil((trialEndsAt - now) / 86400000)
+    : 0;
+  const trialActive = trialEndsAt && trialEndsAt > now;
+
+  // Premium → alles sauber, kein Banner
+  if (userIsPremium) {
+    hideBanner();
+    hidePaywall();
+    return;
+  }
+
+  // Trial aktiv → Banner zeigen
+  if (trialActive) {
+    hidePaywall();
+    showTrialBanner(trialDays);
+    return;
+  }
+
+  // Trial abgelaufen, nicht Premium → Paywall
+  showPaywall();
+}
+
+// ── Banner ───────────────────────────────────────────────
+function showTrialBanner(daysLeft) {
+  const banner  = document.getElementById('trialBanner');
+  const text    = document.getElementById('trialBannerText');
+  const badge   = document.getElementById('trialDaysBadge');
+  if (!banner) return;
+
+  banner.classList.remove('hidden');
+
+  if (daysLeft <= 3) {
+    banner.classList.add('urgent');
+    text.textContent  = '⚠️ Dein Test läuft bald ab —';
+    badge.textContent = `noch ${daysLeft} Tag${daysLeft === 1 ? '' : 'e'}!`;
+  } else {
+    banner.classList.remove('urgent');
+    text.textContent  = 'Kostenloser Test aktiv —';
+    badge.textContent = `noch ${daysLeft} Tage`;
+  }
+}
+
+function hideBanner() {
+  document.getElementById('trialBanner')?.classList.add('hidden');
+}
+
+// ── Paywall ──────────────────────────────────────────────
+function showPaywall() {
+  document.getElementById('paywallOverlay')?.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function hidePaywall() {
+  document.getElementById('paywallOverlay')?.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function openPaywall() {
+  showPaywall();
+}
+
+// ── PayPal Checkout öffnen ─────────────────────────────────
+function openPaypalCheckout() {
+  if (!PAYPAL_LINK || PAYPAL_LINK.includes('DEINNAME')) {
+    showToast('⚠️ PayPal-Link noch nicht eingetragen', 'error');
+    return;
+  }
+  window.open(PAYPAL_LINK, '_blank', 'noopener');
+}
+
+// ── Realtime: Premium-Status live aktualisieren ────────────
+
+// Hier nur den Realtime-Listener für is_premium:
+function initPremiumListener() {
+  if (!currentUser) return;
+  sb.channel('wedding-premium-' + currentUser.id)
+    .on('postgres_changes', {
+      event:  'UPDATE',
+      schema: 'public',
+      table:  'wedding',
+      filter: `user_id=eq.${currentUser.id}`,
+    }, payload => {
+      if (payload.new.is_premium === true) {
+        userIsPremium = true;
+        hidePaywall();
+        hideBanner();
+        showToast('🎉 Premium aktiviert! Willkommen.', 'success');
+      }
+    })
+    .subscribe();
+}
+
+// ═══════════════════════════════════════════════════════
+// SUPABASE CONFIG
+// ══════════════════════════════════════════════
+const SUPABASE_URL  = 'https://rfcdhxzamthrieaoxagx.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmY2RoeHphbXRocmllYW94YWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNjU2MjksImV4cCI6MjA5MzY0MTYyOX0.BW8Aze_AMtmunKbit2ocGLfLvum14_44-lLp9zgNpno';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+
+// ── Auth Tab Switch ───────────────────────────
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((el,i) => {
+    el.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register'));
+  });
+  document.getElementById('loginForm').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authMsg').textContent = '';
+}
+
+function setAuthMsg(msg, isSuccess) {
+  const el = document.getElementById('authMsg');
+  el.textContent = msg;
+  el.className = 'auth-msg' + (isSuccess ? ' success' : '');
+}
+
+// ── Login ─────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPassword').value;
+  if (!email || !pass) { setAuthMsg('Bitte E-Mail und Passwort eingeben.'); return; }
+  const btn = document.querySelector('#loginForm .auth-btn');
+  btn.disabled = true; btn.textContent = 'Anmelden …';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Anmelden →';
+  if (error) { setAuthMsg('Fehler: ' + error.message); return; }
+  onLogin(data.user);
+}
+
+// ── Register ──────────────────────────────────
+async function doRegister() {
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPassword').value;
+  const pass2 = document.getElementById('regPassword2').value;
+  if (!email || !pass) { setAuthMsg('Bitte alle Felder ausfüllen.'); return; }
+  if (pass !== pass2)  { setAuthMsg('Passwörter stimmen nicht überein.'); return; }
+  if (pass.length < 6) { setAuthMsg('Passwort muss mind. 6 Zeichen haben.'); return; }
+  const btn = document.querySelector('#registerForm .auth-btn');
+  btn.disabled = true; btn.textContent = 'Konto erstellen …';
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Konto erstellen →';
+  if (error) { setAuthMsg('Fehler: ' + error.message); return; }
+  if (data.user && !data.session) {
+    setAuthMsg('✓ Bestätigungs-E-Mail gesendet! Bitte E-Mail bestätigen.', true);
+  } else if (data.user) {
+    onLogin(data.user);
+  }
+}
+
+// ── Logout ────────────────────────────────────
+async function doLogout() {
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('appWrapper').classList.remove('visible');
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+}
+
+// ── On Login Success ──────────────────────────
+function onLogin(user) {
+  currentUser = user;
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appWrapper').classList.add('visible');
+  const badge = document.getElementById('userEmailBadge');
+  if (badge) badge.textContent = '👤 ' + user.email;
+  loadFromSupabase();
+  loadSubscriptionStatus();
+  initPremiumListener();
+  setTimeout(() => {
+    startOnboarding();
+    updateDashboard();
+  }, 500);
+}
+
+// ══════════════════════════════════════════════
+// SUPABASE DATA LAYER
+// Lädt Daten des eingeloggten Users und
+// überschreibt die localStorage-Werte
+// ══════════════════════════════════════════════
+async function loadFromSupabase() {
+  if (!currentUser) return;
+  const uid = currentUser.id;
+
+  // Wedding-Stammdaten laden
+  const { data: wedding } = await sb.from('wedding').select('*').eq('user_id', uid).single();
+  if (wedding) {
+    try {
+      if (wedding.partner1 && wedding.partner2) {
+        localStorage.setItem('forever_names_v1', JSON.stringify({ p1: wedding.partner1, p2: wedding.partner2 }));
+        applyNames();
+      }
+      if (wedding.wedding_date) {
+        localStorage.setItem('forever_wedding_date', wedding.wedding_date);
+        updateCountdown();
+      }
+      if (wedding.style) {
+        activeStyleId = wedding.style;
+      }
+      if (wedding.style_notes) {
+        const sn = document.getElementById('styleNotes');
+        if (sn) sn.value = wedding.style_notes;
+      }
+    } catch(e) {}
+  }
+
+  // Gäste laden
+  const { data: guests } = await sb.from('guests').select('*').eq('user_id', uid);
+  if (guests && guests.length > 0) {
+    const mapped = guests.map(g => ({
+      id: g.id, name: g.name,
+      firstName: g.name.split(' ')[0] || '',
+      lastName:  g.name.split(' ').slice(1).join(' ') || '',
+      category:  g.group_name || 'Sonstige',
+      rsvp:      g.rsvp === 'zugesagt' ? 'yes' : g.rsvp === 'abgesagt' ? 'no' : 'pending',
+      menu:      g.menu || null,
+      dietary:   null,
+      plusOne:   null,
+      table:     g.table_number ? 'Tisch ' + g.table_number : null,
+      source:    'supabase',
+    }));
+    localStorage.setItem('forever_guests_v1', JSON.stringify(mapped));
+    renderGuestTable();
+  }
+
+  // Sitzplan laden
+  const { data: tables } = await sb.from('seating_tables').select('*').eq('user_id', uid);
+  if (tables && tables.length > 0) {
+    const mapped = tables.map(t => ({
+      id: t.id, name: t.table_name || 'Tisch ' + t.table_number,
+      group: t.notes || '', shape: 'round',
+      w: 90, h: 90, seats: 0, max: t.capacity || 8, color: 'gold',
+    }));
+    seatingData = mapped;
+    renderSeating();
+  }
+
+  showToast('✓ Deine Daten wurden geladen');
+}
+
+// ── Supabase Save: Wedding ────────────────────
+async function saveWeddingToSupabase() {
+  if (!currentUser) return;
+  const names = getNames();
+  const date  = getWeddingDate();
+  await sb.from('wedding').upsert({
+    user_id: currentUser.id,
+    partner1: names.p1,
+    partner2: names.p2,
+    wedding_date: date || null,
+    style: activeStyleId,
+  }, { onConflict: 'user_id' });
+}
+
+// ── Supabase Save: Gast hinzufügen ───────────
+async function saveGuestToSupabase(guest) {
+  if (!currentUser) return;
+  await sb.from('guests').insert({
+    user_id: currentUser.id,
+    name: guest.name,
+    group_name: guest.category || '',
+    rsvp: guest.rsvp === 'yes' ? 'zugesagt' : guest.rsvp === 'no' ? 'abgesagt' : 'ausstehend',
+    menu: guest.menu || '',
+    notes: '',
+  });
+}
+
+// ── Supabase Save: Gast löschen ──────────────
+async function deleteGuestFromSupabase(id) {
+  if (!currentUser) return;
+  // Nur UUIDs sind Supabase-IDs; manual_ IDs nur lokal
+  if (!id.startsWith('manual_')) {
+    await sb.from('guests').delete().eq('id', id).eq('user_id', currentUser.id);
+  }
+}
+
+// ── Supabase Save: Stil ───────────────────────
+async function saveStyleToSupabase(styleId, notes) {
+  if (!currentUser) return;
+  await sb.from('wedding').upsert({
+    user_id: currentUser.id,
+    style: styleId,
+    style_notes: notes || '',
+  }, { onConflict: 'user_id' });
+}
+
+// ── Konto löschen ─────────────────────────────
+async function deleteAccount() {
+  if (!currentUser) return;
+  const confirmed = confirm('⚠️ Bist du sicher?\n\nAlle deine Daten (Gäste, Budget, Sitzplan etc.) werden unwiderruflich gelöscht.\n\nDiese Aktion kann NICHT rückgängig gemacht werden.');
+  if (!confirmed) return;
+  const confirmed2 = confirm('Letzte Warnung: Wirklich ALLES löschen und Konto entfernen?');
+  if (!confirmed2) return;
+  
+  const uid = currentUser.id;
+  
+  // Alle User-Daten aus allen Tabellen löschen
+  await sb.from('guests').delete().eq('user_id', uid);
+  await sb.from('vendors').delete().eq('user_id', uid);
+  await sb.from('tasks').delete().eq('user_id', uid);
+  await sb.from('budget_items').delete().eq('user_id', uid);
+  await sb.from('seating_tables').delete().eq('user_id', uid);
+  await sb.from('wedding').delete().eq('user_id', uid);
+  
+  // localStorage leeren
+  localStorage.clear();
+  
+  // Ausloggen
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('appWrapper').classList.remove('visible');
+  document.getElementById('authScreen').classList.remove('hidden');
+  
+  alert('✓ Dein Konto und alle Daten wurden gelöscht.');
+}
+
+// ══════════════════════════════════════════════
+// SESSION CHECK beim Start
+// ══════════════════════════════════════════════
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    onLogin(session.user);
+  }
+})();
+
+// Auth State Listener
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    document.getElementById('appWrapper').classList.remove('visible');
+    document.getElementById('authScreen').classList.remove('hidden');
+  }
+});
 </script>
 </body>
 </html>
