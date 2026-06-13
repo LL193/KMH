@@ -1274,7 +1274,35 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; position: rel
   .mood-cell:first-child { grid-row: auto; border-radius: 12px 0 0 0; }
   .modal-info { grid-template-columns: 1fr; }
 }
-/* ── TRIAL BANNER ── */
+/* ── PASSWORT-RESET MODAL ── */
+.pw-reset-overlay {
+  position: fixed; inset: 0; z-index: 20000;
+  background: rgba(20,16,12,.85); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.pw-reset-overlay.hidden { display: none; }
+.pw-reset-card {
+  background: white; border-radius: 24px;
+  max-width: 400px; width: 100%;
+  box-shadow: 0 24px 80px rgba(0,0,0,.3);
+  overflow: hidden;
+}
+.pw-reset-hero {
+  background: linear-gradient(135deg, #1a1410, #2C2C2C);
+  padding: 28px 28px 20px; text-align: center;
+}
+.pw-reset-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; color: white; margin-bottom: 4px;
+}
+.pw-reset-sub { font-size: .8rem; color: rgba(255,255,255,.5); }
+.pw-reset-body { padding: 24px 28px; }
+.pw-reset-msg {
+  font-size: .78rem; margin-bottom: 10px; padding: 8px 12px;
+  border-radius: 8px; display: none;
+}
+.pw-reset-msg.error   { background: #FDDDE6; color: #C0607A; display: block; }
+.pw-reset-msg.success { background: #D4EDD9; color: #3D7A4A; display: block; }
 .trial-banner {
   background: linear-gradient(135deg, #7C3AED, #5B21B6);
   color: white; padding: 10px 24px;
@@ -4922,7 +4950,70 @@ function updateDashboard() {
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  TRIAL & PAYWALL SYSTEM
+//  PASSWORT-RESET HANDLER
+//  Fängt den Token aus der URL ab wenn User auf Reset-Link klickt
+// ═══════════════════════════════════════════════════════
+function checkPasswordResetToken() {
+  // Supabase hängt Token als Hash-Fragment an: #access_token=...&type=recovery
+  const hash = window.location.hash;
+  if (!hash) return;
+
+  const params = new URLSearchParams(hash.substring(1)); // # entfernen
+  const type   = params.get('type');
+  const token  = params.get('access_token');
+
+  if (type === 'recovery' && token) {
+    // Token in Supabase-Session setzen
+    sb.auth.setSession({
+      access_token:  token,
+      refresh_token: params.get('refresh_token') || '',
+    }).then(({ error }) => {
+      if (error) {
+        console.error('Session-Fehler:', error.message);
+        return;
+      }
+      // URL-Hash bereinigen damit Token nicht sichtbar bleibt
+      history.replaceState(null, '', window.location.pathname);
+      // Reset-Modal anzeigen
+      document.getElementById('pwResetOverlay').classList.remove('hidden');
+    });
+  }
+}
+
+async function doPasswordUpdate() {
+  const pw1 = document.getElementById('pwResetNew').value;
+  const pw2 = document.getElementById('pwResetConfirm').value;
+  const msg = document.getElementById('pwResetMsg');
+
+  msg.className = 'pw-reset-msg';
+
+  if (!pw1 || pw1.length < 6) {
+    msg.textContent = 'Passwort muss mindestens 6 Zeichen haben.';
+    msg.classList.add('error'); return;
+  }
+  if (pw1 !== pw2) {
+    msg.textContent = 'Passwörter stimmen nicht überein.';
+    msg.classList.add('error'); return;
+  }
+
+  const { error } = await sb.auth.updateUser({ password: pw1 });
+
+  if (error) {
+    msg.textContent = 'Fehler: ' + error.message;
+    msg.classList.add('error'); return;
+  }
+
+  msg.textContent = '✓ Passwort erfolgreich gesetzt! Du wirst eingeloggt …';
+  msg.classList.add('success');
+
+  setTimeout(() => {
+    document.getElementById('pwResetOverlay').classList.add('hidden');
+    showToast('✓ Passwort gespeichert — willkommen zurück!', 'success');
+  }, 2000);
+}
+
+// Direkt beim Laden prüfen
+checkPasswordResetToken();
 // ═══════════════════════════════════════════════════════
 
 // ⬇️  HIER deinen PayPal.me-Link eintragen
@@ -5299,5 +5390,36 @@ sb.auth.onAuthStateChange((event, session) => {
   }
 });
 </script>
+<!-- ══ PASSWORT-RESET MODAL ══ -->
+<div class="pw-reset-overlay hidden" id="pwResetOverlay">
+  <div class="pw-reset-card">
+    <div class="pw-reset-hero">
+      <div style="font-size:2rem;margin-bottom:10px;">🔐</div>
+      <div class="pw-reset-title">Neues Passwort</div>
+      <div class="pw-reset-sub">Bitte wähle ein neues Passwort für deinen Account.</div>
+    </div>
+    <div class="pw-reset-body">
+      <div class="pw-reset-msg" id="pwResetMsg"></div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Neues Passwort</label>
+        <input type="password" id="pwResetNew" placeholder="Mind. 6 Zeichen"
+          autocomplete="new-password"
+          onkeypress="if(event.key==='Enter')doPasswordUpdate()"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--cream);border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;background:var(--ivory);outline:none;">
+      </div>
+      <div class="field" style="margin-bottom:20px;">
+        <label>Passwort wiederholen</label>
+        <input type="password" id="pwResetConfirm" placeholder="Passwort bestätigen"
+          autocomplete="new-password"
+          onkeypress="if(event.key==='Enter')doPasswordUpdate()"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--cream);border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;background:var(--ivory);outline:none;">
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:13px;" onclick="doPasswordUpdate()">
+        ✓ Passwort speichern
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
